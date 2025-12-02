@@ -227,16 +227,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Landing Page Display"
-    - "Signup Form Functionality"
-    - "Login Form Functionality"
-    - "Home Feed Display"
-    - "Post Like Functionality"
-    - "Profile Page Display"
-    - "App Layout and Navigation"
+    - "Dark Mode Toggle with Persistence"
+    - "Save/Bookmark Posts UI"
+    - "Save/Bookmark Posts Endpoints"
+    - "Hashtag Parsing and Linking"
+    - "Hashtag Extraction and Endpoints"
+    - "Trending Hashtags Section"
+    - "Post Sharing Functionality"
   stuck_tasks: []
   test_all: true
-  test_priority: "sequential"
+  test_priority: "high_first"
 
   - task: "Login Form Functionality"
     implemented: true
