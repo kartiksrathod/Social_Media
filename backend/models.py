@@ -69,6 +69,7 @@ class Post(BaseModel):
     author_avatar: Optional[str] = None
     text: str
     image_url: Optional[str] = None
+    hashtags: List[str] = Field(default_factory=list)  # List of hashtags in post
     likes: List[str] = Field(default_factory=list)  # List of user IDs who liked
     comments: List[Comment] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
