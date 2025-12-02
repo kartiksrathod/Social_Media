@@ -7,7 +7,7 @@ import requests
 import json
 from jose import jwt
 
-BACKEND_URL = "https://prox-advisor.preview.emergentagent.com/api"
+BACKEND_URL = "https://usernet.preview.emergentagent.com/api"
 
 def debug_auth():
     # First, create a user
