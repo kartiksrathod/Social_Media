@@ -91,9 +91,9 @@ export default function Signup() {
                 onChange={e => setFormData({...formData, password: e.target.value})}
               />
             </div>
-            <Button type="submit" className="w-full font-semibold shadow-lg shadow-primary/20 group transition-all hover:scale-[1.02]">
-              Create Account 
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Button type="submit" disabled={loading} className="w-full font-semibold shadow-lg shadow-primary/20 group transition-all hover:scale-[1.02]">
+              {loading ? "Creating Account..." : "Create Account"}
+              {!loading && <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />}
             </Button>
           </form>
         </CardContent>
