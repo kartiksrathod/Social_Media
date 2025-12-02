@@ -107,27 +107,33 @@ user_problem_statement: "Implement Quick Wins features for SocialVibe: Dark mode
 backend:
   - task: "Save/Bookmark Posts Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Backend endpoints already exist: POST /api/posts/{post_id}/save, POST /api/posts/{post_id}/unsave, GET /api/posts/saved. Need to test if they work correctly."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: All save/bookmark endpoints working perfectly. POST /api/posts/{post_id}/save saves posts correctly, POST /api/posts/{post_id}/unsave removes saved posts, GET /api/posts/saved returns user's saved posts. Error handling works: rejects saving already saved posts (400), rejects unsaving non-saved posts (400), rejects saving non-existent posts (404). Saved posts persist correctly and are associated with the correct user."
 
   - task: "Hashtag Extraction and Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Backend has hashtag extraction function and endpoints: GET /api/hashtags/trending, GET /api/posts/hashtag/{tag}. Hashtags are automatically extracted from post text and stored in posts collection. Need to test functionality."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: All hashtag functionality working perfectly. Hashtag extraction automatically detects hashtags in post text (e.g., '#SocialVibe #hashtags') and stores them normalized (lowercase). GET /api/hashtags/trending returns trending hashtags with counts sorted by popularity. GET /api/posts/hashtag/{tag} returns posts containing specific hashtags. Case-insensitive search works (SOCIALVIBE = socialvibe). URL encoding with # symbol works correctly. Hashtag deduplication and normalization working as expected."
 
 frontend:
   - task: "Landing Page Display"
