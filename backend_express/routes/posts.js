@@ -307,7 +307,7 @@ router.post('/:postId/unsave', authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/posts/saved - Get saved posts
+// GET /api/posts/saved - Get saved posts (must be before /:postId routes)
 router.get('/saved', authenticateToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
@@ -324,25 +324,6 @@ router.get('/saved', authenticateToken, async (req, res) => {
     res.json(posts.map(post => postToPublic(post, req.userId, user.saved_posts)));
   } catch (error) {
     console.error('Get saved posts error:', error);
-    res.status(500).json({ detail: 'Internal server error' });
-  }
-});
-
-// GET /api/hashtags/trending - Get trending hashtags
-router.get('/hashtags/trending', async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit) || 10;
-
-    const result = await Post.aggregate([
-      { $unwind: '$hashtags' },
-      { $group: { _id: '$hashtags', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: limit }
-    ]);
-
-    res.json(result.map(item => ({ tag: item._id, count: item.count })));
-  } catch (error) {
-    console.error('Get trending hashtags error:', error);
     res.status(500).json({ detail: 'Internal server error' });
   }
 });
