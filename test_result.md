@@ -101,3 +101,99 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Test the SocialVibe app flow: Landing Page, Signup, Home Feed, Profile functionality"
+
+frontend:
+  - task: "Landing Page Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LandingPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Initial testing - need to verify Hero section and 'Connect beyond boundaries' text visibility"
+
+  - task: "Signup Form Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Signup.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Initial testing - need to verify form submission and redirection to /home"
+
+  - task: "Home Feed Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Feed.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Initial testing - need to verify Home text visibility on mobile and sidebar on desktop"
+
+  - task: "Post Like Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Initial testing - need to verify heart icon click functionality"
+
+  - task: "Profile Page Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Profile.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Initial testing - need to verify Sarah Wilson mock user display"
+
+  - task: "App Layout and Navigation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/layout/AppLayout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Fixed missing Link import. Need to verify sidebar navigation functionality"
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+
+test_plan:
+  current_focus:
+    - "Landing Page Display"
+    - "Signup Form Functionality"
+    - "Home Feed Display"
+    - "Post Like Functionality"
+    - "Profile Page Display"
+    - "App Layout and Navigation"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "sequential"
+
+agent_communication:
+    - agent: "testing"
+      message: "Starting comprehensive testing of SocialVibe app flow. Fixed missing Link import in AppLayout. Will test all components sequentially as requested."
