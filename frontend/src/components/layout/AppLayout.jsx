@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar'; // Assuming a sidebar component or creating one custom
 import { 
   Home, 
   Search, 
