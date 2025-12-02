@@ -369,7 +369,7 @@ async def get_feed(
 @api_router.get("/posts/explore", response_model=List[PostPublic])
 async def get_explore_posts(
     limit: int = 20,
-    current_user_id: str = Depends(get_current_user_id)
+    current_user: UserInDB = Depends(get_current_user)
 ):
     """Get all recent posts for explore page."""
     posts = await posts_collection.find(
@@ -382,7 +382,7 @@ async def get_explore_posts(
         if isinstance(post.get("created_at"), str):
             post["created_at"] = datetime.fromisoformat(post["created_at"])
     
-    return [post_to_public(post, current_user_id) for post in posts]
+    return [post_to_public(post, current_user.id, current_user.saved_posts) for post in posts]
 
 @api_router.get("/posts/user/{username}", response_model=List[PostPublic])
 async def get_user_posts(
