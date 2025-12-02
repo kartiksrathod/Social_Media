@@ -5,17 +5,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Mock login
-    console.log("Logging in with:", { username, password });
-    navigate("/home");
+    setLoading(true);
+    
+    const result = await login(username, password);
+    
+    setLoading(false);
+    
+    if (result.success) {
+      toast.success("Logged in successfully!");
+      navigate("/home");
+    } else {
+      toast.error(result.error);
+    }
   };
 
   return (
