@@ -24,22 +24,66 @@ const userToPublic = (user, currentUserId = null) => {
   };
 };
 
-// GET /api/users/:username - Get user profile
-router.get('/:username', authenticateToken, async (req, res) => {
+// GET /api/users/search - Search users (must come before /:username)
+router.get('/search', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
-    if (!user) {
-      return res.status(404).json({ detail: 'User not found' });
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ detail: 'Search query required' });
     }
 
-    res.json(userToPublic(user, req.userId));
+    const users = await User.find(
+      { username: { $regex: q, $options: 'i' } }
+    ).limit(20);
+
+    res.json(users.map(user => userToPublic(user, req.userId)));
   } catch (error) {
-    console.error('Get user error:', error);
+    console.error('Search error:', error);
     res.status(500).json({ detail: 'Internal server error' });
   }
 });
 
-// PUT /api/users/me - Update profile
+// GET /api/users/suggested - Get suggested users (must come before /:username)
+router.get('/suggested', authenticateToken, async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ id: req.userId });
+    const excludeIds = [req.userId, ...currentUser.following];
+
+    const users = await User.find(
+      { id: { $nin: excludeIds } }
+    ).limit(5);
+
+    res.json(users.map(user => userToPublic(user, req.userId)));
+  } catch (error) {
+    console.error('Suggested users error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// POST /api/users/upload-avatar - Upload avatar (must come before /:username)
+router.post('/upload-avatar', authenticateToken, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ detail: 'No file uploaded' });
+    }
+
+    const result = await uploadToCloudinary(req.file.buffer, 'avatars');
+
+    // Update user avatar
+    await User.updateOne(
+      { id: req.userId },
+      { $set: { avatar: result.url } }
+    );
+
+    res.json({ url: result.url });
+  } catch (error) {
+    console.error('Upload avatar error:', error);
+    res.status(500).json({ detail: 'Image upload failed' });
+  }
+});
+
+// PUT /api/users/me - Update profile (must come before /:username)
 router.put('/me', authenticateToken, async (req, res) => {
   try {
     const { bio, avatar } = req.body;
