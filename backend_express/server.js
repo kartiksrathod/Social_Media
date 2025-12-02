@@ -33,10 +33,7 @@ app.use(cors({
 
 // MongoDB Connection
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/socialvibe';
-mongoose.connect(mongoUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(mongoUrl)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch(err => {
     console.error('❌ MongoDB connection error:', err);
