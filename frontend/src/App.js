@@ -9,6 +9,8 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
 import Notifications from "./pages/Notifications";
+import SavedPosts from "./pages/SavedPosts";
+import HashtagPage from "./pages/HashtagPage";
 import AppLayout from "./components/layout/AppLayout";
 
 // Protected Route - Requires authentication
