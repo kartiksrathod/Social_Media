@@ -228,6 +228,12 @@ async def unfollow_user(user_id: str, current_user: UserInDB = Depends(get_curre
     
     return {"message": "Successfully unfollowed user"}
 
+@api_router.get("/users/search-test")
+async def search_test(current_user_id: str = Depends(get_current_user_id)):
+    """Test endpoint to debug dependency injection."""
+    print(f"DEBUG: search_test called with current_user_id={current_user_id}")
+    return {"message": "Test successful", "user_id": current_user_id}
+
 @api_router.get("/users/search", response_model=List[UserPublic])
 async def search_users(
     q: str,
