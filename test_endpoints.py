@@ -6,7 +6,7 @@ Test specific endpoints to isolate the issue
 import requests
 import json
 
-BACKEND_URL = "https://feature-checks.preview.emergentagent.com/api"
+BACKEND_URL = "https://techstack-explorer-1.preview.emergentagent.com/api"
 
 def test_specific_endpoints():
     # Login to get token

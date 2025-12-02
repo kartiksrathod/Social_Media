@@ -7,7 +7,7 @@ import requests
 import json
 from jose import jwt
 
-BACKEND_URL = "https://feature-checks.preview.emergentagent.com/api"
+BACKEND_URL = "https://techstack-explorer-1.preview.emergentagent.com/api"
 
 def debug_auth():
     # First, create a user
