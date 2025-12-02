@@ -610,6 +610,23 @@ class SocialVibeAPITester:
         self.test_get_comments()
         self.test_unlike_post()
         
+        # Save/Bookmark Tests
+        print("\n🔖 SAVE/BOOKMARK POSTS TESTS")
+        self.test_save_post()
+        self.test_save_already_saved_post()
+        self.test_get_saved_posts()
+        self.test_unsave_post()
+        self.test_unsave_not_saved_post()
+        self.test_save_nonexistent_post()
+        
+        # Hashtag Tests
+        print("\n🏷️ HASHTAG TESTS")
+        self.test_create_post_with_hashtags()
+        self.test_get_trending_hashtags()
+        self.test_get_posts_by_hashtag()
+        self.test_hashtag_case_insensitive()
+        self.test_hashtag_with_hash_symbol()
+        
         # Notification Tests
         print("\n🔔 NOTIFICATION TESTS")
         self.test_get_notifications()
