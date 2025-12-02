@@ -55,6 +55,13 @@ def serialize_datetime(obj):
         return obj.isoformat()
     return obj
 
+def extract_hashtags(text: str) -> List[str]:
+    """Extract hashtags from text."""
+    # Find all hashtags (word characters after #)
+    hashtags = re.findall(r'#(\w+)', text)
+    # Return unique hashtags in lowercase
+    return list(set([tag.lower() for tag in hashtags]))
+
 def user_to_public(user: dict, current_user_id: Optional[str] = None) -> dict:
     """Convert user data to public format."""
     return {
@@ -70,13 +77,18 @@ def user_to_public(user: dict, current_user_id: Optional[str] = None) -> dict:
         "is_following": current_user_id in user.get("followers", []) if current_user_id else False
     }
 
-def post_to_public(post: dict, current_user_id: Optional[str] = None) -> dict:
+async def get_user_data(user_id: str) -> Optional[dict]:
+    """Get user data by ID."""
+    return await users_collection.find_one({"id": user_id}, {"_id": 0})
+
+def post_to_public(post: dict, current_user_id: Optional[str] = None, saved_posts: List[str] = []) -> dict:
     """Convert post data to public format."""
     return {
         **post,
         "likes_count": len(post.get("likes", [])),
         "comments_count": len(post.get("comments", [])),
-        "is_liked": current_user_id in post.get("likes", []) if current_user_id else False
+        "is_liked": current_user_id in post.get("likes", []) if current_user_id else False,
+        "is_saved": post.get("id") in saved_posts if saved_posts else False
     }
 
 # ==================== AUTHENTICATION ROUTES ====================
