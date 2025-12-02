@@ -30,6 +30,7 @@ class User(UserBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     followers: List[str] = Field(default_factory=list)  # List of user IDs
     following: List[str] = Field(default_factory=list)  # List of user IDs
+    saved_posts: List[str] = Field(default_factory=list)  # List of saved post IDs
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserInDB(User):
