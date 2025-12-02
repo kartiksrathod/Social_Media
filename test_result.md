@@ -264,15 +264,18 @@ test_plan:
 
   - task: "Dark Mode Toggle with Persistence"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/contexts/ThemeContext.jsx, /app/frontend/src/components/layout/AppLayout.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Dark mode fully implemented with ThemeContext. Theme persists in localStorage. Toggle button in sidebar (Moon/Sun icons). Need to test: 1) Theme toggle works, 2) Theme persists after page refresh, 3) Works across all pages."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Dark mode toggle working perfectly. Found theme toggle button with 'Mode' text in sidebar. Initial theme: light, after toggle: dark, stored in localStorage correctly. Theme persists after page refresh (dark theme maintained). Theme classes properly applied to document.documentElement. All functionality working as expected."
 
   - task: "Save/Bookmark Posts UI"
     implemented: true
