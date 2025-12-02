@@ -561,6 +561,106 @@ async def mark_all_notifications_read(current_user_id: str = Depends(get_current
     
     return {"message": "All notifications marked as read"}
 
+# ==================== SAVE/BOOKMARK POST ROUTES ====================
+
+@api_router.post("/posts/{post_id}/save")
+async def save_post(post_id: str, current_user: UserInDB = Depends(get_current_user)):
+    """Save/bookmark a post."""
+    post = await posts_collection.find_one({"id": post_id}, {"_id": 0})
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    # Check if already saved
+    if post_id in current_user.saved_posts:
+        raise HTTPException(status_code=400, detail="Post already saved")
+    
+    # Add to saved posts
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$push": {"saved_posts": post_id}}
+    )
+    
+    return {"message": "Post saved successfully"}
+
+@api_router.post("/posts/{post_id}/unsave")
+async def unsave_post(post_id: str, current_user: UserInDB = Depends(get_current_user)):
+    """Unsave/unbookmark a post."""
+    # Check if post is saved
+    if post_id not in current_user.saved_posts:
+        raise HTTPException(status_code=400, detail="Post not saved")
+    
+    # Remove from saved posts
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$pull": {"saved_posts": post_id}}
+    )
+    
+    return {"message": "Post unsaved successfully"}
+
+@api_router.get("/posts/saved", response_model=List[PostPublic])
+async def get_saved_posts(
+    limit: int = 20,
+    current_user: UserInDB = Depends(get_current_user)
+):
+    """Get user's saved posts."""
+    if not current_user.saved_posts:
+        return []
+    
+    # Get saved posts
+    posts = await posts_collection.find(
+        {"id": {"$in": current_user.saved_posts}},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Convert ISO strings back to datetime
+    for post in posts:
+        if isinstance(post.get("created_at"), str):
+            post["created_at"] = datetime.fromisoformat(post["created_at"])
+    
+    return [post_to_public(post, current_user.id, current_user.saved_posts) for post in posts]
+
+# ==================== HASHTAG ROUTES ====================
+
+@api_router.get("/hashtags/trending")
+async def get_trending_hashtags(limit: int = 10):
+    """Get trending hashtags."""
+    # Aggregate hashtags from all posts
+    pipeline = [
+        {"$unwind": "$hashtags"},
+        {"$group": {
+            "_id": "$hashtags",
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": limit}
+    ]
+    
+    result = await posts_collection.aggregate(pipeline).to_list(limit)
+    
+    return [{"tag": item["_id"], "count": item["count"]} for item in result]
+
+@api_router.get("/posts/hashtag/{tag}", response_model=List[PostPublic])
+async def get_posts_by_hashtag(
+    tag: str,
+    limit: int = 20,
+    current_user: UserInDB = Depends(get_current_user)
+):
+    """Get posts by hashtag."""
+    # Normalize tag (remove # if present, lowercase)
+    normalized_tag = tag.lower().lstrip('#')
+    
+    posts = await posts_collection.find(
+        {"hashtags": normalized_tag},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Convert ISO strings back to datetime
+    for post in posts:
+        if isinstance(post.get("created_at"), str):
+            post["created_at"] = datetime.fromisoformat(post["created_at"])
+    
+    return [post_to_public(post, current_user.id, current_user.saved_posts) for post in posts]
+
 # Include the router in the main app
 app.include_router(api_router)
 
