@@ -59,6 +59,15 @@ export const postsAPI = {
   unlike: (postId) => api.post(`/posts/${postId}/unlike`),
   addComment: (postId, text) => api.post(`/posts/${postId}/comments`, { text }),
   getComments: (postId) => api.get(`/posts/${postId}/comments`),
+  save: (postId) => api.post(`/posts/${postId}/save`),
+  unsave: (postId) => api.post(`/posts/${postId}/unsave`),
+  getSaved: () => api.get('/posts/saved'),
+  getByHashtag: (tag) => api.get(`/posts/hashtag/${tag}`),
+};
+
+// ==================== HASHTAGS ====================
+export const hashtagsAPI = {
+  getTrending: (limit = 10) => api.get('/hashtags/trending', { params: { limit } }),
 };
 
 // ==================== NOTIFICATIONS ====================
