@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-BACKEND_URL = "https://usernet.preview.emergentagent.com/api"
+BACKEND_URL = "https://quickbuilder-1.preview.emergentagent.com/api"
 
 def fresh_test():
     # Create a completely new user
