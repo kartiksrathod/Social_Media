@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import LandingPage from "./pages/LandingPage";
 import Feed from "./pages/Feed";
 import Login from "./pages/Login";
