@@ -148,7 +148,7 @@ export default function PostCard({ post, onUpdate }) {
       </CardHeader>
       
       <CardContent className="p-4 pt-2 space-y-4">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.text}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap">{renderTextWithHashtags(post.text)}</p>
         
         {post.image_url && (
           <div className="rounded-xl overflow-hidden border border-border/50 bg-muted">
