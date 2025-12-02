@@ -254,7 +254,67 @@ test_plan:
           comment: "✅ PASSED: Username label correctly displays 'Username' (not Email), username and password input fields are functional, 'Sign In' button works, form submission successfully redirects to /home. Mock authentication working correctly."
         - working: true
           agent: "testing"
-          comment: "✅ VERIFIED: Google and Github signup buttons are properly removed from Login page (0 found). Login functionality with username still works correctly. Form contains only Username field, Password field, and Sign In button as expected."
+          comment: "✅ VERIFIED: Google and Github signup buttons are properly removed from Login page (0 found). Login functionality with username-only authentication works perfectly. Task successfully verified."
+
+  - task: "Dark Mode Toggle with Persistence"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/contexts/ThemeContext.jsx, /app/frontend/src/components/layout/AppLayout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Dark mode fully implemented with ThemeContext. Theme persists in localStorage. Toggle button in sidebar (Moon/Sun icons). Need to test: 1) Theme toggle works, 2) Theme persists after page refresh, 3) Works across all pages."
+
+  - task: "Save/Bookmark Posts UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/post/PostCard.jsx, /app/frontend/src/pages/SavedPosts.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Save functionality in PostCard with bookmark icon (filled when saved). SavedPosts page displays saved posts with empty state. 'Saved' link in sidebar navigation. Need to test: 1) Save/unsave posts, 2) Saved posts page loads correctly, 3) Empty state shows when no saved posts."
+
+  - task: "Hashtag Parsing and Linking"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/post/PostCard.jsx, /app/frontend/src/pages/HashtagPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "PostCard renders hashtags as clickable links in post text. HashtagPage shows all posts for a specific hashtag. Need to test: 1) Hashtags are clickable in posts, 2) Clicking hashtag navigates to correct page, 3) HashtagPage displays posts correctly."
+
+  - task: "Trending Hashtags Section"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/layout/TrendingSection.jsx, /app/frontend/src/components/layout/AppLayout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "TrendingSection component in right sidebar shows top 5 trending hashtags with post counts. Hashtags are clickable. Need to test: 1) Trending section loads, 2) Shows correct hashtag counts, 3) Links work correctly."
+
+  - task: "Post Sharing Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Share button in PostCard copies post link to clipboard. Shows success toast and checkmark icon. Need to test: 1) Share button copies correct URL, 2) Success feedback shows, 3) Clipboard functionality works."
 
 agent_communication:
     - agent: "testing"
