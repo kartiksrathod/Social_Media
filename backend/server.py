@@ -234,12 +234,22 @@ async def search_users(
     current_user_id: str = Depends(get_current_user_id)
 ):
     """Search users by username."""
-    users = await users_collection.find(
-        {"username": {"$regex": q, "$options": "i"}},
-        {"_id": 0}
-    ).limit(20).to_list(20)
+    print(f"DEBUG: search_users called with q={q}, current_user_id={current_user_id}")
     
-    return [user_to_public(user, current_user_id) for user in users]
+    try:
+        users = await users_collection.find(
+            {"username": {"$regex": q, "$options": "i"}},
+            {"_id": 0}
+        ).limit(20).to_list(20)
+        
+        print(f"DEBUG: Found {len(users)} users")
+        
+        result = [user_to_public(user, current_user_id) for user in users]
+        print(f"DEBUG: Converted to {len(result)} public users")
+        return result
+    except Exception as e:
+        print(f"DEBUG: Error in search_users: {e}")
+        raise
 
 @api_router.get("/users/suggested", response_model=List[UserPublic])
 async def get_suggested_users(current_user: UserInDB = Depends(get_current_user)):
