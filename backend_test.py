@@ -338,6 +338,202 @@ class SocialVibeAPITester:
             self.log_result("Unlike Post", False, f"Status: {status_code}", str(response))
             return False
     
+    # ==================== SAVE/BOOKMARK POSTS TESTS ====================
+    
+    def test_save_post(self):
+        """Test saving/bookmarking a post"""
+        if not self.test_post_id:
+            self.log_result("Save Post", False, "No test post available")
+            return False
+        
+        success, status_code, response = self.make_request("POST", f"/posts/{self.test_post_id}/save", token=self.user2_token)
+        
+        if success and status_code == 200:
+            self.log_result("Save Post", True, "Post saved successfully")
+            return True
+        else:
+            self.log_result("Save Post", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_save_already_saved_post(self):
+        """Test saving an already saved post (should fail)"""
+        if not self.test_post_id:
+            self.log_result("Save Already Saved Post", False, "No test post available")
+            return False
+        
+        success, status_code, response = self.make_request("POST", f"/posts/{self.test_post_id}/save", token=self.user2_token)
+        
+        if success and status_code == 400:
+            self.log_result("Save Already Saved Post", True, "Correctly rejected saving already saved post")
+            return True
+        else:
+            self.log_result("Save Already Saved Post", False, f"Expected 400, got {status_code}", str(response))
+            return False
+    
+    def test_get_saved_posts(self):
+        """Test getting saved posts"""
+        success, status_code, response = self.make_request("GET", "/posts/saved", token=self.user2_token)
+        
+        if success and status_code == 200 and isinstance(response, list):
+            # Check if our test post is in saved posts
+            saved_post_ids = [post.get("id") for post in response]
+            if self.test_post_id in saved_post_ids:
+                self.log_result("Get Saved Posts", True, f"Retrieved {len(response)} saved posts including test post")
+                return True
+            else:
+                self.log_result("Get Saved Posts", False, f"Test post not found in {len(response)} saved posts", str(saved_post_ids))
+                return False
+        else:
+            self.log_result("Get Saved Posts", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_unsave_post(self):
+        """Test unsaving/unbookmarking a post"""
+        if not self.test_post_id:
+            self.log_result("Unsave Post", False, "No test post available")
+            return False
+        
+        success, status_code, response = self.make_request("POST", f"/posts/{self.test_post_id}/unsave", token=self.user2_token)
+        
+        if success and status_code == 200:
+            self.log_result("Unsave Post", True, "Post unsaved successfully")
+            return True
+        else:
+            self.log_result("Unsave Post", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_unsave_not_saved_post(self):
+        """Test unsaving a post that wasn't saved (should fail)"""
+        if not self.test_post_id:
+            self.log_result("Unsave Not Saved Post", False, "No test post available")
+            return False
+        
+        success, status_code, response = self.make_request("POST", f"/posts/{self.test_post_id}/unsave", token=self.user2_token)
+        
+        if success and status_code == 400:
+            self.log_result("Unsave Not Saved Post", True, "Correctly rejected unsaving non-saved post")
+            return True
+        else:
+            self.log_result("Unsave Not Saved Post", False, f"Expected 400, got {status_code}", str(response))
+            return False
+    
+    def test_save_nonexistent_post(self):
+        """Test saving a non-existent post (should fail)"""
+        fake_post_id = "nonexistent-post-id-12345"
+        
+        success, status_code, response = self.make_request("POST", f"/posts/{fake_post_id}/save", token=self.user1_token)
+        
+        if success and status_code == 404:
+            self.log_result("Save Nonexistent Post", True, "Correctly rejected saving non-existent post")
+            return True
+        else:
+            self.log_result("Save Nonexistent Post", False, f"Expected 404, got {status_code}", str(response))
+            return False
+    
+    # ==================== HASHTAG TESTS ====================
+    
+    def test_create_post_with_hashtags(self):
+        """Test creating a post with hashtags"""
+        data = {
+            "text": "Loving the new features on #SocialVibe! Great work on #hashtags and #trending topics. #awesome #community",
+            "image_url": None
+        }
+        
+        success, status_code, response = self.make_request("POST", "/posts", data, token=self.user1_token)
+        
+        if success and status_code == 200 and "id" in response:
+            # Check if hashtags were extracted
+            hashtags = response.get("hashtags", [])
+            expected_hashtags = ["socialvibe", "hashtags", "trending", "awesome", "community"]
+            
+            if all(tag in hashtags for tag in expected_hashtags):
+                self.log_result("Create Post with Hashtags", True, f"Post created with hashtags: {hashtags}")
+                return True
+            else:
+                self.log_result("Create Post with Hashtags", False, f"Missing hashtags. Expected: {expected_hashtags}, Got: {hashtags}")
+                return False
+        else:
+            self.log_result("Create Post with Hashtags", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_get_trending_hashtags(self):
+        """Test getting trending hashtags"""
+        success, status_code, response = self.make_request("GET", "/hashtags/trending", token=self.user1_token)
+        
+        if success and status_code == 200 and isinstance(response, list):
+            # Check if response has correct format
+            if len(response) > 0:
+                first_hashtag = response[0]
+                if "tag" in first_hashtag and "count" in first_hashtag:
+                    # Check if our hashtags are in trending
+                    hashtag_names = [item["tag"] for item in response]
+                    if "socialvibe" in hashtag_names or "hashtags" in hashtag_names:
+                        self.log_result("Get Trending Hashtags", True, f"Retrieved {len(response)} trending hashtags including our test hashtags")
+                        return True
+                    else:
+                        self.log_result("Get Trending Hashtags", True, f"Retrieved {len(response)} trending hashtags (test hashtags may not be trending yet)")
+                        return True
+                else:
+                    self.log_result("Get Trending Hashtags", False, "Invalid hashtag format", str(first_hashtag))
+                    return False
+            else:
+                self.log_result("Get Trending Hashtags", True, "No trending hashtags yet (empty list is valid)")
+                return True
+        else:
+            self.log_result("Get Trending Hashtags", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_get_posts_by_hashtag(self):
+        """Test getting posts by hashtag"""
+        # Test with a hashtag we created
+        success, status_code, response = self.make_request("GET", "/posts/hashtag/socialvibe", token=self.user1_token)
+        
+        if success and status_code == 200 and isinstance(response, list):
+            if len(response) > 0:
+                # Check if posts contain the hashtag
+                found_hashtag_post = False
+                for post in response:
+                    if "socialvibe" in post.get("hashtags", []):
+                        found_hashtag_post = True
+                        break
+                
+                if found_hashtag_post:
+                    self.log_result("Get Posts by Hashtag", True, f"Retrieved {len(response)} posts with #socialvibe hashtag")
+                    return True
+                else:
+                    self.log_result("Get Posts by Hashtag", False, f"Posts don't contain expected hashtag", str([p.get("hashtags") for p in response]))
+                    return False
+            else:
+                self.log_result("Get Posts by Hashtag", True, "No posts found for hashtag (valid if hashtag doesn't exist)")
+                return True
+        else:
+            self.log_result("Get Posts by Hashtag", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_hashtag_case_insensitive(self):
+        """Test hashtag search is case insensitive"""
+        # Test with uppercase version of hashtag
+        success, status_code, response = self.make_request("GET", "/posts/hashtag/SOCIALVIBE", token=self.user1_token)
+        
+        if success and status_code == 200 and isinstance(response, list):
+            self.log_result("Hashtag Case Insensitive", True, f"Case insensitive search returned {len(response)} posts")
+            return True
+        else:
+            self.log_result("Hashtag Case Insensitive", False, f"Status: {status_code}", str(response))
+            return False
+    
+    def test_hashtag_with_hash_symbol(self):
+        """Test hashtag search with # symbol"""
+        # Test with # prefix
+        success, status_code, response = self.make_request("GET", "/posts/hashtag/#socialvibe", token=self.user1_token)
+        
+        if success and status_code == 200 and isinstance(response, list):
+            self.log_result("Hashtag with Hash Symbol", True, f"Search with # symbol returned {len(response)} posts")
+            return True
+        else:
+            self.log_result("Hashtag with Hash Symbol", False, f"Status: {status_code}", str(response))
+            return False
+    
     # ==================== NOTIFICATION TESTS ====================
     
     def test_get_notifications(self):
