@@ -8,12 +8,13 @@ import { Sparkles } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
     // Mock login
+    console.log("Logging in with:", { username, password });
     navigate("/home");
   };
 
@@ -34,19 +35,19 @@ export default function Login() {
           </div>
           <CardTitle className="text-2xl font-heading font-bold">Welcome back</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account
+            Enter your username to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input 
-                id="email" 
-                type="email" 
-                placeholder="m@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username" 
+                type="text" 
+                placeholder="@johndoe" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 className="bg-background/50"
               />
