@@ -80,9 +80,22 @@ const SidebarContent = ({ isMobile = false }) => {
                <p className="text-xs text-muted-foreground truncate">@johndoe</p>
             </div>
          </div>
-         <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive">
-            <LogOut className="mr-2 w-5 h-5" /> Logout
-         </Button>
+         <div className="space-y-2">
+            <Button 
+               variant="ghost" 
+               className="w-full justify-start text-muted-foreground hover:text-foreground"
+               onClick={toggleTheme}
+            >
+               {theme === 'dark' ? (
+                  <><Sun className="mr-2 w-5 h-5" /> Light Mode</>
+               ) : (
+                  <><Moon className="mr-2 w-5 h-5" /> Dark Mode</>
+               )}
+            </Button>
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive">
+               <LogOut className="mr-2 w-5 h-5" /> Logout
+            </Button>
+         </div>
       </div>
     </div>
   );
