@@ -46,6 +46,8 @@ function App() {
                   <Route path="/home" element={<Feed />} />
                   <Route path="/explore" element={<Explore />} />
                   <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/saved" element={<SavedPosts />} />
+                  <Route path="/hashtag/:tag" element={<HashtagPage />} />
                   <Route path="/profile/:username" element={<Profile />} />
                   <Route path="/profile" element={<Profile />} /> {/* Self profile */}
                 </Route>
