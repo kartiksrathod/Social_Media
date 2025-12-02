@@ -81,8 +81,8 @@ export default function Login() {
                 className="bg-background/50"
               />
             </div>
-            <Button type="submit" className="w-full font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
-              Sign In
+            <Button type="submit" disabled={loading} className="w-full font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
         </CardContent>
