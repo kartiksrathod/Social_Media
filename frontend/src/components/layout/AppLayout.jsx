@@ -9,12 +9,15 @@ import {
   LogOut, 
   PlusCircle,
   Sparkles,
-  Menu
+  Menu,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const SidebarContent = ({ isMobile = false }) => {
   const location = useLocation();
