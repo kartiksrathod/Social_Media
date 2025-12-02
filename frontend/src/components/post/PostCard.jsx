@@ -207,6 +207,31 @@ export default function PostCard({ post, onUpdate }) {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`group px-2 h-8 hover:text-primary ${saved ? 'text-primary' : ''}`}
+              onClick={handleSave}
+            >
+              <Bookmark className={`w-5 h-5 transition-transform group-active:scale-75 ${saved ? 'fill-current' : ''}`} />
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="group px-2 h-8 hover:text-primary"
+              onClick={handleShare}
+            >
+              {copied ? (
+                <Check className="w-5 h-5 text-green-500" />
+              ) : (
+                <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              )}
+            </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>
