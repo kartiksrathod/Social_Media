@@ -102,7 +102,32 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the SocialVibe app flow: Landing Page, Signup, Home Feed, Profile functionality"
+user_problem_statement: "Implement Quick Wins features for SocialVibe: Dark mode, Save posts, Hashtags, Trending, Post sharing"
+
+backend:
+  - task: "Save/Bookmark Posts Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Backend endpoints already exist: POST /api/posts/{post_id}/save, POST /api/posts/{post_id}/unsave, GET /api/posts/saved. Need to test if they work correctly."
+
+  - task: "Hashtag Extraction and Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Backend has hashtag extraction function and endpoints: GET /api/hashtags/trending, GET /api/posts/hashtag/{tag}. Hashtags are automatically extracted from post text and stored in posts collection. Need to test functionality."
 
 frontend:
   - task: "Landing Page Display"
