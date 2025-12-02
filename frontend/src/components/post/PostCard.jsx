@@ -100,6 +100,25 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
+  const renderTextWithHashtags = (text) => {
+    const parts = text.split(/(#\w+)/g);
+    return parts.map((part, index) => {
+      if (part.match(/^#\w+$/)) {
+        const tag = part.slice(1); // Remove the # symbol
+        return (
+          <Link 
+            key={index} 
+            to={`/hashtag/${tag}`} 
+            className="text-primary hover:underline font-medium"
+          >
+            {part}
+          </Link>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   return (
     <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden bg-card">
       <CardHeader className="p-4 pb-2 flex flex-row items-start gap-4 space-y-0">
