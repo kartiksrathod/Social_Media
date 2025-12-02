@@ -364,7 +364,7 @@ async def get_feed(
         if isinstance(post.get("created_at"), str):
             post["created_at"] = datetime.fromisoformat(post["created_at"])
     
-    return [post_to_public(post, current_user.id) for post in posts]
+    return [post_to_public(post, current_user.id, current_user.saved_posts) for post in posts]
 
 @api_router.get("/posts/explore", response_model=List[PostPublic])
 async def get_explore_posts(
