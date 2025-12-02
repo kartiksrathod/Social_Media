@@ -29,28 +29,30 @@ const ProtectedRoute = () => {
 function App() {
   return (
     <div className="App antialiased">
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
 
-            {/* Protected App Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/home" element={<Feed />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/profile/:username" element={<Profile />} />
-                <Route path="/profile" element={<Profile />} /> {/* Self profile */}
+              {/* Protected App Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<AppLayout />}>
+                  <Route path="/home" element={<Feed />} />
+                  <Route path="/explore" element={<Explore />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/profile/:username" element={<Profile />} />
+                  <Route path="/profile" element={<Profile />} /> {/* Self profile */}
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-        <Toaster position="bottom-right" theme="system" />
-      </AuthProvider>
+            </Routes>
+          </BrowserRouter>
+          <Toaster position="bottom-right" theme="system" />
+        </AuthProvider>
+      </ThemeProvider>
     </div>
   );
 }
