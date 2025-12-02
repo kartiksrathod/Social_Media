@@ -388,7 +388,7 @@ async def get_explore_posts(
 async def get_user_posts(
     username: str,
     limit: int = 20,
-    current_user_id: str = Depends(get_current_user_id)
+    current_user: UserInDB = Depends(get_current_user)
 ):
     """Get posts by a specific user."""
     # Find user
@@ -407,7 +407,7 @@ async def get_user_posts(
         if isinstance(post.get("created_at"), str):
             post["created_at"] = datetime.fromisoformat(post["created_at"])
     
-    return [post_to_public(post, current_user_id) for post in posts]
+    return [post_to_public(post, current_user.id, current_user.saved_posts) for post in posts]
 
 @api_router.post("/posts/{post_id}/like")
 async def like_post(post_id: str, current_user: UserInDB = Depends(get_current_user)):
