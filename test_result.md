@@ -294,15 +294,18 @@ test_plan:
 
   - task: "Hashtag Parsing and Linking"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/post/PostCard.jsx, /app/frontend/src/pages/HashtagPage.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "PostCard renders hashtags as clickable links in post text. HashtagPage shows all posts for a specific hashtag. Need to test: 1) Hashtags are clickable in posts, 2) Clicking hashtag navigates to correct page, 3) HashtagPage displays posts correctly."
+        - working: false
+          agent: "testing"
+          comment: "❌ FAILED: Cannot test hashtag functionality - no posts with hashtags available in feed. Found 0 hashtag links and 0 hashtag-like text patterns. Empty feed prevents testing of hashtag parsing, clickable links, and navigation to hashtag pages. Need posts containing hashtags to verify renderTextWithHashtags function and HashtagPage navigation."
 
   - task: "Trending Hashtags Section"
     implemented: true
