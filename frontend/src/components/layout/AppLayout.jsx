@@ -149,23 +149,7 @@ export default function AppLayout() {
                />
             </div>
 
-            <div className="mb-8">
-               <h3 className="font-heading font-bold text-lg mb-4">Trends for you</h3>
-               <div className="space-y-4">
-                  {['#DesignSystem', '#WebDev', '#AIArt', '#Photography', '#StartupLife'].map((tag, i) => (
-                     <div key={i} className="flex justify-between items-start group cursor-pointer">
-                        <div>
-                           <p className="text-xs text-muted-foreground">Trending in Tech</p>
-                           <p className="font-semibold group-hover:text-primary transition-colors">{tag}</p>
-                           <p className="text-xs text-muted-foreground">12.5K Posts</p>
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                           <span className="text-xl">...</span>
-                        </Button>
-                     </div>
-                  ))}
-               </div>
-            </div>
+            <TrendingSection />
 
             <div>
                <h3 className="font-heading font-bold text-lg mb-4">Who to follow</h3>
