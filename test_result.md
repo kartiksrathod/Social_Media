@@ -204,6 +204,7 @@ test_plan:
   current_focus:
     - "Landing Page Display"
     - "Signup Form Functionality"
+    - "Login Form Functionality"
     - "Home Feed Display"
     - "Post Like Functionality"
     - "Profile Page Display"
