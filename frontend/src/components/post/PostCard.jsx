@@ -63,6 +63,35 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      if (saved) {
+        await postsAPI.unsave(post.id);
+        setSaved(false);
+        toast.success('Post removed from saved');
+      } else {
+        await postsAPI.save(post.id);
+        setSaved(true);
+        toast.success('Post saved');
+      }
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save post');
+    }
+  };
+
+  const handleShare = async () => {
+    const postUrl = `${window.location.origin}/post/${post.id}`;
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      setCopied(true);
+      toast.success('Link copied to clipboard');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast.error('Failed to copy link');
+    }
+  };
+
   const formatTime = (dateString) => {
     try {
       return formatDistanceToNow(new Date(dateString), { addSuffix: true });
