@@ -524,8 +524,10 @@ class SocialVibeAPITester:
     
     def test_hashtag_with_hash_symbol(self):
         """Test hashtag search with # symbol"""
-        # Test with # prefix
-        success, status_code, response = self.make_request("GET", "/posts/hashtag/#socialvibe", token=self.user1_token)
+        # Test with # prefix - need to URL encode the #
+        import urllib.parse
+        encoded_tag = urllib.parse.quote("#socialvibe")
+        success, status_code, response = self.make_request("GET", f"/posts/hashtag/{encoded_tag}", token=self.user1_token)
         
         if success and status_code == 200 and isinstance(response, list):
             self.log_result("Hashtag with Hash Symbol", True, f"Search with # symbol returned {len(response)} posts")
