@@ -143,27 +143,28 @@ export default function PostCard({ post, onUpdate }) {
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <div className="flex items-center gap-6 w-full text-muted-foreground">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className={`group px-2 h-8 hover:text-accent ${liked ? 'text-accent' : ''}`}
-            onClick={handleLike}
-          >
-            <Heart className={`w-5 h-5 mr-1.5 transition-transform group-active:scale-75 ${liked ? 'fill-current' : ''}`} />
-            <span className="text-xs font-medium">{likeCount}</span>
-          </Button>
+        <div className="flex items-center justify-between w-full text-muted-foreground">
+          <div className="flex items-center gap-6">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`group px-2 h-8 hover:text-accent ${liked ? 'text-accent' : ''}`}
+              onClick={handleLike}
+            >
+              <Heart className={`w-5 h-5 mr-1.5 transition-transform group-active:scale-75 ${liked ? 'fill-current' : ''}`} />
+              <span className="text-xs font-medium">{likeCount}</span>
+            </Button>
 
-          <Dialog open={commentsOpen} onOpenChange={(open) => {
-            setCommentsOpen(open);
-            if (open) loadComments();
-          }}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="group px-2 h-8 hover:text-primary">
-                <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-medium">{post.comments_count}</span>
-              </Button>
-            </DialogTrigger>
+            <Dialog open={commentsOpen} onOpenChange={(open) => {
+              setCommentsOpen(open);
+              if (open) loadComments();
+            }}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="group px-2 h-8 hover:text-primary">
+                  <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-medium">{post.comments_count}</span>
+                </Button>
+              </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Comments</DialogTitle>
