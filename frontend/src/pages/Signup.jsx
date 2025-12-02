@@ -6,18 +6,33 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Sparkles, ArrowRight } from "lucide-react";
 
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
+
 export default function Signup() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: ""
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    // Mock signup
-    navigate("/home");
+    setLoading(true);
+    
+    const result = await signup(formData.username, formData.email, formData.password);
+    
+    setLoading(false);
+    
+    if (result.success) {
+      toast.success("Account created successfully!");
+      navigate("/home");
+    } else {
+      toast.error(result.error);
+    }
   };
 
   return (
