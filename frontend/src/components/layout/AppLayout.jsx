@@ -21,6 +21,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 const SidebarContent = ({ isMobile = false }) => {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   
   const isActive = (path) => {
     return location.pathname === path;
