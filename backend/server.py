@@ -291,12 +291,16 @@ async def create_post(
     current_user: UserInDB = Depends(get_current_user)
 ):
     """Create a new post."""
+    # Extract hashtags from text
+    hashtags = extract_hashtags(post_data.text)
+    
     post = Post(
         author_id=current_user.id,
         author_username=current_user.username,
         author_avatar=current_user.avatar,
         text=post_data.text,
-        image_url=post_data.image_url
+        image_url=post_data.image_url,
+        hashtags=hashtags
     )
     
     # Convert to dict and serialize datetime
@@ -305,7 +309,7 @@ async def create_post(
     
     await posts_collection.insert_one(post_dict)
     
-    return post_to_public(post_dict, current_user.id)
+    return post_to_public(post_dict, current_user.id, current_user.saved_posts)
 
 @api_router.post("/posts/upload-image")
 async def upload_post_image(
