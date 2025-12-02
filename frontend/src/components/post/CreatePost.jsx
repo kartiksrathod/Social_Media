@@ -1,47 +1,146 @@
-import React from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Image, Smile, MapPin, Calendar } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState } from 'react';
+import { Card, CardContent } from '../ui/card';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Image, X } from 'lucide-react';
+import { postsAPI } from '../../lib/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'sonner';
 
-export default function CreatePost() {
+export default function CreatePost({ onPostCreated }) {
+  const { user } = useAuth();
+  const [text, setText] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!text.trim() && !imageFile) {
+      toast.error('Please add some text or an image');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      let imageUrl = null;
+      
+      // Upload image if selected
+      if (imageFile) {
+        const uploadResponse = await postsAPI.uploadImage(imageFile);
+        imageUrl = uploadResponse.data.url;
+      }
+
+      // Create post
+      await postsAPI.create({
+        text: text.trim(),
+        image_url: imageUrl,
+      });
+
+      toast.success('Post created successfully!');
+      setText('');
+      setImageFile(null);
+      setImagePreview(null);
+      
+      if (onPostCreated) {
+        onPostCreated();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create post');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Card className="border-border/50 shadow-sm bg-card overflow-hidden">
-      <CardContent className="p-4">
-        <div className="flex gap-4">
-          <Avatar className="w-10 h-10 hidden sm:block">
-            <AvatarImage src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 space-y-4">
-             <Textarea 
-                placeholder="What's happening?" 
-                className="min-h-[80px] resize-none border-none focus-visible:ring-0 p-0 text-lg placeholder:text-muted-foreground bg-transparent"
-             />
-             
-             <div className="flex items-center justify-between border-t border-border/50 pt-3">
-                <div className="flex items-center gap-2 text-primary">
-                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10">
-                      <Image className="w-5 h-5" />
-                   </Button>
-                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10">
-                      <Smile className="w-5 h-5" />
-                   </Button>
-                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10 hidden sm:inline-flex">
-                      <Calendar className="w-5 h-5" />
-                   </Button>
-                   <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-primary/10 hidden sm:inline-flex">
-                      <MapPin className="w-5 h-5" />
-                   </Button>
+    <Card className="mb-6">
+      <CardContent className="pt-6">
+        <form onSubmit={handleSubmit}>
+          <div className="flex gap-4">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={user?.avatar} />
+              <AvatarFallback>
+                {user?.username?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 space-y-4">
+              <Textarea
+                placeholder="What's on your mind?"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="min-h-[100px] resize-none border-0 focus-visible:ring-0 p-0"
+              />
+              
+              {imagePreview && (
+                <div className="relative inline-block">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="max-h-64 rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={removeImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
-                
-                <Button className="rounded-full px-6 font-semibold shadow-md shadow-primary/20 hover:shadow-primary/40">
-                   Post
+              )}
+
+              <div className="flex items-center justify-between pt-2 border-t">
+                <div>
+                  <input
+                    type="file"
+                    id="post-image"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <label htmlFor="post-image">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="cursor-pointer"
+                      asChild
+                    >
+                      <span>
+                        <Image className="h-4 w-4 mr-2" />
+                        Add Image
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+                <Button type="submit" disabled={loading}>
+                  {loading ? 'Posting...' : 'Post'}
                 </Button>
-             </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </form>
       </CardContent>
     </Card>
   );
