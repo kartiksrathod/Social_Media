@@ -78,6 +78,7 @@ class PostPublic(Post):
     likes_count: int = 0
     comments_count: int = 0
     is_liked: bool = False  # Whether current user liked this post
+    is_saved: bool = False  # Whether current user saved this post
 
 # ==================== NOTIFICATION MODELS ====================
 
