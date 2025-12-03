@@ -54,6 +54,13 @@ export const postsAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
+  uploadVideo: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/posts/upload-video', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
   getFeed: () => api.get('/posts/feed'),
   getExplore: () => api.get('/posts/explore'),
   getUserPosts: (username) => api.get(`/posts/user/${username}`),
