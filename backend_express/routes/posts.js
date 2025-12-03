@@ -790,4 +790,158 @@ router.get('/:postId/reposted-by', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/posts/:postId/react - Add or change reaction
+router.post('/:postId/react', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { type } = req.body;
+
+    const validReactions = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
+    if (!type || !validReactions.includes(type)) {
+      return res.status(400).json({ detail: 'Invalid reaction type. Valid types: like, love, laugh, wow, sad, angry' });
+    }
+
+    const post = await Post.findOne({ id: postId });
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    // Initialize reactions array if it doesn't exist
+    if (!post.reactions) {
+      post.reactions = [];
+    }
+
+    // Check if user already reacted
+    const existingReactionIndex = post.reactions.findIndex(r => r.user_id === req.userId);
+
+    if (existingReactionIndex !== -1) {
+      // User already reacted - update reaction type
+      post.reactions[existingReactionIndex].type = type;
+      post.reactions[existingReactionIndex].created_at = new Date();
+    } else {
+      // Add new reaction
+      post.reactions.push({
+        user_id: req.userId,
+        type: type,
+        created_at: new Date()
+      });
+
+      // Create notification for post author (only for new reactions, not changes)
+      if (post.author_id !== req.userId) {
+        const user = await User.findOne({ id: req.userId });
+        const notification = new Notification({
+          user_id: post.author_id,
+          actor_id: req.userId,
+          actor_username: user.username,
+          actor_avatar: user.avatar,
+          type: 'reaction',
+          post_id: postId,
+          text: type
+        });
+        await notification.save();
+
+        // Emit real-time notification
+        const io = req.app.get('io');
+        const userSockets = req.app.get('userSockets');
+        const targetSocketId = userSockets.get(post.author_id);
+        if (targetSocketId) {
+          io.to(targetSocketId).emit('new_notification', notification);
+        }
+      }
+    }
+
+    await post.save();
+
+    const user = await User.findOne({ id: req.userId });
+    res.json(postToPublic(post, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('React error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// DELETE /api/posts/:postId/react - Remove reaction
+router.delete('/:postId/react', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    // Initialize reactions array if it doesn't exist
+    if (!post.reactions) {
+      post.reactions = [];
+    }
+
+    // Check if user has reacted
+    const hasReacted = post.reactions.some(r => r.user_id === req.userId);
+    if (!hasReacted) {
+      return res.status(400).json({ detail: 'You have not reacted to this post' });
+    }
+
+    // Remove user's reaction
+    post.reactions = post.reactions.filter(r => r.user_id !== req.userId);
+    await post.save();
+
+    const user = await User.findOne({ id: req.userId });
+    res.json(postToPublic(post, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('Remove reaction error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/posts/:postId/reactions - Get reaction details
+router.get('/:postId/reactions', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    const reactions = post.reactions || [];
+    
+    // Count reactions by type
+    const reactionCounts = {
+      like: 0,
+      love: 0,
+      laugh: 0,
+      wow: 0,
+      sad: 0,
+      angry: 0
+    };
+
+    // Get user details for each reaction
+    const reactionsWithUsers = [];
+    
+    for (const reaction of reactions) {
+      reactionCounts[reaction.type]++;
+      
+      const user = await User.findOne({ id: reaction.user_id });
+      if (user) {
+        reactionsWithUsers.push({
+          user_id: reaction.user_id,
+          username: user.username,
+          avatar: user.avatar,
+          type: reaction.type,
+          created_at: reaction.created_at
+        });
+      }
+    }
+
+    res.json({
+      total: reactions.length,
+      counts: reactionCounts,
+      reactions: reactionsWithUsers
+    });
+  } catch (error) {
+    console.error('Get reactions error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 module.exports = router;
