@@ -192,6 +192,42 @@ router.post('/:userId/unfollow', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/users/:userId/followers - Get user followers
+router.get('/:userId/followers', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const targetUser = await User.findOne({ id: userId });
+
+    if (!targetUser) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    const followers = await User.find({ id: { $in: targetUser.followers } });
+    res.json(followers.map(user => userToPublic(user, req.userId)));
+  } catch (error) {
+    console.error('Get followers error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/users/:userId/following - Get user following
+router.get('/:userId/following', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const targetUser = await User.findOne({ id: userId });
+
+    if (!targetUser) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    const following = await User.find({ id: { $in: targetUser.following } });
+    res.json(following.map(user => userToPublic(user, req.userId)));
+  } catch (error) {
+    console.error('Get following error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 // GET /api/users/:username - Get user profile (must come AFTER specific routes)
 router.get('/:username', authenticateToken, async (req, res) => {
   try {
