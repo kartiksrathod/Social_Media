@@ -172,6 +172,42 @@ backend:
           comment: "✅ PASSED: All hashtag functionality working perfectly. Hashtag extraction automatically detects hashtags in post text (e.g., '#SocialVibe #hashtags') and stores them normalized (lowercase). GET /api/hashtags/trending returns trending hashtags with counts sorted by popularity. GET /api/posts/hashtag/{tag} returns posts containing specific hashtags. Case-insensitive search works (SOCIALVIBE = socialvibe). URL encoding with # symbol works correctly. Hashtag deduplication and normalization working as expected."
 
 frontend:
+  - task: "Video Posts UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/post/CreatePost.jsx, /app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "CreatePost component has video upload with 50MB limit, preview before posting. PostCard component displays videos with video tag and controls. Video upload uses /api/posts/upload-video endpoint. Needs testing: 1) Upload video, 2) Create post with video, 3) View video in feed, 4) Video playback."
+
+  - task: "Stories UI with 24h Expiry"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/story/StoriesBar.jsx, /app/frontend/src/components/story/CreateStory.jsx, /app/frontend/src/components/story/StoryViewer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Complete stories UI: StoriesBar shows user avatars with gradient ring for unviewed stories at top of feed. CreateStory dialog supports image and video upload. StoryViewer full-screen with auto-advance (5s for images, video duration for videos), progress bars, view counting, delete own stories. Integrated in Feed page. Needs testing: 1) Create image story, 2) Create video story, 3) View stories, 4) Auto-advance, 5) Delete own story, 6) 24h expiry."
+
+  - task: "Direct Messaging UI with Real-time"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Messages.jsx, /app/frontend/src/components/message/ConversationList.jsx, /app/frontend/src/components/message/ChatInterface.jsx, /app/frontend/src/contexts/SocketContext.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Complete messaging UI: Messages page with conversation list and chat interface. ConversationList shows unread counts, last message, timestamps. ChatInterface has real-time messaging via WebSocket, typing indicators, message bubbles, auto-scroll. SocketContext manages WebSocket connection with reconnection logic. New message dialog with user search. messagesAPI added to api.js. Route added to App.js, navigation link in AppLayout. Needs testing: 1) Start new conversation, 2) Send messages, 3) Real-time message delivery, 4) Typing indicators, 5) Unread counts, 6) Mark as read."
+
   - task: "Landing Page Display"
     implemented: true
     working: true
