@@ -151,6 +151,14 @@ router.post('/:userId/follow', authenticateToken, async (req, res) => {
     });
     await notification.save();
 
+    // Emit real-time notification
+    const io = req.app.get('io');
+    const userSockets = req.app.get('userSockets');
+    const targetSocketId = userSockets.get(userId);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit('new_notification', notification);
+    }
+
     res.json({ message: 'Successfully followed user' });
   } catch (error) {
     console.error('Follow error:', error);
