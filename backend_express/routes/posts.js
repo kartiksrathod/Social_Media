@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { authenticateToken } = require('../middleware/auth');
 const { uploadToCloudinary } = require('../utils/cloudinary');
-const { extractHashtags, postToPublic } = require('../utils/helpers');
+const { extractHashtags, extractMentions, postToPublic } = require('../utils/helpers');
 const multer = require('multer');
 
 const router = express.Router();
