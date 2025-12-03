@@ -227,23 +227,60 @@ export default function PostCard({ post, onUpdate }) {
 
   return (
     <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden bg-card">
-      <CardHeader className="p-4 pb-2 flex flex-row items-start gap-4 space-y-0">
-        <Link to={`/profile/${post.author_username}`}>
-          <Avatar className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
-            <AvatarImage src={post.author_avatar} />
-            <AvatarFallback>{post.author_username?.charAt(0).toUpperCase()}</AvatarFallback>
-          </Avatar>
-        </Link>
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <div>
+      {/* Repost indicator */}
+      {isRepost && (
+        <div className="px-4 pt-3 pb-0">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Repeat2 className="w-3.5 h-3.5 text-green-600" />
+            <span className="font-medium">{post.author_username} reposted</span>
+          </div>
+        </div>
+      )}
+
+      {/* Quote text - shown above original post for quote reposts */}
+      {isRepost && post.repost_text && (
+        <div className="px-4 pt-3">
+          <div className="flex gap-3">
+            <Link to={`/profile/${post.author_username}`}>
+              <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
+                <AvatarImage src={post.author_avatar} />
+                <AvatarFallback>{post.author_username?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </Link>
+            <div className="flex-1">
               <Link to={`/profile/${post.author_username}`}>
                 <h4 className="font-semibold text-sm hover:underline cursor-pointer">
                   {post.author_username}
                 </h4>
               </Link>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 @{post.author_username} • {formatTime(post.created_at)}
+              </p>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap mb-3">
+                {renderTextWithHashtagsAndMentions(post.repost_text)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <CardHeader className={`p-4 pb-2 flex flex-row items-start gap-4 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
+        <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`}>
+          <Avatar className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
+            <AvatarImage src={isRepost && originalPost ? originalPost.author_avatar : post.author_avatar} />
+            <AvatarFallback>{(isRepost && originalPost ? originalPost.author_username : post.author_username)?.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </Link>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`}>
+                <h4 className="font-semibold text-sm hover:underline cursor-pointer">
+                  {isRepost && originalPost ? originalPost.author_username : post.author_username}
+                </h4>
+              </Link>
+              <p className="text-xs text-muted-foreground">
+                @{isRepost && originalPost ? originalPost.author_username : post.author_username} • {formatTime(isRepost && originalPost ? originalPost.created_at : post.created_at)}
               </p>
             </div>
             {isOwnPost && (
