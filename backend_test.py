@@ -46,7 +46,7 @@ class SocialVibeBackendTester:
         for user_data in users:
             try:
                 # Try to register user
-                response = requests.post(f"{self.base_url}/auth/register", json=user_data)
+                response = requests.post(f"{self.base_url}/auth/signup", json=user_data)
                 if response.status_code in [200, 201]:
                     # Login to get token
                     login_response = requests.post(f"{self.base_url}/auth/login", json={
