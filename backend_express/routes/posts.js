@@ -379,6 +379,38 @@ router.get('/:postId/comments', async (req, res) => {
   }
 });
 
+// DELETE /api/posts/:postId/comments/:commentId - Delete comment
+router.delete('/:postId/comments/:commentId', authenticateToken, async (req, res) => {
+  try {
+    const { postId, commentId } = req.params;
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    const comment = post.comments.find(c => c.id === commentId);
+    if (!comment) {
+      return res.status(404).json({ detail: 'Comment not found' });
+    }
+
+    // Check if user is the comment author or post author
+    if (comment.user_id !== req.userId && post.author_id !== req.userId) {
+      return res.status(403).json({ detail: 'You can only delete your own comments' });
+    }
+
+    await Post.updateOne(
+      { id: postId },
+      { $pull: { comments: { id: commentId } } }
+    );
+
+    res.json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('Delete comment error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 // POST /api/posts/:postId/save - Save post
 router.post('/:postId/save', authenticateToken, async (req, res) => {
   try {
