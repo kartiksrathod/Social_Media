@@ -47,6 +47,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/hashtags', hashtagRoutes);
+app.use('/api/stories', storyRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
