@@ -1,0 +1,90 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { usersAPI } from '../../lib/api';
+import FollowButton from './FollowButton';
+
+const SuggestedUsers = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadSuggestedUsers();
+  }, []);
+
+  const loadSuggestedUsers = async () => {
+    try {
+      const response = await usersAPI.getSuggested();
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Failed to load suggested users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFollowChange = (userId, isFollowing) => {
+    if (isFollowing) {
+      // Remove from suggestions after following
+      setUsers(users.filter(u => u.id !== userId));
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 space-y-4">
+        <h2 className="font-bold text-xl">Suggested For You</h2>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 animate-pulse">
+              <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (users.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 space-y-4">
+      <h2 className="font-bold text-xl">Suggested For You</h2>
+      <div className="space-y-4">
+        {users.map((user) => (
+          <div key={user.id} className="flex items-center justify-between gap-3">
+            <Link
+              to={`/profile/${user.username}`}
+              className="flex items-center gap-3 flex-1 min-w-0"
+            >
+              <img
+                src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+                alt={user.username}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm truncate">{user.username}</p>
+                {user.bio && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
+                )}
+              </div>
+            </Link>
+            <FollowButton
+              userId={user.id}
+              initialIsFollowing={false}
+              onFollowChange={(isFollowing) => handleFollowChange(user.id, isFollowing)}
+              size="sm"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SuggestedUsers;
