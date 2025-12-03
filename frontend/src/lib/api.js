@@ -86,4 +86,20 @@ export const notificationsAPI = {
   markAllRead: () => api.post('/notifications/read-all'),
 };
 
+// ==================== STORIES ====================
+export const storiesAPI = {
+  create: (data) => api.post('/stories', data),
+  getAll: () => api.get('/stories'),
+  getUserStories: (userId) => api.get(`/stories/user/${userId}`),
+  viewStory: (storyId) => api.post(`/stories/${storyId}/view`),
+  deleteStory: (storyId) => api.delete(`/stories/${storyId}`),
+  uploadMedia: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/stories/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
 export default api;
