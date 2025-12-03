@@ -104,6 +104,41 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
+  const handleEdit = async () => {
+    if (!editText.trim()) {
+      toast.error('Post text cannot be empty');
+      return;
+    }
+
+    try {
+      await postsAPI.update(post.id, { text: editText.trim() });
+      toast.success('Post updated successfully');
+      setEditOpen(false);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update post');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await postsAPI.delete(post.id);
+      toast.success('Post deleted successfully');
+      setDeleteOpen(false);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete post');
+    }
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % postImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + postImages.length) % postImages.length);
+  };
+
   const formatTime = (dateString) => {
     try {
       return formatDistanceToNow(new Date(dateString), { addSuffix: true });
