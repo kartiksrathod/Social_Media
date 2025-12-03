@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /api/posts - Create new post
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { text, image_url } = req.body;
+    const { text, image_url, images } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -24,8 +24,9 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(404).json({ detail: 'User not found' });
     }
 
-    // Extract hashtags from text
+    // Extract hashtags and mentions from text
     const hashtags = extractHashtags(text);
+    const mentions = extractMentions(text);
 
     const post = new Post({
       author_id: user.id,
@@ -33,12 +34,33 @@ router.post('/', authenticateToken, async (req, res) => {
       author_avatar: user.avatar,
       text,
       image_url: image_url || null,
+      images: images || [],
       hashtags,
+      mentions,
       likes: [],
       comments: []
     });
 
     await post.save();
+
+    // Create notifications for mentioned users
+    if (mentions.length > 0) {
+      for (const mentionedUsername of mentions) {
+        const mentionedUser = await User.findOne({ username: mentionedUsername.toLowerCase() });
+        if (mentionedUser && mentionedUser.id !== user.id) {
+          const notification = new Notification({
+            user_id: mentionedUser.id,
+            actor_id: user.id,
+            actor_username: user.username,
+            actor_avatar: user.avatar,
+            type: 'mention',
+            post_id: post.id,
+            text: text.substring(0, 100)
+          });
+          await notification.save();
+        }
+      }
+    }
 
     res.status(201).json(postToPublic(post, req.userId, user.saved_posts));
   } catch (error) {
