@@ -79,6 +79,9 @@ export const postsAPI = {
   quote: (postId, text) => api.post(`/posts/${postId}/quote`, { text }),
   unrepost: (postId) => api.delete(`/posts/${postId}/unrepost`),
   checkReposted: (postId) => api.get(`/posts/${postId}/reposted-by`),
+  react: (postId, type) => api.post(`/posts/${postId}/react`, { type }),
+  removeReaction: (postId) => api.delete(`/posts/${postId}/react`),
+  getReactions: (postId) => api.get(`/posts/${postId}/reactions`),
 };
 
 // ==================== HASHTAGS ====================
