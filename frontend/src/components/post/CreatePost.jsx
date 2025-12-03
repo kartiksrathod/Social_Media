@@ -49,7 +49,7 @@ export default function CreatePost({ onPostCreated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!text.trim() && !imageFile) {
+    if (!text.trim() && imageFiles.length === 0) {
       toast.error('Please add some text or an image');
       return;
     }
@@ -57,24 +57,27 @@ export default function CreatePost({ onPostCreated }) {
     setLoading(true);
 
     try {
-      let imageUrl = null;
+      const imageUrls = [];
       
-      // Upload image if selected
-      if (imageFile) {
-        const uploadResponse = await postsAPI.uploadImage(imageFile);
-        imageUrl = uploadResponse.data.url;
+      // Upload all images if selected
+      if (imageFiles.length > 0) {
+        for (const file of imageFiles) {
+          const uploadResponse = await postsAPI.uploadImage(file);
+          imageUrls.push(uploadResponse.data.url);
+        }
       }
 
-      // Create post
+      // Create post with multiple images
       await postsAPI.create({
         text: text.trim(),
-        image_url: imageUrl,
+        images: imageUrls,
+        image_url: imageUrls[0] || null, // For backward compatibility
       });
 
       toast.success('Post created successfully!');
       setText('');
-      setImageFile(null);
-      setImagePreview(null);
+      setImageFiles([]);
+      setImagePreviews([]);
       
       if (onPostCreated) {
         onPostCreated();
