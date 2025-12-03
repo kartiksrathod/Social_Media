@@ -79,6 +79,23 @@ const postSchema = new mongoose.Schema({
   edited_at: {
     type: Date,
     default: null
+  },
+  // Repost fields
+  is_repost: {
+    type: Boolean,
+    default: false
+  },
+  original_post_id: {
+    type: String,
+    default: null
+  },
+  repost_text: {
+    type: String,
+    default: null
+  },
+  repost_count: {
+    type: Number,
+    default: 0
   }
 }, {
   collection: 'posts',
