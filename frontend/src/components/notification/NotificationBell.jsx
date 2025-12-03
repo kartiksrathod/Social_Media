@@ -8,7 +8,7 @@ const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showPanel, setShowPanel] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     loadNotifications();
