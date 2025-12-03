@@ -102,4 +102,16 @@ export const storiesAPI = {
   },
 };
 
+// ==================== MESSAGES ====================
+export const messagesAPI = {
+  // Conversations
+  createConversation: (participantId) => api.post('/messages/conversations', { participant_id: participantId }),
+  getConversations: () => api.get('/messages/conversations'),
+  
+  // Messages
+  sendMessage: (data) => api.post('/messages', data),
+  getMessages: (conversationId, limit = 50) => api.get(`/messages/${conversationId}`, { params: { limit } }),
+  markAsRead: (conversationId) => api.put(`/messages/${conversationId}/read`),
+};
+
 export default api;
