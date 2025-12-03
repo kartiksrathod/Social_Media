@@ -140,14 +140,20 @@ export default function Profile() {
              </div>
              
              <div className="flex gap-6 text-sm">
-                <div>
+                <button 
+                  onClick={() => setFollowingModalOpen(true)}
+                  className="hover:underline"
+                >
                   <span className="font-bold text-foreground">{profileUser.following_count}</span>{' '}
                   <span className="text-muted-foreground">Following</span>
-                </div>
-                <div>
+                </button>
+                <button 
+                  onClick={() => setFollowersModalOpen(true)}
+                  className="hover:underline"
+                >
                   <span className="font-bold text-foreground">{profileUser.followers_count}</span>{' '}
                   <span className="text-muted-foreground">Followers</span>
-                </div>
+                </button>
              </div>
           </div>
        </div>
