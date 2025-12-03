@@ -19,6 +19,10 @@ export default function CreatePost({ onPostCreated }) {
 
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files);
+    if (videoFile) {
+      toast.error('Cannot add images with video');
+      return;
+    }
     if (files.length + imageFiles.length > 5) {
       toast.error('Maximum 5 images allowed');
       return;
@@ -41,11 +45,41 @@ export default function CreatePost({ onPostCreated }) {
     });
   };
 
+  const handleVideoSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (imageFiles.length > 0) {
+      toast.error('Cannot add video with images');
+      return;
+    }
+
+    // Validate file size (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error('Video file too large. Maximum size is 50MB');
+      return;
+    }
+
+    setVideoFile(file);
+
+    // Generate video preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setVideoPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const removeImage = (index) => {
     const newFiles = imageFiles.filter((_, i) => i !== index);
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setImageFiles(newFiles);
     setImagePreviews(newPreviews);
+  };
+
+  const removeVideo = () => {
+    setVideoFile(null);
+    setVideoPreview(null);
   };
 
   const handleSubmit = async (e) => {
