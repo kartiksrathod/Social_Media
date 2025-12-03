@@ -261,6 +261,19 @@ export default function PostCard({ post, onUpdate }) {
             )}
           </div>
         )}
+
+        {post.video_url && (
+          <div className="rounded-xl overflow-hidden border border-border/50 bg-muted">
+            <video 
+              src={post.video_url} 
+              controls 
+              className="w-full h-auto max-h-[500px]"
+              preload="metadata"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )}
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
