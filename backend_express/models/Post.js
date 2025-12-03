@@ -58,6 +58,10 @@ const postSchema = new mongoose.Schema({
   images: [{
     type: String
   }],
+  video_url: {
+    type: String,
+    default: null
+  },
   hashtags: [{
     type: String
   }],
