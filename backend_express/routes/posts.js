@@ -266,7 +266,16 @@ router.get('/user/:username', authenticateToken, async (req, res) => {
       .sort({ created_at: -1 })
       .limit(limit);
 
-    res.json(posts.map(post => postToPublic(post, req.userId, currentUser.saved_posts)));
+    // Populate original posts for reposts
+    const postsWithOriginal = await Promise.all(posts.map(async (post) => {
+      if (post.is_repost && post.original_post_id) {
+        const originalPost = await Post.findOne({ id: post.original_post_id });
+        return postToPublic(post, req.userId, currentUser.saved_posts, originalPost);
+      }
+      return postToPublic(post, req.userId, currentUser.saved_posts);
+    }));
+
+    res.json(postsWithOriginal);
   } catch (error) {
     console.error('Get user posts error:', error);
     res.status(500).json({ detail: 'Internal server error' });
