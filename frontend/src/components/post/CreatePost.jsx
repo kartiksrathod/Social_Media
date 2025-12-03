@@ -177,6 +177,25 @@ export default function CreatePost({ onPostCreated }) {
                 </div>
               )}
 
+              {videoPreview && (
+                <div className="relative">
+                  <video
+                    src={videoPreview}
+                    controls
+                    className="w-full max-h-96 rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={removeVideo}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-2 border-t">
                 <div>
                   <input
