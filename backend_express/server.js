@@ -1,8 +1,10 @@
 const express = require('express');
+const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const { Server } = require('socket.io');
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -14,10 +16,72 @@ const postRoutes = require('./routes/posts');
 const notificationRoutes = require('./routes/notifications');
 const hashtagRoutes = require('./routes/hashtags');
 const storyRoutes = require('./routes/stories');
+const messageRoutes = require('./routes/messages');
 
-// Create Express app
+// Create Express app and HTTP server
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 8001;
+
+// Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+// Socket.IO connection handling
+const userSockets = new Map(); // Map userId to socket.id
+
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
+  // Register user
+  socket.on('register', (userId) => {
+    userSockets.set(userId, socket.id);
+    console.log(`User ${userId} registered with socket ${socket.id}`);
+  });
+
+  // Join conversation room
+  socket.on('join_conversation', (conversationId) => {
+    socket.join(conversationId);
+    console.log(`Socket ${socket.id} joined conversation ${conversationId}`);
+  });
+
+  // Leave conversation room
+  socket.on('leave_conversation', (conversationId) => {
+    socket.leave(conversationId);
+    console.log(`Socket ${socket.id} left conversation ${conversationId}`);
+  });
+
+  // Typing indicator
+  socket.on('typing', ({ conversationId, userId, username }) => {
+    socket.to(conversationId).emit('user_typing', { userId, username });
+  });
+
+  // Stop typing indicator
+  socket.on('stop_typing', ({ conversationId, userId }) => {
+    socket.to(conversationId).emit('user_stop_typing', { userId });
+  });
+
+  // Disconnect
+  socket.on('disconnect', () => {
+    // Remove user from map
+    for (const [userId, socketId] of userSockets.entries()) {
+      if (socketId === socket.id) {
+        userSockets.delete(userId);
+        console.log(`User ${userId} disconnected`);
+        break;
+      }
+    }
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+// Make io available to routes
+app.set('io', io);
+app.set('userSockets', userSockets);
 
 // Middleware
 app.use(express.json());
