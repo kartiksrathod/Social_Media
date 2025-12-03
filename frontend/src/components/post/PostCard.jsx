@@ -151,6 +151,34 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
+  const handleRepostClick = () => {
+    if (reposted) {
+      handleUnrepost();
+    } else {
+      setRepostOpen(true);
+    }
+  };
+
+  const handleUnrepost = async () => {
+    try {
+      const targetPostId = isRepost ? post.original_post_id : post.id;
+      await postsAPI.unrepost(targetPostId);
+      setReposted(false);
+      setRepostCount(prev => Math.max(0, prev - 1));
+      toast.success('Repost removed');
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to remove repost');
+    }
+  };
+
+  const handleRepostSuccess = () => {
+    const targetPostId = isRepost ? post.original_post_id : post.id;
+    setReposted(true);
+    setRepostCount(prev => prev + 1);
+    if (onUpdate) onUpdate();
+  };
+
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % postImages.length);
   };
