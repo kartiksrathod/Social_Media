@@ -68,6 +68,7 @@ export const postsAPI = {
   unlike: (postId) => api.post(`/posts/${postId}/unlike`),
   addComment: (postId, text) => api.post(`/posts/${postId}/comments`, { text }),
   getComments: (postId) => api.get(`/posts/${postId}/comments`),
+  deleteComment: (postId, commentId) => api.delete(`/posts/${postId}/comments/${commentId}`),
   save: (postId) => api.post(`/posts/${postId}/save`),
   unsave: (postId) => api.post(`/posts/${postId}/unsave`),
   getSaved: () => api.get('/posts/saved'),
