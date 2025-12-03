@@ -20,6 +20,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useTheme } from '@/contexts/ThemeContext';
 import TrendingSection from './TrendingSection';
+import SearchBar from '../search/SearchBar';
+import NotificationBell from '../notification/NotificationBell';
+import SuggestedUsers from '../follow/SuggestedUsers';
 
 const SidebarContent = ({ isMobile = false }) => {
   const location = useLocation();
