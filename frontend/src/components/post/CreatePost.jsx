@@ -197,7 +197,7 @@ export default function CreatePost({ onPostCreated }) {
               )}
 
               <div className="flex items-center justify-between pt-2 border-t">
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="file"
                     id="post-image"
@@ -213,11 +213,34 @@ export default function CreatePost({ onPostCreated }) {
                       size="sm"
                       className="cursor-pointer"
                       asChild
-                      disabled={imageFiles.length >= 5}
+                      disabled={imageFiles.length >= 5 || videoFile}
                     >
                       <span>
                         <Image className="h-4 w-4 mr-2" />
                         Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}
+                      </span>
+                    </Button>
+                  </label>
+
+                  <input
+                    type="file"
+                    id="post-video"
+                    accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"
+                    onChange={handleVideoSelect}
+                    className="hidden"
+                  />
+                  <label htmlFor="post-video">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="cursor-pointer"
+                      asChild
+                      disabled={videoFile || imageFiles.length > 0}
+                    >
+                      <span>
+                        <Video className="h-4 w-4 mr-2" />
+                        Add Video
                       </span>
                     </Button>
                   </label>
