@@ -525,4 +525,242 @@ router.get('/hashtag/:tag', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/posts/:postId/repost - Simple repost (share to feed)
+router.post('/:postId/repost', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const originalPost = await Post.findOne({ id: postId });
+
+    if (!originalPost) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    const user = await User.findOne({ id: req.userId });
+    if (!user) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    // Check if user already reposted this post
+    const existingRepost = await Post.findOne({
+      author_id: req.userId,
+      is_repost: true,
+      original_post_id: postId
+    });
+
+    if (existingRepost) {
+      return res.status(400).json({ detail: 'You have already reposted this post' });
+    }
+
+    // Create repost
+    const repost = new Post({
+      author_id: user.id,
+      author_username: user.username,
+      author_avatar: user.avatar,
+      text: originalPost.text,
+      image_url: originalPost.image_url,
+      images: originalPost.images,
+      video_url: originalPost.video_url,
+      hashtags: originalPost.hashtags,
+      mentions: originalPost.mentions,
+      is_repost: true,
+      original_post_id: postId,
+      repost_text: null,
+      likes: [],
+      comments: []
+    });
+
+    await repost.save();
+
+    // Increment repost count on original post
+    await Post.updateOne(
+      { id: postId },
+      { $inc: { repost_count: 1 } }
+    );
+
+    // Create notification for original author
+    if (originalPost.author_id !== req.userId) {
+      const notification = new Notification({
+        user_id: originalPost.author_id,
+        actor_id: req.userId,
+        actor_username: user.username,
+        actor_avatar: user.avatar,
+        type: 'repost',
+        post_id: postId
+      });
+      await notification.save();
+
+      // Emit real-time notification
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      const targetSocketId = userSockets.get(originalPost.author_id);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('new_notification', notification);
+      }
+    }
+
+    res.status(201).json(postToPublic(repost, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('Repost error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// POST /api/posts/:postId/quote - Quote post (repost with commentary)
+router.post('/:postId/quote', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ detail: 'Quote text is required' });
+    }
+
+    const originalPost = await Post.findOne({ id: postId });
+
+    if (!originalPost) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    const user = await User.findOne({ id: req.userId });
+    if (!user) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    // Extract hashtags and mentions from quote text
+    const hashtags = extractHashtags(text);
+    const mentions = extractMentions(text);
+
+    // Create quote post
+    const quotePost = new Post({
+      author_id: user.id,
+      author_username: user.username,
+      author_avatar: user.avatar,
+      text: originalPost.text,
+      image_url: originalPost.image_url,
+      images: originalPost.images,
+      video_url: originalPost.video_url,
+      hashtags: [...hashtags, ...originalPost.hashtags],
+      mentions: [...mentions, ...originalPost.mentions],
+      is_repost: true,
+      original_post_id: postId,
+      repost_text: text,
+      likes: [],
+      comments: []
+    });
+
+    await quotePost.save();
+
+    // Increment repost count on original post
+    await Post.updateOne(
+      { id: postId },
+      { $inc: { repost_count: 1 } }
+    );
+
+    // Create notification for original author
+    if (originalPost.author_id !== req.userId) {
+      const notification = new Notification({
+        user_id: originalPost.author_id,
+        actor_id: req.userId,
+        actor_username: user.username,
+        actor_avatar: user.avatar,
+        type: 'repost',
+        post_id: postId,
+        text: text.substring(0, 100)
+      });
+      await notification.save();
+
+      // Emit real-time notification
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      const targetSocketId = userSockets.get(originalPost.author_id);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('new_notification', notification);
+      }
+    }
+
+    // Create notifications for mentioned users in quote text
+    if (mentions.length > 0) {
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      
+      for (const mentionedUsername of mentions) {
+        const mentionedUser = await User.findOne({ username: mentionedUsername.toLowerCase() });
+        if (mentionedUser && mentionedUser.id !== user.id) {
+          const notification = new Notification({
+            user_id: mentionedUser.id,
+            actor_id: user.id,
+            actor_username: user.username,
+            actor_avatar: user.avatar,
+            type: 'mention',
+            post_id: quotePost.id,
+            text: text.substring(0, 100)
+          });
+          await notification.save();
+
+          // Emit real-time notification
+          const targetSocketId = userSockets.get(mentionedUser.id);
+          if (targetSocketId) {
+            io.to(targetSocketId).emit('new_notification', notification);
+          }
+        }
+      }
+    }
+
+    res.status(201).json(postToPublic(quotePost, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('Quote post error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// DELETE /api/posts/:postId/unrepost - Remove repost
+router.delete('/:postId/unrepost', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    
+    // Find the repost made by current user
+    const repost = await Post.findOne({
+      author_id: req.userId,
+      is_repost: true,
+      original_post_id: postId
+    });
+
+    if (!repost) {
+      return res.status(404).json({ detail: 'Repost not found' });
+    }
+
+    // Delete the repost
+    await Post.deleteOne({ id: repost.id });
+
+    // Decrement repost count on original post
+    await Post.updateOne(
+      { id: postId },
+      { $inc: { repost_count: -1 } }
+    );
+
+    res.json({ message: 'Repost removed successfully' });
+  } catch (error) {
+    console.error('Unrepost error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/posts/:postId/reposted-by - Check if user reposted this post
+router.get('/:postId/reposted-by', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    
+    const repost = await Post.findOne({
+      author_id: req.userId,
+      is_repost: true,
+      original_post_id: postId
+    });
+
+    res.json({ reposted: !!repost });
+  } catch (error) {
+    console.error('Check repost error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 module.exports = router;
