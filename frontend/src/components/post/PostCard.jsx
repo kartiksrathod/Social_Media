@@ -29,9 +29,28 @@ export default function PostCard({ post, onUpdate }) {
   const [editText, setEditText] = useState(post.text);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [repostOpen, setRepostOpen] = useState(false);
+  const [reposted, setReposted] = useState(false);
+  const [repostCount, setRepostCount] = useState(post.repost_count || 0);
 
   const isOwnPost = user && post.author_id === user.id;
+  const isRepost = post.is_repost;
+  const originalPost = post.original_post;
   const postImages = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : []);
+
+  // Check if user has reposted this post
+  useEffect(() => {
+    const checkReposted = async () => {
+      try {
+        const targetPostId = isRepost ? post.original_post_id : post.id;
+        const response = await postsAPI.checkReposted(targetPostId);
+        setReposted(response.data.reposted);
+      } catch (error) {
+        console.error('Failed to check repost status');
+      }
+    };
+    checkReposted();
+  }, [post.id, post.original_post_id, isRepost]);
 
   const handleLike = async () => {
     try {
