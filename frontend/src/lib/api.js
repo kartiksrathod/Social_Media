@@ -45,6 +45,8 @@ export const usersAPI = {
 // ==================== POSTS ====================
 export const postsAPI = {
   create: (data) => api.post('/posts', data),
+  update: (postId, data) => api.put(`/posts/${postId}`, data),
+  delete: (postId) => api.delete(`/posts/${postId}`),
   uploadImage: (file) => {
     const formData = new FormData();
     formData.append('file', file);
