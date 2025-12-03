@@ -55,7 +55,13 @@ const postSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  images: [{
+    type: String
+  }],
   hashtags: [{
+    type: String
+  }],
+  mentions: [{
     type: String
   }],
   likes: [{
@@ -65,6 +71,10 @@ const postSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     default: Date.now
+  },
+  edited_at: {
+    type: Date,
+    default: null
   }
 }, {
   collection: 'posts',
