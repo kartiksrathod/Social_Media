@@ -277,6 +277,14 @@ router.post('/:postId/like', authenticateToken, async (req, res) => {
         post_id: postId
       });
       await notification.save();
+
+      // Emit real-time notification
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      const targetSocketId = userSockets.get(post.author_id);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('new_notification', notification);
+      }
     }
 
     res.json({ message: 'Post liked successfully' });
