@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CreatePost from '@/components/post/CreatePost';
 import PostCard from '@/components/post/PostCard';
+import StoriesBar from '@/components/story/StoriesBar';
 import { postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 
@@ -28,6 +29,8 @@ export default function Feed() {
        <h2 className="text-xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-3 -mx-4 px-4 border-b border-border/50 md:hidden">
           Home
        </h2>
+       
+       <StoriesBar />
        
        <CreatePost onPostCreated={loadFeed} />
        
