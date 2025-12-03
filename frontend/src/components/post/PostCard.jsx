@@ -147,16 +147,27 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
-  const renderTextWithHashtags = (text) => {
-    const parts = text.split(/(#\w+)/g);
+  const renderTextWithHashtagsAndMentions = (text) => {
+    const parts = text.split(/(#\w+|@\w+)/g);
     return parts.map((part, index) => {
       if (part.match(/^#\w+$/)) {
-        const tag = part.slice(1); // Remove the # symbol
+        const tag = part.slice(1);
         return (
           <Link 
             key={index} 
             to={`/hashtag/${tag}`} 
             className="text-primary hover:underline font-medium"
+          >
+            {part}
+          </Link>
+        );
+      } else if (part.match(/^@\w+$/)) {
+        const username = part.slice(1);
+        return (
+          <Link 
+            key={index} 
+            to={`/profile/${username}`} 
+            className="text-blue-500 hover:underline font-medium"
           >
             {part}
           </Link>
