@@ -257,4 +257,130 @@ router.delete('/cleanup/expired', async (req, res) => {
   }
 });
 
+// POST /api/stories/:storyId/reply - Reply to a story (converts to DM)
+router.post('/:storyId/reply', authenticateToken, async (req, res) => {
+  try {
+    const { storyId } = req.params;
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    if (!text || !text.trim()) {
+      return res.status(400).json({ detail: 'Reply text is required' });
+    }
+
+    // Get the story
+    const story = await Story.findOne({ id: storyId });
+    if (!story) {
+      return res.status(404).json({ detail: 'Story not found' });
+    }
+
+    // Check if story is expired
+    if (new Date() > story.expires_at) {
+      return res.status(400).json({ detail: 'This story has expired' });
+    }
+
+    // Cannot reply to own story
+    if (story.user_id === userId) {
+      return res.status(400).json({ detail: 'Cannot reply to your own story' });
+    }
+
+    // Get sender info
+    const sender = await User.findOne({ id: userId });
+    if (!sender) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    // Get or create conversation between sender and story owner
+    const Conversation = require('../models/Conversation');
+    const Message = require('../models/Message');
+
+    const participants = [userId, story.user_id].sort();
+    let conversation = await Conversation.findOne({
+      participants: { $all: participants }
+    });
+
+    if (!conversation) {
+      // Create new conversation
+      const { v4: uuidv4 } = require('uuid');
+      conversation = new Conversation({
+        id: uuidv4(),
+        participants: participants,
+        participant_details: [
+          {
+            user_id: userId,
+            username: sender.username,
+            avatar: sender.avatar
+          },
+          {
+            user_id: story.user_id,
+            username: story.username,
+            avatar: story.user_avatar
+          }
+        ],
+        last_message: text.substring(0, 100),
+        last_message_at: new Date(),
+        unread_count: { [story.user_id]: 1 }
+      });
+      await conversation.save();
+    } else {
+      // Update existing conversation
+      conversation.last_message = text.substring(0, 100);
+      conversation.last_message_at = new Date();
+      if (!conversation.unread_count) {
+        conversation.unread_count = {};
+      }
+      conversation.unread_count[story.user_id] = (conversation.unread_count[story.user_id] || 0) + 1;
+      await conversation.save();
+    }
+
+    // Create message with story context
+    const { v4: uuidv4 } = require('uuid');
+    const message = new Message({
+      id: uuidv4(),
+      conversation_id: conversation.id,
+      sender_id: userId,
+      sender_username: sender.username,
+      sender_avatar: sender.avatar,
+      text: text.trim(),
+      is_story_reply: true,
+      story_id: story.id,
+      story_media_url: story.media_url,
+      story_media_type: story.media_type,
+      read: false,
+      created_at: new Date()
+    });
+    await message.save();
+
+    // Emit real-time event to story owner
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`user_${story.user_id}`).emit('new_message', {
+        conversation_id: conversation.id,
+        message: {
+          id: message.id,
+          conversation_id: message.conversation_id,
+          sender_id: message.sender_id,
+          sender_username: message.sender_username,
+          sender_avatar: message.sender_avatar,
+          text: message.text,
+          is_story_reply: true,
+          story_id: message.story_id,
+          story_media_url: message.story_media_url,
+          story_media_type: message.story_media_type,
+          read: false,
+          created_at: message.created_at
+        }
+      });
+    }
+
+    res.json({ 
+      message: 'Reply sent',
+      conversation_id: conversation.id
+    });
+  } catch (error) {
+    console.error('Story reply error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 module.exports = router;
