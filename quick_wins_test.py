@@ -9,7 +9,7 @@ import json
 import urllib.parse
 from typing import Dict, Any
 
-BACKEND_URL = "https://techstack-explorer-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://python-cleanup.preview.emergentagent.com/api"
 
 class QuickWinsAPITester:
     def __init__(self):

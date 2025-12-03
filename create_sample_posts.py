@@ -8,7 +8,7 @@ import requests
 import json
 
 # Backend URL from environment
-BACKEND_URL = "https://techstack-explorer-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://python-cleanup.preview.emergentagent.com/api"
 
 class PostCreator:
     def __init__(self):
