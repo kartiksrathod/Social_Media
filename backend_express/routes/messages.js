@@ -164,7 +164,7 @@ router.post('/', authenticateToken, async (req, res) => {
       }
     );
 
-    res.status(201).json({
+    const messageData = {
       id: message.id,
       conversation_id: message.conversation_id,
       sender_id: message.sender_id,
@@ -174,7 +174,15 @@ router.post('/', authenticateToken, async (req, res) => {
       media_url: message.media_url,
       read: message.read,
       created_at: message.created_at
-    });
+    };
+
+    // Emit socket event to conversation room
+    const io = req.app.get('io');
+    if (io) {
+      io.to(conversation_id).emit('new_message', messageData);
+    }
+
+    res.status(201).json(messageData);
   } catch (error) {
     console.error('Send message error:', error);
     res.status(500).json({ detail: 'Internal server error' });
