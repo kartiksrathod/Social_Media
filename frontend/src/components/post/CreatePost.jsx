@@ -85,8 +85,8 @@ export default function CreatePost({ onPostCreated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!text.trim() && imageFiles.length === 0) {
-      toast.error('Please add some text or an image');
+    if (!text.trim() && imageFiles.length === 0 && !videoFile) {
+      toast.error('Please add some text, an image, or a video');
       return;
     }
 
@@ -94,6 +94,7 @@ export default function CreatePost({ onPostCreated }) {
 
     try {
       const imageUrls = [];
+      let videoUrl = null;
       
       // Upload all images if selected
       if (imageFiles.length > 0) {
@@ -103,17 +104,26 @@ export default function CreatePost({ onPostCreated }) {
         }
       }
 
-      // Create post with multiple images
+      // Upload video if selected
+      if (videoFile) {
+        const uploadResponse = await postsAPI.uploadVideo(videoFile);
+        videoUrl = uploadResponse.data.url;
+      }
+
+      // Create post with multiple images or video
       await postsAPI.create({
         text: text.trim(),
         images: imageUrls,
         image_url: imageUrls[0] || null, // For backward compatibility
+        video_url: videoUrl,
       });
 
       toast.success('Post created successfully!');
       setText('');
       setImageFiles([]);
       setImagePreviews([]);
+      setVideoFile(null);
+      setVideoPreview(null);
       
       if (onPostCreated) {
         onPostCreated();
