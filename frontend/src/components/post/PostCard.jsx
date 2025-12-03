@@ -222,15 +222,43 @@ export default function PostCard({ post, onUpdate }) {
       </CardHeader>
       
       <CardContent className="p-4 pt-2 space-y-4">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{renderTextWithHashtags(post.text)}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+          {renderTextWithHashtagsAndMentions(post.text)}
+          {post.edited_at && (
+            <span className="text-xs text-muted-foreground ml-2">(edited)</span>
+          )}
+        </p>
         
-        {post.image_url && (
-          <div className="rounded-xl overflow-hidden border border-border/50 bg-muted">
+        {postImages.length > 0 && (
+          <div className="relative rounded-xl overflow-hidden border border-border/50 bg-muted">
             <img 
-              src={post.image_url} 
+              src={postImages[currentImageIndex]} 
               alt="Post content" 
-              className="w-full h-auto object-cover max-h-[500px] hover:scale-[1.01] transition-transform duration-500"
+              className="w-full h-auto object-cover max-h-[500px]"
             />
+            {postImages.length > 1 && (
+              <>
+                <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
+                  {currentImageIndex + 1} / {postImages.length}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                  onClick={prevImage}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                  onClick={nextImage}
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </>
+            )}
           </div>
         )}
       </CardContent>
