@@ -137,6 +137,7 @@ export default function CreatePost({ onPostCreated }) {
                     type="file"
                     id="post-image"
                     accept="image/*"
+                    multiple
                     onChange={handleImageSelect}
                     className="hidden"
                   />
@@ -147,10 +148,11 @@ export default function CreatePost({ onPostCreated }) {
                       size="sm"
                       className="cursor-pointer"
                       asChild
+                      disabled={imageFiles.length >= 5}
                     >
                       <span>
                         <Image className="h-4 w-4 mr-2" />
-                        Add Image
+                        Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}
                       </span>
                     </Button>
                   </label>
