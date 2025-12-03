@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement Quick Wins features for SocialVibe: Dark mode, Save posts, Hashtags, Trending, Post sharing"
+user_problem_statement: "Phase 2 & 3 Implementation: Video Posts, Stories (24h expiring), Direct Messaging with real-time WebSocket support"
 
 backend:
   - task: "Save/Bookmark Posts Endpoints"
