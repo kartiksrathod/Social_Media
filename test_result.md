@@ -105,6 +105,42 @@
 user_problem_statement: "Phase 2 & 3 Implementation: Video Posts, Stories (24h expiring), Direct Messaging with real-time WebSocket support"
 
 backend:
+  - task: "Video Upload and Posts Backend"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "POST /api/posts/upload-video endpoint exists with file validation (50MB limit, video formats). Post model has video_url field. Needs testing to verify video upload and post creation with videos."
+
+  - task: "Stories Backend with 24h Expiry"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/stories.js, /app/backend_express/models/Story.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Complete stories backend: POST /api/stories/upload (media upload), POST /api/stories (create), GET /api/stories (get all with view status), GET /api/stories/user/:userId, POST /api/stories/:storyId/view, DELETE /api/stories/:storyId, DELETE /api/stories/cleanup/expired. Story model has expires_at field (24h from creation), views tracking. Needs testing."
+
+  - task: "Direct Messaging Backend with WebSocket"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/messages.js, /app/backend_express/models/Message.js, /app/backend_express/models/Conversation.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Complete messaging backend: POST /api/messages/conversations (create/get), GET /api/messages/conversations (list with unread counts), POST /api/messages (send), GET /api/messages/:conversationId (get messages), PUT /api/messages/:conversationId/read (mark as read). WebSocket setup in server.js with real-time events: new_message, typing, stop_typing. Socket rooms for conversations. Needs testing."
+
   - task: "Save/Bookmark Posts Endpoints"
     implemented: true
     working: true
