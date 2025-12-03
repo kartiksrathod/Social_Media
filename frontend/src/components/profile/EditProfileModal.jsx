@@ -1,137 +1,139 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Label } from '../ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Camera } from 'lucide-react';
+import { X, Camera, Upload } from 'lucide-react';
 import { usersAPI } from '../../lib/api';
-import { useAuth } from '../../contexts/AuthContext';
-import { toast } from 'sonner';
 
-export default function EditProfileModal({ open, onOpenChange, onProfileUpdated }) {
-  const { user, updateUser } = useAuth();
-  const [bio, setBio] = useState(user?.bio || '');
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar);
-  const [loading, setLoading] = useState(false);
+const EditProfileModal = ({ isOpen, onClose, user, onUpdate }) => {
+  const [formData, setFormData] = useState({
+    bio: user?.bio || '',
+    avatar: user?.avatar || ''
+  });
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const handleAvatarSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const response = await usersAPI.uploadAvatar(file);
+      setFormData({ ...formData, avatar: response.data.url });
+    } catch (error) {
+      console.error('Failed to upload avatar:', error);
+      alert('Failed to upload avatar. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
+    setSaving(true);
     try {
-      let avatarUrl = user?.avatar;
-
-      // Upload new avatar if selected
-      if (avatarFile) {
-        const uploadResponse = await usersAPI.uploadAvatar(avatarFile);
-        avatarUrl = uploadResponse.data.url;
+      const response = await usersAPI.updateProfile(formData);
+      if (onUpdate) {
+        onUpdate(response.data);
       }
-
-      // Update profile
-      const response = await usersAPI.updateProfile({
-        bio: bio.trim(),
-        avatar: avatarUrl,
-      });
-
-      updateUser(response.data);
-      toast.success('Profile updated successfully!');
-      onOpenChange(false);
-      
-      if (onProfileUpdated) {
-        onProfileUpdated();
-      }
+      // Update localStorage
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify({ ...currentUser, ...formData }));
+      onClose();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to update profile');
+      console.error('Failed to update profile:', error);
+      alert('Failed to update profile. Please try again.');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
-            Update your profile information
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage src={avatarPreview} />
-                  <AvatarFallback>
-                    {user?.username?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <input
-                  type="file"
-                  id="avatar-upload"
-                  accept="image/*"
-                  onChange={handleAvatarSelect}
-                  className="hidden"
-                />
-                <label htmlFor="avatar-upload">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute bottom-0 right-0 rounded-full h-8 w-8 cursor-pointer"
-                    asChild
-                  >
-                    <span>
-                      <Camera className="h-4 w-4" />
-                    </span>
-                  </Button>
-                </label>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                placeholder="Tell us about yourself..."
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                className="resize-none"
-                rows={4}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
+      <div 
+        className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-lg mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b dark:border-gray-800">
+          <h2 className="text-xl font-bold">Edit Profile</h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Avatar */}
+          <div className="flex flex-col items-center">
+            <div className="relative">
+              <img
+                src={formData.avatar || `https://ui-avatars.com/api/?name=${user?.username}&background=random&size=128`}
+                alt="Avatar"
+                className="w-24 h-24 rounded-full object-cover"
+              />
+              <label
+                htmlFor="avatar-upload"
+                className="absolute bottom-0 right-0 p-2 bg-purple-600 text-white rounded-full cursor-pointer hover:bg-purple-700 transition-colors"
+              >
+                {uploading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                ) : (
+                  <Camera className="w-5 h-5" />
+                )}
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                disabled={uploading}
               />
             </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Click camera to change photo</p>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+
+          {/* Bio */}
+          <div>
+            <label className="block text-sm font-semibold mb-2">Bio</label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              placeholder="Tell us about yourself..."
+              rows={4}
+              maxLength={160}
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border-none rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-right mt-1">
+              {formData.bio.length}/160
+            </p>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
               Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </DialogFooter>
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
-}
+};
+
+export default EditProfileModal;
