@@ -18,7 +18,9 @@ const FollowersModal = ({ isOpen, onClose, userId, title = 'Followers' }) => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const response = await usersAPI.getFollowers(userId);
+      const response = title === 'Following' 
+        ? await usersAPI.getFollowing(userId)
+        : await usersAPI.getFollowers(userId);
       setUsers(response.data);
     } catch (error) {
       console.error('Failed to load users:', error);
