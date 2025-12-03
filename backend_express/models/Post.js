@@ -71,6 +71,21 @@ const postSchema = new mongoose.Schema({
   likes: [{
     type: String
   }],
+  reactions: [{
+    user_id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      enum: ['like', 'love', 'laugh', 'wow', 'sad', 'angry'],
+      required: true
+    },
+    created_at: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   comments: [commentSchema],
   created_at: {
     type: Date,
