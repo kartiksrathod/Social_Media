@@ -13,6 +13,7 @@ const userRoutes = require('./routes/users');
 const postRoutes = require('./routes/posts');
 const notificationRoutes = require('./routes/notifications');
 const hashtagRoutes = require('./routes/hashtags');
+const storyRoutes = require('./routes/stories');
 
 // Create Express app
 const app = express();
