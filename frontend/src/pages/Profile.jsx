@@ -20,6 +20,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [followersModalOpen, setFollowersModalOpen] = useState(false);
+  const [followingModalOpen, setFollowingModalOpen] = useState(false);
 
   const isOwnProfile = !username || username === currentUser?.username;
 
