@@ -33,7 +33,7 @@ const SidebarContent = ({ isMobile = false }) => {
     { label: "Home", href: "/home", icon: Home },
     { label: "Explore", href: "/explore", icon: Search },
     { label: "Notifications", href: "/notifications", icon: Bell },
-    { label: "Messages", href: "/messages", icon: MessageSquare }, // Mocked route
+    { label: "Messages", href: "/messages", icon: MessageSquare },
     { label: "Saved", href: "/saved", icon: Bookmark },
     { label: "Profile", href: "/profile", icon: User },
   ];
