@@ -11,25 +11,39 @@ import { toast } from 'sonner';
 export default function CreatePost({ onPostCreated }) {
   const { user } = useAuth();
   const [text, setText] = useState('');
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleImageSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
+    const files = Array.from(e.target.files);
+    if (files.length + imageFiles.length > 5) {
+      toast.error('Maximum 5 images allowed');
+      return;
+    }
+
+    const newImageFiles = [...imageFiles, ...files];
+    setImageFiles(newImageFiles);
+
+    // Generate previews
+    const newPreviews = [];
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        newPreviews.push(reader.result);
+        if (newPreviews.length === files.length) {
+          setImagePreviews([...imagePreviews, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
+  const removeImage = (index) => {
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImageFiles(newFiles);
+    setImagePreviews(newPreviews);
   };
 
   const handleSubmit = async (e) => {
