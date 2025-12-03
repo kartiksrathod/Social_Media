@@ -181,6 +181,20 @@ export default function Profile() {
          onOpenChange={setEditModalOpen}
          onProfileUpdated={loadProfile}
        />
+
+       <FollowersModal
+         isOpen={followersModalOpen}
+         onClose={() => setFollowersModalOpen(false)}
+         userId={profileUser?.id}
+         title="Followers"
+       />
+
+       <FollowersModal
+         isOpen={followingModalOpen}
+         onClose={() => setFollowingModalOpen(false)}
+         userId={profileUser?.id}
+         title="Following"
+       />
     </div>
   );
 }
