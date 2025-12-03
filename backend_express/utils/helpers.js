@@ -43,5 +43,6 @@ const postToPublic = (post, currentUserId = null, savedPosts = []) => {
 
 module.exports = {
   extractHashtags,
+  extractMentions,
   postToPublic
 };
