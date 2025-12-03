@@ -142,43 +142,15 @@ export default function AppLayout() {
 
       {/* Right Sidebar (Suggestions) */}
       <aside className="hidden lg:block w-80 fixed right-0 top-0 bottom-0 border-l border-border/50 p-6 bg-card/50 backdrop-blur-md z-40">
-         <div className="sticky top-6">
-            <div className="relative mb-8">
-               <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-               <input 
-                  type="text" 
-                  placeholder="Search SocialVibe" 
-                  className="w-full bg-muted/50 border-none rounded-full pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/50 focus:outline-none transition-all"
-               />
-            </div>
+         <div className="sticky top-6 space-y-6">
+            {/* Search Bar */}
+            <SearchBar />
 
+            {/* Trending Hashtags */}
             <TrendingSection />
 
-            <div>
-               <h3 className="font-heading font-bold text-lg mb-4">Who to follow</h3>
-               <div className="space-y-4">
-                  {[
-                     { name: "Sarah Wilson", handle: "@sarahw", img: "https://images.unsplash.com/photo-1701615004837-40d8573b6652?auto=format&fit=crop&w=100&h=100" },
-                     { name: "Alex Chen", handle: "@alexc", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100" }
-                  ].map((user, i) => (
-                     <div key={i} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                           <Avatar className="h-10 w-10">
-                              <AvatarImage src={user.img} />
-                              <AvatarFallback>{user.name[0]}</AvatarFallback>
-                           </Avatar>
-                           <div className="flex flex-col">
-                              <span className="text-sm font-semibold hover:underline cursor-pointer">{user.name}</span>
-                              <span className="text-xs text-muted-foreground">{user.handle}</span>
-                           </div>
-                        </div>
-                        <Button size="sm" variant="outline" className="rounded-full hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
-                           Follow
-                        </Button>
-                     </div>
-                  ))}
-               </div>
-            </div>
+            {/* Suggested Users */}
+            <SuggestedUsers />
          </div>
       </aside>
     </div>
