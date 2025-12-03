@@ -9,30 +9,34 @@ cloudinary.config({
 });
 
 /**
- * Upload image buffer to Cloudinary
- * @param {Buffer} fileBuffer - Image file buffer
+ * Upload image/video buffer to Cloudinary
+ * @param {Buffer} fileBuffer - File buffer
  * @param {String} folder - Cloudinary folder name
+ * @param {Object} options - Additional upload options (e.g., {resource_type: 'video'})
  * @returns {Promise<Object>} Upload result
  */
-const uploadToCloudinary = (fileBuffer, folder = 'uploads') => {
+const uploadToCloudinary = (fileBuffer, folder = 'uploads', options = {}) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: folder,
-        resource_type: 'image',
-        secure: true
+        resource_type: options.resource_type || 'image',
+        secure: true,
+        ...options
       },
       (error, result) => {
         if (error) {
           console.error('Cloudinary upload error:', error);
-          reject(new Error(`Image upload failed: ${error.message}`));
+          reject(new Error(`Upload failed: ${error.message}`));
         } else {
           resolve({
             public_id: result.public_id,
             url: result.secure_url,
             width: result.width,
             height: result.height,
-            format: result.format
+            format: result.format,
+            duration: result.duration || null, // For videos
+            resource_type: result.resource_type
           });
         }
       }
