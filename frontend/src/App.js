@@ -13,6 +13,7 @@ import Notifications from "./pages/Notifications";
 import SavedPosts from "./pages/SavedPosts";
 import HashtagPage from "./pages/HashtagPage";
 import Messages from "./pages/Messages";
+import SearchResults from "./pages/SearchResults";
 import AppLayout from "./components/layout/AppLayout";
 
 // Protected Route - Requires authentication
