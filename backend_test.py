@@ -12,7 +12,7 @@ import io
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://socialnet-buzz.preview.emergentagent.com/api"
+BASE_URL = "https://modern-vibes.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SocialVibeBackendTester:
@@ -649,7 +649,7 @@ class SocialVibeBackendTester:
         """Test if WebSocket server is available"""
         try:
             # Test if the server responds to HTTP requests (Socket.IO endpoint)
-            response = requests.get("https://socialnet-buzz.preview.emergentagent.com/socket.io/")
+            response = requests.get("https://modern-vibes.preview.emergentagent.com/socket.io/")
             
             if response.status_code in [200, 400]:  # 400 is expected for Socket.IO without proper handshake
                 self.log_test("WebSocket server availability", "PASS", "Socket.IO server is responding")
