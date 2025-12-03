@@ -75,6 +75,10 @@ export const postsAPI = {
   unsave: (postId) => api.post(`/posts/${postId}/unsave`),
   getSaved: () => api.get('/posts/saved'),
   getByHashtag: (tag) => api.get(`/posts/hashtag/${tag}`),
+  repost: (postId) => api.post(`/posts/${postId}/repost`),
+  quote: (postId, text) => api.post(`/posts/${postId}/quote`, { text }),
+  unrepost: (postId) => api.delete(`/posts/${postId}/unrepost`),
+  checkReposted: (postId) => api.get(`/posts/${postId}/reposted-by`),
 };
 
 // ==================== HASHTAGS ====================
