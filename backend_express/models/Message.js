@@ -36,6 +36,24 @@ const messageSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // Story reply context
+  is_story_reply: {
+    type: Boolean,
+    default: false
+  },
+  story_id: {
+    type: String,
+    default: null
+  },
+  story_media_url: {
+    type: String,
+    default: null
+  },
+  story_media_type: {
+    type: String,
+    enum: ['image', 'video', null],
+    default: null
+  },
   created_at: {
     type: Date,
     default: Date.now
