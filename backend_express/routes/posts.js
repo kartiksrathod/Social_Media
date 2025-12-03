@@ -84,6 +84,79 @@ router.post('/upload-image', authenticateToken, upload.single('file'), async (re
   }
 });
 
+// PUT /api/posts/:postId - Edit post
+router.put('/:postId', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { text, images } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ detail: 'Post text is required' });
+    }
+
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    // Check if user is the author
+    if (post.author_id !== req.userId) {
+      return res.status(403).json({ detail: 'You can only edit your own posts' });
+    }
+
+    // Extract hashtags and mentions from updated text
+    const hashtags = extractHashtags(text);
+    const mentions = extractMentions(text);
+
+    // Update post
+    post.text = text;
+    post.hashtags = hashtags;
+    post.mentions = mentions;
+    post.edited_at = new Date();
+    
+    if (images !== undefined) {
+      post.images = images;
+    }
+
+    await post.save();
+
+    const user = await User.findOne({ id: req.userId });
+    res.json(postToPublic(post, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('Edit post error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// DELETE /api/posts/:postId - Delete post
+router.delete('/:postId', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findOne({ id: postId });
+
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    // Check if user is the author
+    if (post.author_id !== req.userId) {
+      return res.status(403).json({ detail: 'You can only delete your own posts' });
+    }
+
+    // Delete post
+    await Post.deleteOne({ id: postId });
+
+    // Delete associated notifications
+    await Notification.deleteMany({ post_id: postId });
+
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Delete post error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 // GET /api/posts/feed - Get personalized feed
 router.get('/feed', authenticateToken, async (req, res) => {
   try {
