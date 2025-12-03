@@ -85,6 +85,32 @@ router.post('/upload-image', authenticateToken, upload.single('file'), async (re
   }
 });
 
+// POST /api/posts/upload-video - Upload post video
+router.post('/upload-video', authenticateToken, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ detail: 'No file uploaded' });
+    }
+
+    // Validate file size (max 50MB for videos)
+    if (req.file.size > 50 * 1024 * 1024) {
+      return res.status(400).json({ detail: 'Video file too large. Maximum size is 50MB' });
+    }
+
+    // Validate file type
+    const validVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo'];
+    if (!validVideoTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({ detail: 'Invalid video format. Supported formats: MP4, WebM, MOV, AVI' });
+    }
+
+    const result = await uploadToCloudinary(req.file.buffer, 'videos', { resource_type: 'video' });
+    res.json({ url: result.url });
+  } catch (error) {
+    console.error('Upload video error:', error);
+    res.status(500).json({ detail: 'Video upload failed' });
+  }
+});
+
 // PUT /api/posts/:postId - Edit post
 router.put('/:postId', authenticateToken, async (req, res) => {
   try {
