@@ -361,6 +361,14 @@ router.post('/:postId/comments', authenticateToken, async (req, res) => {
         text: text
       });
       await notification.save();
+
+      // Emit real-time notification
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      const targetSocketId = userSockets.get(post.author_id);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('new_notification', notification);
+      }
     }
 
     res.json(comment);
