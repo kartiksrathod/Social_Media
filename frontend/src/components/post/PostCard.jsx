@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function PostCard({ post, onUpdate }) {
+  const { user } = useAuth();
   const [liked, setLiked] = useState(post.is_liked);
   const [likeCount, setLikeCount] = useState(post.likes_count);
   const [saved, setSaved] = useState(post.is_saved);
@@ -23,6 +24,13 @@ export default function PostCard({ post, onUpdate }) {
   const [loadingComment, setLoadingComment] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editText, setEditText] = useState(post.text);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const isOwnPost = user && post.author_id === user.id;
+  const postImages = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : []);
 
   const handleLike = async () => {
     try {
