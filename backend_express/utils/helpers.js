@@ -11,6 +11,18 @@ const extractHashtags = (text) => {
 };
 
 /**
+ * Extract mentions (@username) from text
+ * @param {String} text - Post text
+ * @returns {Array<String>} Array of unique mentions (lowercase usernames without @)
+ */
+const extractMentions = (text) => {
+  const mentionRegex = /@(\w+)/g;
+  const matches = text.match(mentionRegex) || [];
+  const mentions = matches.map(mention => mention.substring(1).toLowerCase());
+  return [...new Set(mentions)]; // Return unique mentions
+};
+
+/**
  * Convert post to public format with additional metadata
  * @param {Object} post - Post document
  * @param {String} currentUserId - Current user ID
