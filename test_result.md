@@ -308,15 +308,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Dark Mode Toggle with Persistence"
-    - "Save/Bookmark Posts UI"
-    - "Save/Bookmark Posts Endpoints"
-    - "Hashtag Parsing and Linking"
-    - "Hashtag Extraction and Endpoints"
-    - "Trending Hashtags Section"
-    - "Post Sharing Functionality"
+    - "Video Upload and Posts Backend"
+    - "Stories Backend with 24h Expiry"
+    - "Direct Messaging Backend with WebSocket"
+    - "Video Posts UI"
+    - "Stories UI with 24h Expiry"
+    - "Direct Messaging UI with Real-time"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
   - task: "Login Form Functionality"
