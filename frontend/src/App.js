@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SocketProvider } from "./contexts/SocketContext";
 import LandingPage from "./pages/LandingPage";
 import Feed from "./pages/Feed";
 import Login from "./pages/Login";
@@ -11,6 +12,7 @@ import Explore from "./pages/Explore";
 import Notifications from "./pages/Notifications";
 import SavedPosts from "./pages/SavedPosts";
 import HashtagPage from "./pages/HashtagPage";
+import Messages from "./pages/Messages";
 import AppLayout from "./components/layout/AppLayout";
 
 // Protected Route - Requires authentication
