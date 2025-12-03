@@ -14,6 +14,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import RepostDialog from './RepostDialog';
+import ReactionButton from './ReactionButton';
 
 export default function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
@@ -32,6 +33,8 @@ export default function PostCard({ post, onUpdate }) {
   const [repostOpen, setRepostOpen] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [repostCount, setRepostCount] = useState(post.repost_count || 0);
+  const [userReaction, setUserReaction] = useState(post.user_reaction);
+  const [reactionCounts, setReactionCounts] = useState(post.reaction_counts || {});
 
   const isOwnPost = user && post.author_id === user.id;
   const isRepost = post.is_repost;
@@ -65,6 +68,34 @@ export default function PostCard({ post, onUpdate }) {
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to update like');
+    }
+  };
+
+  const handleReact = async (type) => {
+    try {
+      const response = await postsAPI.react(post.id, type);
+      const updatedPost = response.data;
+      
+      setUserReaction(updatedPost.user_reaction);
+      setReactionCounts(updatedPost.reaction_counts);
+      
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to add reaction');
+    }
+  };
+
+  const handleRemoveReaction = async () => {
+    try {
+      const response = await postsAPI.removeReaction(post.id);
+      const updatedPost = response.data;
+      
+      setUserReaction(null);
+      setReactionCounts(updatedPost.reaction_counts);
+      
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to remove reaction');
     }
   };
 
@@ -364,15 +395,12 @@ export default function PostCard({ post, onUpdate }) {
       <CardFooter className="p-4 pt-0">
         <div className="flex items-center justify-between w-full text-muted-foreground">
           <div className="flex items-center gap-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={`group px-2 h-8 hover:text-accent ${liked ? 'text-accent' : ''}`}
-              onClick={handleLike}
-            >
-              <Heart className={`w-5 h-5 mr-1.5 transition-transform group-active:scale-75 ${liked ? 'fill-current' : ''}`} />
-              <span className="text-xs font-medium">{likeCount}</span>
-            </Button>
+            <ReactionButton
+              userReaction={userReaction}
+              reactionCounts={reactionCounts}
+              onReact={handleReact}
+              onRemoveReaction={handleRemoveReaction}
+            />
 
             <Dialog open={commentsOpen} onOpenChange={(open) => {
               setCommentsOpen(open);
