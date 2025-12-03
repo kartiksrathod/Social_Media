@@ -123,16 +123,19 @@ export default function AppLayout() {
             </div>
             <span className="font-heading font-bold text-xl">SocialVibe</span>
          </div>
-         <Sheet>
-            <SheetTrigger asChild>
-               <Button variant="ghost" size="icon">
-                  <Menu className="w-6 h-6" />
-               </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80 p-0">
-               <SidebarContent isMobile />
-            </SheetContent>
-         </Sheet>
+         <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Sheet>
+               <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                     <Menu className="w-6 h-6" />
+                  </Button>
+               </SheetTrigger>
+               <SheetContent side="left" className="w-80 p-0">
+                  <SidebarContent isMobile />
+               </SheetContent>
+            </Sheet>
+         </div>
       </div>
 
       {/* Main Content Area */}
