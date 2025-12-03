@@ -49,6 +49,7 @@ function App() {
                   <Route element={<AppLayout />}>
                     <Route path="/home" element={<Feed />} />
                     <Route path="/explore" element={<Explore />} />
+                    <Route path="/search" element={<SearchResults />} />
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/saved" element={<SavedPosts />} />
