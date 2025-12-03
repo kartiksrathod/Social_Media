@@ -46,6 +46,9 @@ router.post('/', authenticateToken, async (req, res) => {
 
     // Create notifications for mentioned users
     if (mentions.length > 0) {
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      
       for (const mentionedUsername of mentions) {
         const mentionedUser = await User.findOne({ username: mentionedUsername.toLowerCase() });
         if (mentionedUser && mentionedUser.id !== user.id) {
@@ -59,6 +62,12 @@ router.post('/', authenticateToken, async (req, res) => {
             text: text.substring(0, 100)
           });
           await notification.save();
+
+          // Emit real-time notification
+          const targetSocketId = userSockets.get(mentionedUser.id);
+          if (targetSocketId) {
+            io.to(targetSocketId).emit('new_notification', notification);
+          }
         }
       }
     }
