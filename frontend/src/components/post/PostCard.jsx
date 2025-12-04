@@ -297,7 +297,7 @@ export default function PostCard({ post, onUpdate }) {
 
       <CardHeader className={`p-4 pb-2 flex flex-row items-start gap-4 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
         <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`}>
-          <Avatar className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
+          <Avatar className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
             <AvatarImage src={isRepost && originalPost ? originalPost.author_avatar : post.author_avatar} />
             <AvatarFallback>{(isRepost && originalPost ? originalPost.author_username : post.author_username)?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
