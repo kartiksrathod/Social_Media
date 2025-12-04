@@ -61,19 +61,19 @@ export default function StoriesBar() {
 
   return (
     <>
-      <div className="mb-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-        {/* Create Story Button */}
+      <div className="mb-6 flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+        {/* Create Story Button - Accent with subtle glow */}
         <div className="flex flex-col items-center gap-2 flex-shrink-0">
           <button
             onClick={() => setCreateStoryOpen(true)}
-            className="relative w-16 h-16 rounded-full border-2 border-dashed border-primary hover:bg-accent/10 transition-colors flex items-center justify-center group"
+            className="relative w-16 h-16 rounded-full border-2 border-dashed border-primary hover:bg-primary/10 transition-all flex items-center justify-center group glow-subtle"
           >
             <Plus className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
           </button>
-          <span className="text-xs text-muted-foreground">Your Story</span>
+          <span className="text-xs text-text-muted">Your Story</span>
         </div>
 
-        {/* Stories from followed users */}
+        {/* Stories from followed users - Soft gradient ring */}
         {storiesData.map((userStories) => (
           <div
             key={userStories.user_id}
@@ -81,10 +81,10 @@ export default function StoriesBar() {
             onClick={() => handleStoryClick(userStories.user_id)}
           >
             <div
-              className={`relative w-16 h-16 rounded-full p-[3px] ${
+              className={`relative w-16 h-16 rounded-full p-[2.5px] transition-all ${
                 userStories.has_viewed_all
-                  ? 'bg-muted'
-                  : 'bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500'
+                  ? 'bg-border'
+                  : 'gradient-ring glow-subtle'
               }`}
             >
               <Avatar className="w-full h-full border-2 border-background">
@@ -92,7 +92,7 @@ export default function StoriesBar() {
                 <AvatarFallback>{userStories.username?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
             </div>
-            <span className="text-xs text-center truncate max-w-[64px]">
+            <span className="text-xs text-center truncate max-w-[64px] text-text-secondary">
               {userStories.user_id === user?.id ? 'You' : userStories.username}
             </span>
           </div>
