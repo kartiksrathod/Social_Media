@@ -305,16 +305,36 @@ export default function PostCard({ post, onUpdate }) {
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <div>
-              <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`}>
-                <div className="flex items-center gap-1.5">
-                  <h4 className="font-semibold text-sm hover:underline cursor-pointer">
-                    {isRepost && originalPost ? originalPost.author_username : post.author_username}
-                  </h4>
+              {/* Show collaborative post authors */}
+              {post.is_collaborative && post.collaboration_status === 'accepted' ? (
+                <div className="flex items-center gap-1 flex-wrap">
+                  <Link to={`/profile/${post.author_username}`}>
+                    <h4 className="font-semibold text-sm hover:underline cursor-pointer inline">
+                      {post.author_username}
+                    </h4>
+                  </Link>
+                  <span className="text-sm text-text-muted">and</span>
+                  <Link to={`/profile/${post.collaborator_username}`}>
+                    <h4 className="font-semibold text-sm hover:underline cursor-pointer inline">
+                      {post.collaborator_username}
+                    </h4>
+                  </Link>
                   {post.visibility === 'close_friends' && (
-                    <Star className="w-3.5 h-3.5 fill-green-500 text-green-500" title="Close Friends Only" />
+                    <Star className="w-3.5 h-3.5 fill-green-500 text-green-500 ml-1" title="Close Friends Only" />
                   )}
                 </div>
-              </Link>
+              ) : (
+                <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`}>
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="font-semibold text-sm hover:underline cursor-pointer">
+                      {isRepost && originalPost ? originalPost.author_username : post.author_username}
+                    </h4>
+                    {post.visibility === 'close_friends' && (
+                      <Star className="w-3.5 h-3.5 fill-green-500 text-green-500" title="Close Friends Only" />
+                    )}
+                  </div>
+                </Link>
+              )}
               <p className="text-xs text-text-muted">
                 @{isRepost && originalPost ? originalPost.author_username : post.author_username} • {formatTime(isRepost && originalPost ? originalPost.created_at : post.created_at)}
                 {post.visibility === 'close_friends' && (
