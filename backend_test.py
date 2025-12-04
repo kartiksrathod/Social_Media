@@ -463,41 +463,40 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Feed filtering", "FAIL", str(e))
     
-    def test_get_stories_with_view_status(self):
-        """Test GET /api/stories with view status"""
+    def test_author_can_see_own_close_friends_posts(self):
+        """Test that authors can always see their own close_friends posts"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
             
-            response = requests.get(f"{self.base_url}/stories", headers=headers)
+            # Alice creates a close friends post
+            close_friends_post = {
+                "text": "Alice's own close friends post! She should see this in her own feed 📝 #ownpost",
+                "visibility": "close_friends"
+            }
             
-            if response.status_code == 200:
-                stories_data = response.json()
+            create_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            
+            if create_response.status_code == 201:
+                post = create_response.json()
+                post_id = post['id']
                 
-                if isinstance(stories_data, list) and len(stories_data) > 0:
-                    # Check structure
-                    story_group = stories_data[0]
-                    required_fields = ['user_id', 'username', 'stories', 'has_viewed_all']
+                # Alice should see her own close friends post in her feed
+                alice_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=alice_headers)
+                
+                if alice_feed_response.status_code == 200:
+                    alice_feed = alice_feed_response.json()
+                    own_post_found = any(p.get('id') == post_id for p in alice_feed)
                     
-                    if all(field in story_group for field in required_fields):
-                        # Check individual story structure
-                        if len(story_group['stories']) > 0:
-                            story = story_group['stories'][0]
-                            story_fields = ['id', 'media_url', 'media_type', 'has_viewed', 'expires_at']
-                            
-                            if all(field in story for field in story_fields):
-                                self.log_test("Get stories with view status", "PASS", f"Found {len(stories_data)} story groups")
-                            else:
-                                self.log_test("Get stories with view status", "FAIL", "Missing story fields")
-                        else:
-                            self.log_test("Get stories with view status", "PASS", "Stories endpoint working (no stories)")
+                    if own_post_found:
+                        self.log_test("Author sees own close friends posts", "PASS", "Alice can see her own close friends post")
                     else:
-                        self.log_test("Get stories with view status", "FAIL", "Missing required fields in story group")
+                        self.log_test("Author sees own close friends posts", "FAIL", "Alice cannot see her own close friends post")
                 else:
-                    self.log_test("Get stories with view status", "PASS", "Stories endpoint working (empty)")
+                    self.log_test("Author sees own close friends posts", "FAIL", f"Alice feed status: {alice_feed_response.status_code}")
             else:
-                self.log_test("Get stories with view status", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Author sees own close friends posts", "FAIL", f"Post creation failed: {create_response.status_code}")
         except Exception as e:
-            self.log_test("Get stories with view status", "FAIL", str(e))
+            self.log_test("Author sees own close friends posts", "FAIL", str(e))
     
     def test_view_story_tracking(self):
         """Test story view tracking"""
