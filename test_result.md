@@ -106,7 +106,56 @@ user_problem_statement: |
   Implementing three major features for SocialVibe:
   1. Enhanced Mentions & Tags (Autocomplete + Photo Tagging)
   2. Close Friends / Inner Circle
-  3. Collaborative Posts
+  3. Collaborative Posts (Max 2 authors per post)
+
+backend:
+  - task: "Collaborative Posts - Post model fields"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/models/Post.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added collaborative post fields to Post model: is_collaborative (boolean), collaborator_id, collaborator_username, collaborator_avatar, collaboration_status (pending/accepted/rejected). Added index for collaborator_id for performance."
+
+  - task: "Collaborative Posts - Notification types"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/models/Notification.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added collab_invite and collab_accepted notification types to enum. Notifications sent when collaboration is invited and accepted."
+
+  - task: "Collaborative Posts - API endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/collaborations.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created collaboration endpoints: POST /api/collaborations/invite (create post with collaborator invite), POST /api/collaborations/:postId/accept (accept invite), POST /api/collaborations/:postId/reject (reject and convert to regular post), GET /api/collaborations/pending (get pending invites). Notifications created for invites and acceptances. Prevents self-collaboration and duplicates."
+
+  - task: "Collaborative Posts - Feed and profile filtering"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated GET /api/posts/feed to show posts where user is author OR accepted collaborator. Updated GET /api/posts/user/:username to show posts where user is author OR accepted collaborator. Collaborative posts appear in both authors' profiles and feeds."
 
 backend:
   - task: "Add image_tags field to Post model"
