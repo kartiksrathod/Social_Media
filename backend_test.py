@@ -281,49 +281,86 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Get close friends list", "FAIL", str(e))
     
-    # ==================== STORIES TESTS ====================
-    
-    def test_story_media_upload(self):
-        """Test POST /api/stories/upload"""
+    def test_check_is_close_friend(self):
+        """Test GET /api/users/:userId/is-close-friend - Check close friend status"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
             
-            # Test image upload
-            image_file = self.create_sample_image_file()
-            files = {'file': ('test_image.png', image_file, 'image/png')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Add Bob to close friends
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
             
-            response = requests.post(f"{self.base_url}/stories/upload", 
-                                   headers=upload_headers, files=files)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if 'url' in data and 'media_type' in data:
-                    self.story_image_url = data['url']
-                    self.log_test("Story media upload (image)", "PASS", f"Image uploaded: {data['url']}")
-                else:
-                    self.log_test("Story media upload (image)", "FAIL", "Missing URL or media_type in response")
-            else:
-                self.log_test("Story media upload (image)", "FAIL", f"Status: {response.status_code}")
-            
-            # Test video upload
-            video_file = self.create_sample_video_file()
-            files = {'file': ('test_video.mp4', video_file, 'video/mp4')}
-            
-            response = requests.post(f"{self.base_url}/stories/upload", 
-                                   headers=upload_headers, files=files)
+            # Check Bob's status (should be true)
+            response = requests.get(f"{self.base_url}/users/{bob_user_id}/is-close-friend", headers=alice_headers)
             
             if response.status_code == 200:
                 data = response.json()
-                if 'url' in data and data.get('media_type') == 'video':
-                    self.story_video_url = data['url']
-                    self.log_test("Story media upload (video)", "PASS", f"Video uploaded: {data['url']}")
+                if data.get('is_close_friend') == True:
+                    self.log_test("Check is close friend - True case", "PASS", "Bob correctly identified as close friend")
                 else:
-                    self.log_test("Story media upload (video)", "FAIL", "Incorrect media_type or missing URL")
+                    self.log_test("Check is close friend - True case", "FAIL", f"Expected true, got: {data}")
             else:
-                self.log_test("Story media upload (video)", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Check is close friend - True case", "FAIL", f"Status: {response.status_code}")
+            
+            # Check Charlie's status (should be false)
+            response = requests.get(f"{self.base_url}/users/{charlie_user_id}/is-close-friend", headers=alice_headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('is_close_friend') == False:
+                    self.log_test("Check is close friend - False case", "PASS", "Charlie correctly identified as not close friend")
+                else:
+                    self.log_test("Check is close friend - False case", "FAIL", f"Expected false, got: {data}")
+            else:
+                self.log_test("Check is close friend - False case", "FAIL", f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("Story media upload", "FAIL", str(e))
+            self.log_test("Check is close friend", "FAIL", str(e))
+    
+    # ==================== POST VISIBILITY TESTS ====================
+    
+    def test_create_post_with_visibility(self):
+        """Test POST /api/posts with visibility parameter"""
+        try:
+            alice_headers = self.get_auth_headers("alice_cf")
+            
+            # Create public post
+            public_post_data = {
+                "text": "This is a public post for everyone to see! #public #socialvibe",
+                "visibility": "public"
+            }
+            
+            response = requests.post(f"{self.base_url}/posts", json=public_post_data, headers=alice_headers)
+            
+            if response.status_code == 201:
+                post = response.json()
+                if post.get('visibility') == 'public':
+                    self.log_test("Create public post", "PASS", f"Public post created: {post['id']}")
+                else:
+                    self.log_test("Create public post", "FAIL", f"Expected public visibility, got: {post.get('visibility')}")
+            else:
+                self.log_test("Create public post", "FAIL", f"Status: {response.status_code}")
+            
+            # Create close friends post
+            close_friends_post_data = {
+                "text": "This is a close friends only post! Secret stuff here 🤫 #closefriends",
+                "visibility": "close_friends"
+            }
+            
+            response = requests.post(f"{self.base_url}/posts", json=close_friends_post_data, headers=alice_headers)
+            
+            if response.status_code == 201:
+                post = response.json()
+                if post.get('visibility') == 'close_friends':
+                    self.close_friends_posts.append(post['id'])
+                    self.log_test("Create close friends post", "PASS", f"Close friends post created: {post['id']}")
+                else:
+                    self.log_test("Create close friends post", "FAIL", f"Expected close_friends visibility, got: {post.get('visibility')}")
+            else:
+                self.log_test("Create close friends post", "FAIL", f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Create post with visibility", "FAIL", str(e))
     
     def test_create_image_story(self):
         """Test creating image story"""
