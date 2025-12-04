@@ -70,7 +70,7 @@ const SidebarContent = ({ isMobile = false }) => {
           </Link>
         ))}
         
-        <Button className="w-full mt-6 rounded-full h-12 text-lg font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-[1.02]">
+        <Button className="w-full mt-6 rounded-full h-12 text-lg font-semibold button-neon bg-primary hover:bg-primary/90">
            <PlusCircle className="mr-2 w-5 h-5" /> Post
         </Button>
       </nav>
