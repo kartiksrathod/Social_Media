@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /api/posts - Create new post
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { text, image_url, images, video_url } = req.body;
+    const { text, image_url, images, video_url, image_tags } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -38,17 +38,18 @@ router.post('/', authenticateToken, async (req, res) => {
       video_url: video_url || null,
       hashtags,
       mentions,
+      image_tags: image_tags || [],
       likes: [],
       comments: []
     });
 
     await post.save();
 
+    const io = req.app.get('io');
+    const userSockets = req.app.get('userSockets');
+
     // Create notifications for mentioned users
     if (mentions.length > 0) {
-      const io = req.app.get('io');
-      const userSockets = req.app.get('userSockets');
-      
       for (const mentionedUsername of mentions) {
         const mentionedUser = await User.findOne({ username: mentionedUsername.toLowerCase() });
         if (mentionedUser && mentionedUser.id !== user.id) {
@@ -65,6 +66,30 @@ router.post('/', authenticateToken, async (req, res) => {
 
           // Emit real-time notification
           const targetSocketId = userSockets.get(mentionedUser.id);
+          if (targetSocketId) {
+            io.to(targetSocketId).emit('new_notification', notification);
+          }
+        }
+      }
+    }
+
+    // Create notifications for tagged users in photos
+    if (image_tags && image_tags.length > 0) {
+      for (const tag of image_tags) {
+        if (tag.user_id !== user.id) {
+          const notification = new Notification({
+            user_id: tag.user_id,
+            actor_id: user.id,
+            actor_username: user.username,
+            actor_avatar: user.avatar,
+            type: 'photo_tag',
+            post_id: post.id,
+            text: 'tagged you in a photo'
+          });
+          await notification.save();
+
+          // Emit real-time notification
+          const targetSocketId = userSockets.get(tag.user_id);
           if (targetSocketId) {
             io.to(targetSocketId).emit('new_notification', notification);
           }
