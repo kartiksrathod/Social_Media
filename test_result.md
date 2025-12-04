@@ -183,63 +183,78 @@ backend:
 
   - task: "Close Friends - Add/Remove endpoints"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/users.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "POST /api/users/close-friends/add and DELETE /api/users/close-friends/remove endpoints with notifications. User model has close_friends array field."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: All close friends management endpoints working perfectly. POST /api/users/close-friends/add successfully adds users to close friends with proper validation (rejects self-add, duplicates, non-existent users, missing user_id). DELETE /api/users/close-friends/remove successfully removes users with proper error handling. Both endpoints require authentication and handle edge cases correctly."
 
   - task: "Close Friends - List and check endpoints"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/users.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "GET /api/users/close-friends (list all) and GET /api/users/:userId/is-close-friend (check status) endpoints implemented."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Close friends list and status check endpoints working perfectly. GET /api/users/close-friends returns array of close friends with complete user objects (id, username, avatar, etc.). GET /api/users/:userId/is-close-friend correctly returns boolean status for close friend relationships. Both endpoints properly authenticated and return accurate data."
 
   - task: "Post visibility filtering - Feed and Profile"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/posts.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Post model has visibility field (public/close_friends). Feed endpoint filters posts by visibility. Only close friends can see close_friends posts. Explore shows only public posts. User profile filters by visibility."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Post visibility filtering working flawlessly across all endpoints. GET /api/posts/feed correctly filters close_friends posts (only visible to close friends and author). GET /api/posts/explore shows only public posts (close_friends posts properly hidden). GET /api/posts/user/:username filters profile posts by visibility (close friends see all posts, others see only public). Authors can always see their own close_friends posts."
 
   - task: "Post creation/editing with visibility"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/posts.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "POST /api/posts and PUT /api/posts/:postId accept visibility parameter (public/close_friends). Posts are created/updated with correct visibility."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Post creation and editing with visibility working perfectly. POST /api/posts accepts visibility parameter (public/close_friends) and creates posts with correct visibility field. PUT /api/posts/:postId successfully updates post visibility. Default visibility is 'public' when not specified. Visibility changes are properly saved and reflected in feed filtering."
 
   - task: "Close friend notification type"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/models/Notification.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Notification model supports 'close_friend' type. Notifications sent when user is added to close friends."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Close friend notifications working perfectly. Notification model correctly supports 'close_friend' type in enum. When user is added to close friends, notification is automatically created with proper structure (actor_id, actor_username, type: 'close_friend', text: 'added you to their close friends'). Notifications are delivered in real-time via WebSocket and stored in database correctly."
 
 frontend:
   - task: "Create MentionAutocomplete component"
