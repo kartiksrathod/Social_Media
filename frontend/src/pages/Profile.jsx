@@ -133,14 +133,26 @@ export default function Profile() {
                  Edit Profile
                </Button>
              ) : (
-               <Button 
-                 className="mb-2 rounded-full font-semibold" 
-                 variant={profileUser.is_following ? "outline" : "default"}
-                 onClick={handleFollow}
-                 disabled={followLoading}
-               >
-                 {followLoading ? 'Loading...' : profileUser.is_following ? 'Unfollow' : 'Follow'}
-               </Button>
+               <div className="flex gap-2 mb-2">
+                 <Button 
+                   className="rounded-full font-semibold" 
+                   variant={profileUser.is_following ? "outline" : "default"}
+                   onClick={handleFollow}
+                   disabled={followLoading}
+                 >
+                   {followLoading ? 'Loading...' : profileUser.is_following ? 'Unfollow' : 'Follow'}
+                 </Button>
+                 <Button 
+                   className="rounded-full font-semibold" 
+                   variant={profileUser.is_close_friend ? "default" : "outline"}
+                   size="icon"
+                   onClick={handleToggleCloseFriend}
+                   disabled={closeFriendLoading}
+                   title={profileUser.is_close_friend ? "Remove from Close Friends" : "Add to Close Friends"}
+                 >
+                   <Star className={`w-5 h-5 ${profileUser.is_close_friend ? 'fill-current' : ''}`} />
+                 </Button>
+               </div>
              )}
           </div>
           
