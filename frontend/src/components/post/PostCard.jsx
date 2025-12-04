@@ -460,7 +460,7 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`group px-2 h-8 hover:text-primary ${saved ? 'text-primary' : ''}`}
+              className={`group px-2 h-8 transition-colors ${saved ? 'text-primary' : 'hover-accent'}`}
               onClick={handleSave}
             >
               <Bookmark className={`w-5 h-5 transition-transform group-active:scale-75 ${saved ? 'fill-current' : ''}`} />
@@ -469,7 +469,7 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="group px-2 h-8 hover:text-primary"
+              className="group px-2 h-8 hover-accent"
               onClick={handleShare}
             >
               {copied ? (
