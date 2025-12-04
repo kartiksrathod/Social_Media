@@ -181,6 +181,66 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: GET /api/users/search?q=query works perfectly for mention autocomplete. Case-insensitive search, proper 20-user limit, empty query validation (400 error), and returns user objects with id, username, and other profile fields. Tested with various search patterns."
 
+  - task: "Close Friends - Add/Remove endpoints"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/users.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "POST /api/users/close-friends/add and DELETE /api/users/close-friends/remove endpoints with notifications. User model has close_friends array field."
+
+  - task: "Close Friends - List and check endpoints"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/users.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "GET /api/users/close-friends (list all) and GET /api/users/:userId/is-close-friend (check status) endpoints implemented."
+
+  - task: "Post visibility filtering - Feed and Profile"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Post model has visibility field (public/close_friends). Feed endpoint filters posts by visibility. Only close friends can see close_friends posts. Explore shows only public posts. User profile filters by visibility."
+
+  - task: "Post creation/editing with visibility"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "POST /api/posts and PUT /api/posts/:postId accept visibility parameter (public/close_friends). Posts are created/updated with correct visibility."
+
+  - task: "Close friend notification type"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/models/Notification.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Notification model supports 'close_friend' type. Notifications sent when user is added to close friends."
+
 frontend:
   - task: "Create MentionAutocomplete component"
     implemented: true
