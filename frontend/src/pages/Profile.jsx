@@ -5,7 +5,7 @@ import EditProfileModal from '@/components/profile/EditProfileModal';
 import FollowersModal from '../components/follow/FollowersModal';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Calendar } from 'lucide-react';
+import { Calendar, Star } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '../contexts/AuthContext';
 import { usersAPI, postsAPI } from '../lib/api';
@@ -22,6 +22,7 @@ export default function Profile() {
   const [followLoading, setFollowLoading] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
+  const [closeFriendLoading, setCloseFriendLoading] = useState(false);
 
   const isOwnProfile = !username || username === currentUser?.username;
 
