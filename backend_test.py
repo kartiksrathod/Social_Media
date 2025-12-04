@@ -75,7 +75,7 @@ class SocialVibeBackendTester:
                             self.log_test(f"Get user info {user_data['username']}", "FAIL", f"Status: {me_response.status_code}")
                     else:
                         self.log_test(f"Login user {user_data['username']}", "FAIL", f"Status: {login_response.status_code}")
-                elif response.status_code == 400 and "already exists" in response.text.lower():
+                elif response.status_code == 400 and ("already" in response.text.lower() or "registered" in response.text.lower()):
                     # User exists, try to login
                     login_response = requests.post(f"{self.base_url}/auth/login", json={
                         "username": user_data["username"],
