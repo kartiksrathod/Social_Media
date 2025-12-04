@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema({
   saved_posts: [{
     type: String
   }],
+  close_friends: [{
+    type: String
+  }],
   created_at: {
     type: Date,
     default: Date.now
