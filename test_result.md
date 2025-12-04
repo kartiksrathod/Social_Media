@@ -390,6 +390,66 @@ frontend:
         agent: "main"
         comment: "Profile page has close friend toggle button (star icon). Button shows filled when user is in close friends, outline when not. Toggle adds/removes from close friends list."
 
+  - task: "Collaborative Posts - CollaboratorSelector component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/CollaboratorSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Created CollaboratorSelector component with user search dialog. Shows 'Add Collaborator' button, displays selected collaborator with avatar and username, allows removal. Real-time user search with 300ms debounce. Max 2 authors per post (1 original + 1 collaborator)."
+
+  - task: "Collaborative Posts - CreatePost integration"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/CreatePost.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Integrated CollaboratorSelector into CreatePost. Added collaborator state and dialog. Updated handleSubmit to use collaborationsAPI.createWithInvite when collaborator is selected, regular postsAPI.create otherwise. Shows success message with collaborator username. Clears collaborator on post creation."
+
+  - task: "Collaborative Posts - PostCard display"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Updated PostCard header to display collaborative posts. Shows 'Username1 and Username2' for accepted collaborative posts. Both usernames are clickable links to profiles. Maintains single author display for non-collaborative posts."
+
+  - task: "Collaborative Posts - CollaborationInvite component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/notifications/CollaborationInvite.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Created CollaborationInvite notification component. Shows collab_invite notifications with Accept/Decline buttons. Updates status to accepted/rejected. Calls collaborationsAPI.acceptInvite or rejectInvite. Shows success messages and updates UI accordingly."
+
+  - task: "Collaborative Posts - API integration"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/lib/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Added collaborationsAPI to api.js with 4 endpoints: createWithInvite (POST /api/collaborations/invite), acceptInvite (POST /api/collaborations/:postId/accept), rejectInvite (POST /api/collaborations/:postId/reject), getPending (GET /api/collaborations/pending)."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
