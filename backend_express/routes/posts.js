@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /api/posts - Create new post
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { text, image_url, images, video_url, image_tags } = req.body;
+    const { text, image_url, images, video_url, image_tags, visibility } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -40,7 +40,8 @@ router.post('/', authenticateToken, async (req, res) => {
       mentions,
       image_tags: image_tags || [],
       likes: [],
-      comments: []
+      comments: [],
+      visibility: visibility || 'public'
     });
 
     await post.save();
