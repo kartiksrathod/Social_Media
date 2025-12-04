@@ -75,10 +75,10 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-all hover:-translate-y-1" onClick={() => navigate('/signup')}>
+                <Button size="lg" className="h-14 px-8 text-lg rounded-full button-neon bg-primary hover:bg-primary/90" onClick={() => navigate('/signup')}>
                   Start for free <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full hover:bg-muted" onClick={() => navigate('/login')}>
+                <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full hover:bg-muted border-primary/30 hover:border-primary" onClick={() => navigate('/login')}>
                   View Demo
                 </Button>
               </div>
