@@ -42,6 +42,11 @@ export const usersAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
+  // Close Friends
+  addToCloseFriends: (userId) => api.post('/users/close-friends/add', { user_id: userId }),
+  removeFromCloseFriends: (userId) => api.delete('/users/close-friends/remove', { data: { user_id: userId } }),
+  getCloseFriends: () => api.get('/users/close-friends'),
+  isCloseFriend: (userId) => api.get(`/users/${userId}/is-close-friend`),
 };
 
 // ==================== POSTS ====================
