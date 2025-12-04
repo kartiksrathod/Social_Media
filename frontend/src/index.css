@@ -50,46 +50,46 @@
   }
 
   .dark {
-    /* Base Colors - Slate 950 / Slate 50 */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* DARK PREMIUM - Cyberpunk/Luxury dark theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    /* Cards - Slate 900 */
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    /* Cards - Dark with subtle glow */
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
 
     /* Popovers */
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primary - Vibrant Indigo (slightly lighter for dark mode) */
-    --primary: 250 95% 65%;
-    --primary-foreground: 222 47% 11%;
+    /* Primary - Neon Cyan */
+    --primary: 180 100% 50%;
+    --primary-foreground: 240 10% 3.9%;
 
-    /* Secondary */
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary - Electric Magenta */
+    --secondary: 320 100% 60%;
+    --secondary-foreground: 0 0% 98%;
 
-    /* Muted */
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Muted - Dark gray */
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
 
-    /* Accent */
-    --accent: 340 82% 52%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent - Neon Yellow */
+    --accent: 60 100% 50%;
+    --accent-foreground: 240 10% 3.9%;
 
     /* Destructive */
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    /* Borders & Inputs */
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 250 95% 65%;
+    /* Borders & Inputs - Glowing */
+    --border: 240 10% 18%;
+    --input: 240 10% 15%;
+    --ring: 180 100% 50%;
     
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(250 95% 65%), hsl(270 95% 65%));
-    --gradient-hero: linear-gradient(135deg, hsl(250 95% 65%), hsl(320 80% 65%));
+    /* Gradients - Neon & Dark */
+    --gradient-primary: linear-gradient(135deg, hsl(180 100% 50%), hsl(280 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(320 100% 60%), hsl(180 100% 50%));
   }
 }
 
