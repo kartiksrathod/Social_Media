@@ -374,6 +374,33 @@ agent_communication:
       4. Verify mention autocomplete functionality
       Calling backend testing agent now.
 
+  - agent: "main"
+    message: |
+      PHASE 2: CLOSE FRIENDS / INNER CIRCLE - FEATURE DISCOVERED FULLY IMPLEMENTED! 🎉
+      
+      All Close Friends functionality already exists in the codebase:
+      
+      BACKEND (5 tasks):
+      1. ✅ User model has close_friends array field
+      2. ✅ Post model has visibility enum (public/close_friends)
+      3. ✅ Close friends endpoints: add, remove, list, check
+      4. ✅ Notification type 'close_friend' supported
+      5. ✅ Feed/Explore/Profile filter posts by visibility
+      
+      FRONTEND (3 tasks):
+      1. ✅ CreatePost has visibility dropdown selector (Everyone/Close Friends)
+      2. ✅ PostCard shows visibility indicator (Star icon + text)
+      3. ✅ Profile page has close friend toggle button
+      
+      Now testing backend to verify all Close Friends endpoints work correctly:
+      - POST /api/users/close-friends/add (with notification)
+      - DELETE /api/users/close-friends/remove
+      - GET /api/users/close-friends (list all)
+      - GET /api/users/:userId/is-close-friend (check status)
+      - POST /api/posts with visibility=close_friends
+      - GET /api/posts/feed (filtered by visibility)
+      - Notification creation for close_friend type
+
 user_problem_statement: "Phase 2: Implement Reactions System (like, love, laugh, wow, sad, angry) to replace simple likes"
 
 backend:
