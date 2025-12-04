@@ -107,34 +107,94 @@ class SocialVibeBackendTester:
         png_header = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
         return io.BytesIO(png_header)
     
-    # ==================== VIDEO UPLOAD AND POSTS TESTS ====================
+    # ==================== CLOSE FRIENDS MANAGEMENT TESTS ====================
     
-    def test_video_upload_endpoint(self):
-        """Test POST /api/posts/upload-video"""
+    def test_add_close_friend_success(self):
+        """Test POST /api/users/close-friends/add - Success case"""
         try:
-            headers = self.get_auth_headers("videouser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            # Test with sample video file
-            video_file = self.create_sample_video_file()
-            files = {'file': ('test_video.mp4', video_file, 'video/mp4')}
-            
-            # Remove Content-Type header for multipart upload
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
-            
-            response = requests.post(f"{self.base_url}/posts/upload-video", 
-                                   headers=upload_headers, files=files)
+            response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                   json={"user_id": bob_user_id}, headers=alice_headers)
             
             if response.status_code == 200:
                 data = response.json()
-                if 'url' in data:
-                    self.video_url = data['url']
-                    self.log_test("Video upload endpoint", "PASS", f"Video uploaded: {data['url']}")
+                if 'message' in data and 'successfully' in data['message'].lower():
+                    self.log_test("Add close friend - Success", "PASS", f"Bob added to Alice's close friends")
                 else:
-                    self.log_test("Video upload endpoint", "FAIL", "No URL in response")
+                    self.log_test("Add close friend - Success", "FAIL", f"Unexpected response: {data}")
             else:
-                self.log_test("Video upload endpoint", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+                self.log_test("Add close friend - Success", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
         except Exception as e:
-            self.log_test("Video upload endpoint", "FAIL", str(e))
+            self.log_test("Add close friend - Success", "FAIL", str(e))
+    
+    def test_add_close_friend_missing_user_id(self):
+        """Test POST /api/users/close-friends/add - Missing user_id"""
+        try:
+            alice_headers = self.get_auth_headers("alice_cf")
+            
+            response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                   json={}, headers=alice_headers)
+            
+            if response.status_code == 400:
+                self.log_test("Add close friend - Missing user_id", "PASS", "Correctly rejected missing user_id")
+            else:
+                self.log_test("Add close friend - Missing user_id", "FAIL", f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Add close friend - Missing user_id", "FAIL", str(e))
+    
+    def test_add_close_friend_nonexistent_user(self):
+        """Test POST /api/users/close-friends/add - Non-existent user"""
+        try:
+            alice_headers = self.get_auth_headers("alice_cf")
+            
+            response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                   json={"user_id": "nonexistent-user-id"}, headers=alice_headers)
+            
+            if response.status_code == 404:
+                self.log_test("Add close friend - Non-existent user", "PASS", "Correctly rejected non-existent user")
+            else:
+                self.log_test("Add close friend - Non-existent user", "FAIL", f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Add close friend - Non-existent user", "FAIL", str(e))
+    
+    def test_add_close_friend_self(self):
+        """Test POST /api/users/close-friends/add - Cannot add self"""
+        try:
+            alice_headers = self.get_auth_headers("alice_cf")
+            alice_user_id = self.test_users["alice_cf"]["user_id"]
+            
+            response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                   json={"user_id": alice_user_id}, headers=alice_headers)
+            
+            if response.status_code == 400:
+                self.log_test("Add close friend - Self add", "PASS", "Correctly rejected self-add")
+            else:
+                self.log_test("Add close friend - Self add", "FAIL", f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Add close friend - Self add", "FAIL", str(e))
+    
+    def test_add_close_friend_duplicate(self):
+        """Test POST /api/users/close-friends/add - Already in close friends"""
+        try:
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            
+            # First add Bob (should succeed)
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            # Try to add Bob again (should fail)
+            response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                   json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            if response.status_code == 400:
+                self.log_test("Add close friend - Duplicate", "PASS", "Correctly rejected duplicate add")
+            else:
+                self.log_test("Add close friend - Duplicate", "FAIL", f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Add close friend - Duplicate", "FAIL", str(e))
     
     def test_video_upload_size_limit(self):
         """Test video upload 50MB size limit"""
