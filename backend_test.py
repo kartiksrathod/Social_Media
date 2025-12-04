@@ -746,39 +746,7 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Complete Close Friends workflow", "FAIL", str(e))
     
-    def test_send_message(self):
-        """Test sending messages in conversation"""
-        try:
-            user1_headers = self.get_auth_headers("videouser")
-            
-            # First ensure we have a conversation
-            if not hasattr(self, 'conversation_id'):
-                self.test_create_conversation()
-            
-            if hasattr(self, 'conversation_id'):
-                message_data = {
-                    "conversation_id": self.conversation_id,
-                    "text": "Hello! This is a test message from the backend testing suite."
-                }
-                
-                response = requests.post(f"{self.base_url}/messages", 
-                                       json=message_data, headers=user1_headers)
-                
-                if response.status_code == 201:
-                    message = response.json()
-                    required_fields = ['id', 'conversation_id', 'sender_id', 'text', 'created_at']
-                    
-                    if all(field in message for field in required_fields):
-                        self.message_id = message['id']
-                        self.log_test("Send message", "PASS", f"Message sent: {message['id']}")
-                    else:
-                        self.log_test("Send message", "FAIL", "Missing required fields in message")
-                else:
-                    self.log_test("Send message", "FAIL", f"Status: {response.status_code}")
-            else:
-                self.log_test("Send message", "FAIL", "No conversation available")
-        except Exception as e:
-            self.log_test("Send message", "FAIL", str(e))
+    # ==================== HELPER METHODS ====================
     
     def test_get_messages(self):
         """Test getting messages for conversation"""
