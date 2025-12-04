@@ -137,6 +137,11 @@ const postSchema = new mongoose.Schema({
   repost_count: {
     type: Number,
     default: 0
+  },
+  visibility: {
+    type: String,
+    enum: ['public', 'close_friends'],
+    default: 'public'
   }
 }, {
   collection: 'posts',
