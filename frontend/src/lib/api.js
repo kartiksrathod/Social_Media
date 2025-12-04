@@ -130,4 +130,12 @@ export const messagesAPI = {
   markAsRead: (conversationId) => api.put(`/messages/${conversationId}/read`),
 };
 
+// ==================== COLLABORATIONS ====================
+export const collaborationsAPI = {
+  createWithInvite: (data) => api.post('/collaborations/invite', data),
+  acceptInvite: (postId) => api.post(`/collaborations/${postId}/accept`),
+  rejectInvite: (postId) => api.post(`/collaborations/${postId}/reject`),
+  getPending: () => api.get('/collaborations/pending'),
+};
+
 export default api;
