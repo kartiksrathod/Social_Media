@@ -236,43 +236,22 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Remove close friend - Missing user_id", "FAIL", str(e))
     
-    def test_create_post_with_video(self):
-        """Test creating post with video URL"""
+    def test_remove_close_friend_not_in_list(self):
+        """Test DELETE /api/users/close-friends/remove - User not in close friends"""
         try:
-            headers = self.get_auth_headers("videouser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
             
-            # First upload a video to get URL
-            video_file = self.create_sample_video_file()
-            files = {'file': ('test_video.mp4', video_file, 'video/mp4')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Try to remove Charlie without adding him first
+            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                                     json={"user_id": charlie_user_id}, headers=alice_headers)
             
-            upload_response = requests.post(f"{self.base_url}/posts/upload-video", 
-                                          headers=upload_headers, files=files)
-            
-            if upload_response.status_code == 200:
-                video_url = upload_response.json()['url']
-                
-                # Create post with video
-                post_data = {
-                    "text": "Check out this awesome video! #video #socialvibe",
-                    "video_url": video_url
-                }
-                
-                response = requests.post(f"{self.base_url}/posts", json=post_data, headers=headers)
-                
-                if response.status_code == 201:
-                    post = response.json()
-                    if post.get('video_url') == video_url:
-                        self.video_post_id = post.get('id')
-                        self.log_test("Create post with video", "PASS", f"Post created with video: {post['id']}")
-                    else:
-                        self.log_test("Create post with video", "FAIL", "Video URL not saved in post")
-                else:
-                    self.log_test("Create post with video", "FAIL", f"Status: {response.status_code}")
+            if response.status_code == 400:
+                self.log_test("Remove close friend - Not in list", "PASS", "Correctly rejected removal of non-close friend")
             else:
-                self.log_test("Create post with video", "FAIL", "Video upload failed")
+                self.log_test("Remove close friend - Not in list", "FAIL", f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("Create post with video", "FAIL", str(e))
+            self.log_test("Remove close friend - Not in list", "FAIL", str(e))
     
     def test_video_posts_in_feed(self):
         """Test that video posts appear in feed"""
