@@ -149,7 +149,7 @@ router.post('/upload-video', authenticateToken, upload.single('file'), async (re
 router.put('/:postId', authenticateToken, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { text, images } = req.body;
+    const { text, images, image_tags } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -170,6 +170,10 @@ router.put('/:postId', authenticateToken, async (req, res) => {
     const hashtags = extractHashtags(text);
     const mentions = extractMentions(text);
 
+    // Get old tags to detect new ones
+    const oldTags = post.image_tags || [];
+    const newTags = image_tags || [];
+
     // Update post
     post.text = text;
     post.hashtags = hashtags;
@@ -180,7 +184,41 @@ router.put('/:postId', authenticateToken, async (req, res) => {
       post.images = images;
     }
 
+    if (image_tags !== undefined) {
+      post.image_tags = image_tags;
+    }
+
     await post.save();
+
+    // Create notifications for newly tagged users
+    if (newTags.length > 0) {
+      const io = req.app.get('io');
+      const userSockets = req.app.get('userSockets');
+      const user = await User.findOne({ id: req.userId });
+      
+      const oldTaggedUserIds = oldTags.map(tag => tag.user_id);
+      
+      for (const tag of newTags) {
+        if (tag.user_id !== user.id && !oldTaggedUserIds.includes(tag.user_id)) {
+          const notification = new Notification({
+            user_id: tag.user_id,
+            actor_id: user.id,
+            actor_username: user.username,
+            actor_avatar: user.avatar,
+            type: 'photo_tag',
+            post_id: post.id,
+            text: 'tagged you in a photo'
+          });
+          await notification.save();
+
+          // Emit real-time notification
+          const targetSocketId = userSockets.get(tag.user_id);
+          if (targetSocketId) {
+            io.to(targetSocketId).emit('new_notification', notification);
+          }
+        }
+      }
+    }
 
     const user = await User.findOne({ id: req.userId });
     res.json(postToPublic(post, req.userId, user.saved_posts));
