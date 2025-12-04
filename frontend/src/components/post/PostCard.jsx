@@ -392,8 +392,8 @@ export default function PostCard({ post, onUpdate }) {
         )}
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
-        <div className="flex items-center justify-between w-full text-muted-foreground">
+      <CardFooter className="p-4 pt-0 border-t border-border/50">
+        <div className="flex items-center justify-between w-full text-text-muted">
           <div className="flex items-center gap-6">
             <ReactionButton
               userReaction={userReaction}
@@ -407,7 +407,7 @@ export default function PostCard({ post, onUpdate }) {
               if (open) loadComments();
             }}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="group px-2 h-8 hover:text-primary">
+                <Button variant="ghost" size="sm" className="group px-2 h-8 hover-accent">
                   <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-medium">{post.comments_count}</span>
                 </Button>
