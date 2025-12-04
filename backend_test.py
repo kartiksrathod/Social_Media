@@ -705,6 +705,10 @@ class SocialVibeBackendTester:
             bob_user_id = self.test_users["bob_cf"]["user_id"]
             charlie_user_id = self.test_users["charlie_cf"]["user_id"]
             
+            # Step 0: Ensure Bob is not in close friends initially (remove if exists)
+            requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                          json={"user_id": bob_user_id}, headers=alice_headers)
+            
             # Step 1: Alice adds Bob to close friends
             add_response = requests.post(f"{self.base_url}/users/close-friends/add", 
                                        json={"user_id": bob_user_id}, headers=alice_headers)
