@@ -349,7 +349,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Phase 2: Close Friends Backend Testing - All 5 tasks ready"
     - "Phase 2: Close Friends Frontend Testing - All 3 tasks ready"
   stuck_tasks: []
   test_all: false
