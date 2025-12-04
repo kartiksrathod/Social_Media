@@ -38,6 +38,7 @@ const SidebarContent = ({ isMobile = false }) => {
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Messages", href: "/messages", icon: MessageSquare },
     { label: "Saved", href: "/saved", icon: Bookmark },
+    { label: "Close Friends", href: "/close-friends", icon: Star },
     { label: "Profile", href: "/profile", icon: User },
   ];
 
