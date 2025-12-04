@@ -221,26 +221,20 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Remove close friend - Success", "FAIL", str(e))
     
-    def test_video_format_validation(self):
-        """Test video format validation"""
+    def test_remove_close_friend_missing_user_id(self):
+        """Test DELETE /api/users/close-friends/remove - Missing user_id"""
         try:
-            headers = self.get_auth_headers("videouser")
+            alice_headers = self.get_auth_headers("alice_cf")
             
-            # Test with invalid format (text file)
-            invalid_file = io.BytesIO(b'This is not a video file')
-            files = {'file': ('test.txt', invalid_file, 'text/plain')}
+            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                                     json={}, headers=alice_headers)
             
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
-            
-            response = requests.post(f"{self.base_url}/posts/upload-video", 
-                                   headers=upload_headers, files=files)
-            
-            if response.status_code == 400 and "invalid" in response.text.lower():
-                self.log_test("Video format validation", "PASS", "Invalid formats rejected")
+            if response.status_code == 400:
+                self.log_test("Remove close friend - Missing user_id", "PASS", "Correctly rejected missing user_id")
             else:
-                self.log_test("Video format validation", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Remove close friend - Missing user_id", "FAIL", f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("Video format validation", "FAIL", str(e))
+            self.log_test("Remove close friend - Missing user_id", "FAIL", str(e))
     
     def test_create_post_with_video(self):
         """Test creating post with video URL"""
