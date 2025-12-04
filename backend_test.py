@@ -362,51 +362,43 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Create post with visibility", "FAIL", str(e))
     
-    def test_create_image_story(self):
-        """Test creating image story"""
+    def test_edit_post_visibility(self):
+        """Test PUT /api/posts/:postId with visibility parameter"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
             
-            # First upload image
-            image_file = self.create_sample_image_file()
-            files = {'file': ('story_image.png', image_file, 'image/png')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Create a public post first
+            post_data = {
+                "text": "This post will change visibility! #test",
+                "visibility": "public"
+            }
             
-            upload_response = requests.post(f"{self.base_url}/stories/upload", 
-                                          headers=upload_headers, files=files)
+            create_response = requests.post(f"{self.base_url}/posts", json=post_data, headers=alice_headers)
             
-            if upload_response.status_code == 200:
-                media_data = upload_response.json()
+            if create_response.status_code == 201:
+                post = create_response.json()
+                post_id = post['id']
                 
-                # Create story
-                story_data = {
-                    "media_url": media_data['url'],
-                    "media_type": "image"
+                # Edit post to change visibility to close_friends
+                edit_data = {
+                    "text": "This post is now for close friends only! #test #closefriends",
+                    "visibility": "close_friends"
                 }
                 
-                response = requests.post(f"{self.base_url}/stories", json=story_data, headers=headers)
+                response = requests.put(f"{self.base_url}/posts/{post_id}", json=edit_data, headers=alice_headers)
                 
-                if response.status_code == 201:
-                    story = response.json()
-                    if 'expires_at' in story:
-                        self.image_story_id = story.get('id')
-                        # Check if expires_at is approximately 24 hours from now
-                        expires_at = datetime.fromisoformat(story['expires_at'].replace('Z', '+00:00'))
-                        now = datetime.now()
-                        time_diff = expires_at - now.replace(tzinfo=expires_at.tzinfo)
-                        
-                        if 23 <= time_diff.total_seconds() / 3600 <= 25:  # 23-25 hours (allowing some variance)
-                            self.log_test("Create image story", "PASS", f"Story created with 24h expiry: {story['id']}")
-                        else:
-                            self.log_test("Create image story", "FAIL", f"Incorrect expiry time: {time_diff.total_seconds() / 3600} hours")
+                if response.status_code == 200:
+                    updated_post = response.json()
+                    if updated_post.get('visibility') == 'close_friends':
+                        self.log_test("Edit post visibility", "PASS", f"Post visibility changed to close_friends")
                     else:
-                        self.log_test("Create image story", "FAIL", "No expires_at field in response")
+                        self.log_test("Edit post visibility", "FAIL", f"Expected close_friends, got: {updated_post.get('visibility')}")
                 else:
-                    self.log_test("Create image story", "FAIL", f"Status: {response.status_code}")
+                    self.log_test("Edit post visibility", "FAIL", f"Edit status: {response.status_code}")
             else:
-                self.log_test("Create image story", "FAIL", "Image upload failed")
+                self.log_test("Edit post visibility", "FAIL", f"Create status: {create_response.status_code}")
         except Exception as e:
-            self.log_test("Create image story", "FAIL", str(e))
+            self.log_test("Edit post visibility", "FAIL", str(e))
     
     def test_create_video_story(self):
         """Test creating video story"""
