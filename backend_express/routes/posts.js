@@ -273,7 +273,13 @@ router.get('/feed', authenticateToken, async (req, res) => {
 
     const followingIds = [...user.following, user.id];
 
-    const posts = await Post.find({ author_id: { $in: followingIds } })
+    // Include posts where user is author OR collaborator (with accepted status)
+    const posts = await Post.find({
+      $or: [
+        { author_id: { $in: followingIds } },
+        { collaborator_id: { $in: followingIds }, collaboration_status: 'accepted' }
+      ]
+    })
       .sort({ created_at: -1 })
       .limit(limit);
 
