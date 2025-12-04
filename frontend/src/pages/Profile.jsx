@@ -67,6 +67,26 @@ export default function Profile() {
     }
   };
 
+  const handleToggleCloseFriend = async () => {
+    if (!profileUser) return;
+    
+    setCloseFriendLoading(true);
+    try {
+      if (profileUser.is_close_friend) {
+        await usersAPI.removeFromCloseFriends(profileUser.id);
+        toast.success(`Removed from close friends`);
+      } else {
+        await usersAPI.addToCloseFriends(profileUser.id);
+        toast.success(`Added to close friends!`);
+      }
+      await loadProfile();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update close friends');
+    } finally {
+      setCloseFriendLoading(false);
+    }
+  };
+
   const formatJoinDate = (dateString) => {
     try {
       const date = new Date(dateString);
