@@ -343,6 +343,10 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
+      STARTING CLOSE FRIENDS BACKEND TESTING: All Close Friends features are already implemented (5 backend tasks, 3 frontend tasks). About to test backend endpoints: POST /api/users/close-friends/add, DELETE /api/users/close-friends/remove, GET /api/users/close-friends, GET /api/users/:userId/is-close-friend, POST /api/posts with visibility=close_friends, GET /api/posts/feed filtering, and close_friend notifications. After backend testing completes, will implement Collaborative Posts feature.
+  
+  - agent: "main"
+    message: |
       Completed Phase 1 of feature implementation:
       
       BACKEND:
