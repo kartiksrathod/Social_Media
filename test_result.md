@@ -241,6 +241,17 @@ agent_communication:
       2. Photo tag notifications
       3. Mention autocomplete functionality
       4. Image tag display on posts
+  
+  - agent: "main"
+    message: |
+      NEW SESSION STARTED - All services running successfully (backend, frontend, mongodb).
+      About to test Phase 1 (Enhanced Mentions & Image Tagging) implementation.
+      Backend endpoints to test:
+      1. POST /api/posts with image_tags array
+      2. PUT /api/posts/:postId with image_tags updates
+      3. Verify photo_tag notifications are created
+      4. Verify mention autocomplete functionality
+      Calling backend testing agent now.
 
 user_problem_statement: "Phase 2: Implement Reactions System (like, love, laugh, wow, sad, angry) to replace simple likes"
 
