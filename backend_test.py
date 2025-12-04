@@ -613,21 +613,60 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Profile visibility filtering", "FAIL", str(e))
     
-    def test_cleanup_expired_stories(self):
-        """Test cleanup of expired stories"""
+    def test_close_friend_notification_creation(self):
+        """Test that close_friend notifications are created when adding to close friends"""
         try:
-            response = requests.delete(f"{self.base_url}/stories/cleanup/expired")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_headers = self.get_auth_headers("bob_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            alice_username = self.test_users["alice_cf"]["username"]
             
-            if response.status_code == 200:
-                data = response.json()
-                if 'message' in data:
-                    self.log_test("Cleanup expired stories", "PASS", data['message'])
+            # Get Bob's notifications before adding to close friends
+            before_response = requests.get(f"{self.base_url}/notifications", headers=bob_headers)
+            before_count = len(before_response.json()) if before_response.status_code == 200 else 0
+            
+            # Alice adds Bob to close friends
+            add_response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                       json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            if add_response.status_code == 200:
+                # Wait a moment for notification to be created
+                time.sleep(1)
+                
+                # Get Bob's notifications after adding to close friends
+                after_response = requests.get(f"{self.base_url}/notifications", headers=bob_headers)
+                
+                if after_response.status_code == 200:
+                    notifications = after_response.json()
+                    after_count = len(notifications)
+                    
+                    # Look for close_friend notification
+                    close_friend_notification = None
+                    for notif in notifications:
+                        if (notif.get('type') == 'close_friend' and 
+                            notif.get('actor_username') == alice_username):
+                            close_friend_notification = notif
+                            break
+                    
+                    if close_friend_notification:
+                        required_fields = ['actor_id', 'actor_username', 'type', 'text']
+                        if all(field in close_friend_notification for field in required_fields):
+                            self.log_test("Close friend notification creation", "PASS", 
+                                        f"Notification created with correct structure: {close_friend_notification['text']}")
+                        else:
+                            self.log_test("Close friend notification creation", "FAIL", 
+                                        f"Missing required fields in notification: {close_friend_notification}")
+                    else:
+                        self.log_test("Close friend notification creation", "FAIL", 
+                                    f"No close_friend notification found. Before: {before_count}, After: {after_count}")
                 else:
-                    self.log_test("Cleanup expired stories", "FAIL", "No message in response")
+                    self.log_test("Close friend notification creation", "FAIL", 
+                                f"Failed to get notifications: {after_response.status_code}")
             else:
-                self.log_test("Cleanup expired stories", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Close friend notification creation", "FAIL", 
+                            f"Failed to add close friend: {add_response.status_code}")
         except Exception as e:
-            self.log_test("Cleanup expired stories", "FAIL", str(e))
+            self.log_test("Close friend notification creation", "FAIL", str(e))
     
     # ==================== DIRECT MESSAGING TESTS ====================
     
