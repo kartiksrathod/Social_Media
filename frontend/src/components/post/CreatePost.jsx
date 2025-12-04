@@ -282,17 +282,27 @@ export default function CreatePost({ onPostCreated }) {
         videoUrl = uploadResponse.data.url;
       }
 
-      // Create post with uploaded image URLs and tags
-      await postsAPI.create({
+      const postData = {
         text: text.trim(),
         images: uploadedImageUrls,
         image_url: uploadedImageUrls[0] || null,
         video_url: videoUrl,
         image_tags: imageTags,
         visibility: visibility
-      });
+      };
 
-      toast.success('Post created successfully!');
+      // Create post with or without collaborator
+      if (collaborator) {
+        await collaborationsAPI.createWithInvite({
+          ...postData,
+          collaborator_username: collaborator.username
+        });
+        toast.success(`Post created! Collaboration invite sent to @${collaborator.username}`);
+      } else {
+        await postsAPI.create(postData);
+        toast.success('Post created successfully!');
+      }
+
       setText('');
       setImageFiles([]);
       setImagePreviews([]);
@@ -301,6 +311,7 @@ export default function CreatePost({ onPostCreated }) {
       setVideoFile(null);
       setVideoPreview(null);
       setVisibility('public');
+      setCollaborator(null);
       
       if (onPostCreated) {
         onPostCreated();
