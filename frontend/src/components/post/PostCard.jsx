@@ -352,6 +352,30 @@ export default function PostCard({ post, onUpdate }) {
               alt="Post content" 
               className="w-full h-auto object-cover max-h-[500px]"
             />
+            
+            {/* Image Tags */}
+            {post.image_tags && post.image_tags.filter(tag => tag.image_index === currentImageIndex).map((tag, idx) => (
+              <div
+                key={idx}
+                className="absolute group"
+                style={{ 
+                  left: `${tag.x}%`, 
+                  top: `${tag.y}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                <div className="w-6 h-6 bg-white rounded-full border-2 border-primary shadow-lg cursor-pointer" />
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <Link 
+                    to={`/profile/${tag.username}`}
+                    className="block bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg whitespace-nowrap text-sm font-medium hover:bg-black"
+                  >
+                    @{tag.username}
+                  </Link>
+                </div>
+              </div>
+            ))}
+            
             {postImages.length > 1 && (
               <>
                 <div className="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs backdrop-blur-sm">
