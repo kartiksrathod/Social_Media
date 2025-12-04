@@ -9,7 +9,7 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Helper to format user to public format
-const userToPublic = (user, currentUserId = null) => {
+const userToPublic = (user, currentUserId = null, currentUser = null) => {
   return {
     id: user.id,
     username: user.username,
@@ -20,7 +20,8 @@ const userToPublic = (user, currentUserId = null) => {
     following: user.following,
     followers_count: user.followers.length,
     following_count: user.following.length,
-    is_following: currentUserId ? user.followers.includes(currentUserId) : false
+    is_following: currentUserId ? user.followers.includes(currentUserId) : false,
+    is_close_friend: currentUser ? currentUser.close_friends.includes(user.id) : false
   };
 };
 
