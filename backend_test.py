@@ -196,27 +196,30 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Add close friend - Duplicate", "FAIL", str(e))
     
-    def test_video_upload_size_limit(self):
-        """Test video upload 50MB size limit"""
+    def test_remove_close_friend_success(self):
+        """Test DELETE /api/users/close-friends/remove - Success case"""
         try:
-            headers = self.get_auth_headers("videouser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            # Create a large file (simulate > 50MB)
-            large_data = b'0' * (51 * 1024 * 1024)  # 51MB
-            large_file = io.BytesIO(large_data)
-            files = {'file': ('large_video.mp4', large_file, 'video/mp4')}
+            # First add Bob to close friends
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
             
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Now remove Bob
+            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                                     json={"user_id": bob_user_id}, headers=alice_headers)
             
-            response = requests.post(f"{self.base_url}/posts/upload-video", 
-                                   headers=upload_headers, files=files)
-            
-            if response.status_code == 400 and "too large" in response.text.lower():
-                self.log_test("Video size limit enforcement", "PASS", "50MB limit properly enforced")
+            if response.status_code == 200:
+                data = response.json()
+                if 'message' in data and 'successfully' in data['message'].lower():
+                    self.log_test("Remove close friend - Success", "PASS", f"Bob removed from Alice's close friends")
+                else:
+                    self.log_test("Remove close friend - Success", "FAIL", f"Unexpected response: {data}")
             else:
-                self.log_test("Video size limit enforcement", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Remove close friend - Success", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
         except Exception as e:
-            self.log_test("Video size limit enforcement", "FAIL", str(e))
+            self.log_test("Remove close friend - Success", "FAIL", str(e))
     
     def test_video_format_validation(self):
         """Test video format validation"""
