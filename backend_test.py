@@ -135,14 +135,8 @@ class SocialVibeBackendTester:
             alice_headers = self.get_auth_headers("alice_cf")
             bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            print(f"DEBUG: Bob user_id = {bob_user_id}")
-            print(f"DEBUG: Request payload = {{'user_id': bob_user_id}}")
-            
             response = requests.post(f"{self.base_url}/users/close-friends/add", 
                                    json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            print(f"DEBUG: Response status = {response.status_code}")
-            print(f"DEBUG: Response text = {response.text}")
             
             if response.status_code == 200:
                 data = response.json()
