@@ -310,7 +310,7 @@ export default function PostCard({ post, onUpdate }) {
                   {isRepost && originalPost ? originalPost.author_username : post.author_username}
                 </h4>
               </Link>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-text-muted">
                 @{isRepost && originalPost ? originalPost.author_username : post.author_username} • {formatTime(isRepost && originalPost ? originalPost.created_at : post.created_at)}
               </p>
             </div>
