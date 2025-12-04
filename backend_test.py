@@ -498,46 +498,53 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Author sees own close friends posts", "FAIL", str(e))
     
-    def test_view_story_tracking(self):
-        """Test story view tracking"""
+    def test_explore_shows_only_public_posts(self):
+        """Test GET /api/posts/explore - Should show only public posts"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_headers = self.get_auth_headers("bob_cf")
             
-            # First create a story
-            image_file = self.create_sample_image_file()
-            files = {'file': ('view_test.png', image_file, 'image/png')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Alice creates both public and close friends posts
+            public_post = {
+                "text": "This is a public post for explore! Everyone should see this 🌍 #public #explore",
+                "visibility": "public"
+            }
             
-            upload_response = requests.post(f"{self.base_url}/stories/upload", 
-                                          headers=upload_headers, files=files)
+            close_friends_post = {
+                "text": "This is a close friends post! Should NOT appear in explore 🔒 #secret",
+                "visibility": "close_friends"
+            }
             
-            if upload_response.status_code == 200:
-                media_data = upload_response.json()
+            public_response = requests.post(f"{self.base_url}/posts", json=public_post, headers=alice_headers)
+            close_friends_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            
+            if public_response.status_code == 201 and close_friends_response.status_code == 201:
+                public_post_id = public_response.json()['id']
+                close_friends_post_id = close_friends_response.json()['id']
                 
-                story_data = {
-                    "media_url": media_data['url'],
-                    "media_type": "image"
-                }
+                # Check explore feed (should only show public post)
+                explore_response = requests.get(f"{self.base_url}/posts/explore", headers=bob_headers)
                 
-                story_response = requests.post(f"{self.base_url}/stories", json=story_data, headers=headers)
-                
-                if story_response.status_code == 201:
-                    story = story_response.json()
-                    story_id = story['id']
+                if explore_response.status_code == 200:
+                    explore_posts = explore_response.json()
                     
-                    # Mark story as viewed
-                    view_response = requests.post(f"{self.base_url}/stories/{story_id}/view", headers=headers)
+                    public_found = any(p.get('id') == public_post_id for p in explore_posts)
+                    close_friends_found = any(p.get('id') == close_friends_post_id for p in explore_posts)
                     
-                    if view_response.status_code == 200:
-                        self.log_test("Story view tracking", "PASS", f"Story {story_id} marked as viewed")
+                    if public_found and not close_friends_found:
+                        self.log_test("Explore shows only public posts", "PASS", "Public post visible, close friends post hidden")
+                    elif not public_found:
+                        self.log_test("Explore shows only public posts", "FAIL", "Public post not found in explore")
+                    elif close_friends_found:
+                        self.log_test("Explore shows only public posts", "FAIL", "Close friends post found in explore (should be hidden)")
                     else:
-                        self.log_test("Story view tracking", "FAIL", f"View status: {view_response.status_code}")
+                        self.log_test("Explore shows only public posts", "FAIL", "Neither post found in explore")
                 else:
-                    self.log_test("Story view tracking", "FAIL", "Story creation failed")
+                    self.log_test("Explore shows only public posts", "FAIL", f"Explore status: {explore_response.status_code}")
             else:
-                self.log_test("Story view tracking", "FAIL", "Image upload failed")
+                self.log_test("Explore shows only public posts", "FAIL", "Post creation failed")
         except Exception as e:
-            self.log_test("Story view tracking", "FAIL", str(e))
+            self.log_test("Explore shows only public posts", "FAIL", str(e))
     
     def test_delete_own_story(self):
         """Test deleting own story"""
