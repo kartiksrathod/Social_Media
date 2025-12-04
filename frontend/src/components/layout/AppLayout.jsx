@@ -60,8 +60,8 @@ const SidebarContent = ({ isMobile = false }) => {
             className={`
               flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
               ${isActive(link.href) 
-                ? 'bg-primary/10 text-primary font-semibold' 
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                ? 'bg-primary/20 text-primary font-semibold border-glow' 
+                : 'text-muted-foreground hover:bg-muted hover:text-primary hover:border-primary/30 border border-transparent'
               }
             `}
           >
