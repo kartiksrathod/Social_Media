@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://post-enhance.preview.emergentagent.com/api"
+BASE_URL = "https://friend-circle-4.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ImageTagsBackendTester:
