@@ -111,51 +111,75 @@ user_problem_statement: |
 backend:
   - task: "Add image_tags field to Post model"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/models/Post.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Added image_tags array field with image_index, x, y, user_id, username, avatar to Post schema"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Post model correctly accepts image_tags array with all required fields (image_index, x, y, user_id, username, avatar). Coordinates are preserved with decimal precision. Multiple tags per image and across different images work correctly. Schema validation enforces required fields."
 
   - task: "Add photo_tag notification type"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/models/Notification.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Added 'photo_tag' to notification type enum"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Notification model correctly supports 'photo_tag' type. Notifications are created with proper structure including actor_username, post_id, and 'tagged you in a photo' text. Self-tagging correctly prevents notification creation."
 
   - task: "Update post creation to handle image tags and send notifications"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/posts.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Updated POST /api/posts to accept image_tags and create photo_tag notifications"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: POST /api/posts correctly accepts image_tags array and stores them in posts. Photo_tag notifications are automatically created for tagged users (excluding self-tags). Tested with multiple tags across different images. All notification fields are properly populated."
 
   - task: "Update post editing to handle image tags"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/backend_express/routes/posts.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "Updated PUT /api/posts/:postId to handle image_tags updates and notify newly tagged users"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: PUT /api/posts/:postId successfully updates image_tags and creates notifications for newly tagged users. Existing tags are preserved and only new tags trigger notifications. Response includes updated image_tags array with correct coordinates and user information."
+
+  - task: "User search endpoint for mention autocomplete"
+    implemented: true
+    working: true
+    file: "/app/backend_express/routes/users.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: GET /api/users/search?q=query works perfectly for mention autocomplete. Case-insensitive search, proper 20-user limit, empty query validation (400 error), and returns user objects with id, username, and other profile fields. Tested with various search patterns."
 
 frontend:
   - task: "Create MentionAutocomplete component"
