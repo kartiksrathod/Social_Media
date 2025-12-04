@@ -196,7 +196,7 @@ export default function CreatePost({ onPostCreated }) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-2 border-t">
+              <div className="flex items-center justify-between pt-2 border-t border-border">
                 <div className="flex gap-2">
                   <input
                     type="file"
@@ -211,7 +211,7 @@ export default function CreatePost({ onPostCreated }) {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="cursor-pointer"
+                      className="cursor-pointer hover-accent"
                       asChild
                       disabled={imageFiles.length >= 5 || videoFile}
                     >
@@ -234,7 +234,7 @@ export default function CreatePost({ onPostCreated }) {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="cursor-pointer"
+                      className="cursor-pointer hover-accent"
                       asChild
                       disabled={videoFile || imageFiles.length > 0}
                     >
@@ -245,7 +245,7 @@ export default function CreatePost({ onPostCreated }) {
                     </Button>
                   </label>
                 </div>
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={loading} className="button-primary">
                   {loading ? 'Posting...' : 'Post'}
                 </Button>
               </div>
