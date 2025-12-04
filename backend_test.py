@@ -38,10 +38,11 @@ class SocialVibeBackendTester:
             print(f"   Details: {details}")
     
     def create_test_users(self):
-        """Create test users for testing"""
+        """Create test users for Close Friends testing"""
         users = [
-            {"username": "videouser", "email": "video@test.com", "password": "password123"},
-            {"username": "storyuser", "email": "story@test.com", "password": "password123"}
+            {"username": "alice_cf", "email": "alice@closefriends.com", "password": "password123"},
+            {"username": "bob_cf", "email": "bob@closefriends.com", "password": "password123"},
+            {"username": "charlie_cf", "email": "charlie@closefriends.com", "password": "password123"}
         ]
         
         for user_data in users:
