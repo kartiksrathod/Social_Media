@@ -4,49 +4,49 @@
 
 @layer base {
   :root {
-    /* Base Colors - Slate 50 / Slate 900 */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* DESIGN 1: BOLD & VIBRANT - Hot pink/orange gradients */
+    --background: 280 100% 99%;
+    --foreground: 280 80% 10%;
 
-    /* Cards - White / Slate 900 */
+    /* Cards - Vibrant white with subtle gradient */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 280 80% 10%;
 
     /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 280 80% 10%;
 
-    /* Primary - Vibrant Indigo */
-    --primary: 250 95% 60%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Hot Pink/Magenta */
+    --primary: 330 100% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Soft Slate Blue */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Electric Orange */
+    --secondary: 25 100% 60%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Muted - For subtle text */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Soft pink tint */
+    --muted: 330 60% 95%;
+    --muted-foreground: 280 30% 40%;
 
-    /* Accent - Soft Pink/Coral for likes/highlights */
-    --accent: 340 82% 52%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent - Electric Purple */
+    --accent: 280 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
     /* Destructive */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 55%;
+    --destructive-foreground: 0 0% 100%;
 
     /* Borders & Inputs */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 250 95% 60%; /* Matches Primary */
+    --border: 330 40% 85%;
+    --input: 330 40% 90%;
+    --ring: 330 100% 55%;
 
-    /* Radius - Modern Rounded */
-    --radius: 0.75rem;
+    /* Radius - Bold Rounded */
+    --radius: 1rem;
     
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(250 95% 60%), hsl(270 95% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(250 95% 60%), hsl(320 80% 60%));
+    /* Gradients - Bold & Vibrant */
+    --gradient-primary: linear-gradient(135deg, hsl(330 100% 55%), hsl(280 100% 65%), hsl(25 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(330 100% 55%), hsl(15 100% 55%));
   }
 
   .dark {
