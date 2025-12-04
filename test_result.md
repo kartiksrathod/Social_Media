@@ -290,6 +290,42 @@ frontend:
         agent: "main"
         comment: "Added visual tag markers on images that show username on hover and link to profile"
 
+  - task: "CreatePost visibility selector"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/CreatePost.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Dropdown selector for post visibility (Everyone/Close Friends) with Globe and Users icons. Posts created with correct visibility."
+
+  - task: "PostCard visibility indicator"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Posts show Star icon and 'Close Friends' text when visibility is close_friends. Visual indicator for restricted posts."
+
+  - task: "Profile close friend toggle button"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/pages/Profile.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Profile page has close friend toggle button (star icon). Button shows filled when user is in close friends, outline when not. Toggle adds/removes from close friends list."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
