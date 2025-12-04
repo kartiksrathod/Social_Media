@@ -150,7 +150,7 @@ router.post('/upload-video', authenticateToken, upload.single('file'), async (re
 router.put('/:postId', authenticateToken, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { text, images, image_tags } = req.body;
+    const { text, images, image_tags, visibility } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -187,6 +187,10 @@ router.put('/:postId', authenticateToken, async (req, res) => {
 
     if (image_tags !== undefined) {
       post.image_tags = image_tags;
+    }
+
+    if (visibility !== undefined) {
+      post.visibility = visibility;
     }
 
     await post.save();
