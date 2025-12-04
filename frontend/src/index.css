@@ -4,11 +4,17 @@
 
 @layer base {
   :root {
-    /* DESIGN 3: MINIMAL MODERN - Clean, spacious, Instagram-inspired */
+    /* LIGHT MODE - Clean, spacious, modern */
     --background: 0 0% 100%;
     --foreground: 0 0% 9%;
 
-    /* Cards - Pure white with soft shadow */
+    /* Layered Surfaces */
+    --surface-900: 0 0% 100%;      /* Main background */
+    --surface-800: 0 0% 98%;       /* Elevated surfaces */
+    --surface-700: 0 0% 96%;       /* Cards */
+    --surface-600: 0 0% 94%;       /* Hover states */
+
+    /* Cards */
     --card: 0 0% 100%;
     --card-foreground: 0 0% 9%;
 
@@ -16,80 +22,99 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 9%;
 
-    /* Primary - Soft Black */
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary - Refined Cyan Accent */
+    --primary: 188 78% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Light Gray */
+    /* Secondary - Neutral Gray */
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 9%;
 
-    /* Muted - Ultra light gray */
+    /* Text Hierarchy */
+    --text-primary: 0 0% 9%;
+    --text-secondary: 0 0% 35%;
+    --text-muted: 0 0% 55%;
+
+    /* Muted */
     --muted: 0 0% 96.5%;
     --muted-foreground: 0 0% 45%;
 
-    /* Accent - Subtle Blue */
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 98%;
+    /* Accent - Signature Cyan */
+    --accent: 188 78% 50%;
+    --accent-foreground: 0 0% 100%;
 
     /* Destructive */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    /* Borders & Inputs - Minimal */
-    --border: 0 0% 90%;
+    /* Borders - High Contrast */
+    --border: 0 0% 88%;
+    --border-strong: 0 0% 75%;
     --input: 0 0% 96%;
-    --ring: 0 0% 9%;
+    --ring: 188 78% 50%;
 
-    /* Radius - Subtle */
-    --radius: 0.5rem;
+    /* Radius */
+    --radius: 0.75rem;
     
-    /* Gradients - Monochrome with hint of color */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 9%), hsl(220 10% 20%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 9%), hsl(221 83% 53%));
+    /* Gradients - Soft and Subtle */
+    --gradient-primary: linear-gradient(135deg, hsl(188 78% 50%), hsl(188 70% 60%));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
   }
 
   .dark {
-    /* DARK PREMIUM - Cyberpunk/Luxury dark theme */
-    --background: 240 10% 3.9%;
+    /* DARK PREMIUM - Refined luxury dark theme with signature cyan */
+    
+    /* Layered Surfaces - Natural depth hierarchy */
+    --surface-900: 220 18% 8%;      /* Main background (deeper, richer) */
+    --surface-800: 220 16% 11%;     /* Elevated surfaces */
+    --surface-700: 220 14% 14%;     /* Cards */
+    --surface-600: 220 12% 18%;     /* Hover states */
+
+    --background: 220 18% 8%;
     --foreground: 0 0% 98%;
 
-    /* Cards - Dark with subtle glow */
-    --card: 240 10% 8%;
+    /* Cards - Subtle depth */
+    --card: 220 14% 14%;
     --card-foreground: 0 0% 98%;
 
     /* Popovers */
-    --popover: 240 10% 8%;
+    --popover: 220 16% 11%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary - Neon Cyan */
-    --primary: 180 100% 50%;
-    --primary-foreground: 240 10% 3.9%;
+    /* Primary - Signature Refined Cyan (reduced saturation for sophistication) */
+    --primary: 188 65% 55%;
+    --primary-foreground: 220 18% 8%;
 
-    /* Secondary - Electric Magenta */
-    --secondary: 320 100% 60%;
+    /* Secondary - Neutral dark surface */
+    --secondary: 220 14% 16%;
     --secondary-foreground: 0 0% 98%;
 
-    /* Muted - Dark gray */
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 65%;
+    /* Text Hierarchy - Clear readability */
+    --text-primary: 0 0% 98%;
+    --text-secondary: 0 0% 75%;
+    --text-muted: 0 0% 55%;
 
-    /* Accent - Neon Yellow */
-    --accent: 60 100% 50%;
-    --accent-foreground: 240 10% 3.9%;
+    /* Muted */
+    --muted: 220 14% 16%;
+    --muted-foreground: 0 0% 65%;
+
+    /* Accent - Signature Cyan (consistent with primary) */
+    --accent: 188 65% 55%;
+    --accent-foreground: 220 18% 8%;
 
     /* Destructive */
-    --destructive: 0 85% 60%;
+    --destructive: 0 70% 58%;
     --destructive-foreground: 0 0% 98%;
 
-    /* Borders & Inputs - Glowing */
-    --border: 240 10% 18%;
-    --input: 240 10% 15%;
-    --ring: 180 100% 50%;
+    /* Borders - Subtle but visible */
+    --border: 220 14% 20%;
+    --border-strong: 220 12% 28%;
+    --input: 220 14% 16%;
+    --ring: 188 65% 55%;
     
-    /* Gradients - Neon & Dark */
-    --gradient-primary: linear-gradient(135deg, hsl(180 100% 50%), hsl(280 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(320 100% 60%), hsl(180 100% 50%));
+    /* Gradients - Soft, sophisticated */
+    --gradient-primary: linear-gradient(135deg, hsl(188 65% 55%), hsl(188 60% 45%));
+    --gradient-surface: linear-gradient(180deg, hsl(220 16% 11%), hsl(220 18% 8%));
   }
 }
 
