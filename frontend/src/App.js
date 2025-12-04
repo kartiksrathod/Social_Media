@@ -54,6 +54,7 @@ function App() {
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/saved" element={<SavedPosts />} />
+                    <Route path="/close-friends" element={<CloseFriends />} />
                     <Route path="/hashtag/:tag" element={<HashtagPage />} />
                     <Route path="/profile/:username" element={<Profile />} />
                     <Route path="/profile" element={<Profile />} /> {/* Self profile */}
