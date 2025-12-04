@@ -762,45 +762,56 @@ class SocialVibeBackendTester:
             print(f"Warning: Failed to set up follows: {e}")
     
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🚀 Starting SocialVibe Backend Testing Suite - Phase 2 & 3")
-        print("=" * 60)
+        """Run all Close Friends backend tests"""
+        print("🚀 Starting SocialVibe Backend Testing Suite - Close Friends Feature")
+        print("=" * 70)
         
         # Setup
         print("\n📋 Setting up test environment...")
         self.create_test_users()
+        self.setup_test_follows()
         
-        # Video Upload and Posts Tests
-        print("\n🎥 Testing Video Upload and Posts Backend...")
-        self.test_video_upload_endpoint()
-        self.test_video_upload_size_limit()
-        self.test_video_format_validation()
-        self.test_create_post_with_video()
-        self.test_video_posts_in_feed()
+        # Close Friends Management Tests
+        print("\n👥 Testing Close Friends Management...")
+        self.test_add_close_friend_success()
+        self.test_add_close_friend_missing_user_id()
+        self.test_add_close_friend_nonexistent_user()
+        self.test_add_close_friend_self()
+        self.test_add_close_friend_duplicate()
         
-        # Stories Tests
-        print("\n📸 Testing Stories Backend with 24h Expiry...")
-        self.test_story_media_upload()
-        self.test_create_image_story()
-        self.test_create_video_story()
-        self.test_get_stories_with_view_status()
-        self.test_view_story_tracking()
-        self.test_delete_own_story()
-        self.test_cleanup_expired_stories()
+        print("\n🗑️ Testing Close Friends Removal...")
+        self.test_remove_close_friend_success()
+        self.test_remove_close_friend_missing_user_id()
+        self.test_remove_close_friend_not_in_list()
         
-        # Direct Messaging Tests
-        print("\n💬 Testing Direct Messaging Backend with WebSocket...")
-        self.test_create_conversation()
-        self.test_send_message()
-        self.test_get_messages()
-        self.test_get_conversations_with_unread_counts()
-        self.test_mark_conversation_as_read()
-        self.test_websocket_server_availability()
+        print("\n📋 Testing Close Friends List & Status...")
+        self.test_get_close_friends_list()
+        self.test_check_is_close_friend()
+        
+        # Post Visibility Tests
+        print("\n📝 Testing Post Visibility...")
+        self.test_create_post_with_visibility()
+        self.test_edit_post_visibility()
+        
+        # Feed Filtering Tests
+        print("\n🔍 Testing Feed Filtering...")
+        self.test_feed_filtering_close_friends()
+        self.test_author_can_see_own_close_friends_posts()
+        self.test_explore_shows_only_public_posts()
+        self.test_user_profile_visibility_filtering()
+        
+        # Notification Tests
+        print("\n🔔 Testing Notifications...")
+        self.test_close_friend_notification_creation()
+        
+        # Complete Workflow Test
+        print("\n🔄 Testing Complete Workflow...")
+        self.test_complete_close_friends_workflow()
         
         # Summary
-        print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("📊 CLOSE FRIENDS TESTING SUMMARY")
+        print("=" * 70)
         
         passed = len([r for r in self.test_results if r['status'] == 'PASS'])
         failed = len([r for r in self.test_results if r['status'] == 'FAIL'])
@@ -809,6 +820,18 @@ class SocialVibeBackendTester:
         print(f"✅ PASSED: {passed}")
         print(f"❌ FAILED: {failed}")
         print(f"📈 SUCCESS RATE: {(passed/total)*100:.1f}%")
+        
+        # Categorize results
+        management_tests = [r for r in self.test_results if 'close friend' in r['test'].lower() and ('add' in r['test'].lower() or 'remove' in r['test'].lower() or 'list' in r['test'].lower() or 'check' in r['test'].lower())]
+        visibility_tests = [r for r in self.test_results if 'post' in r['test'].lower() or 'visibility' in r['test'].lower() or 'feed' in r['test'].lower() or 'explore' in r['test'].lower() or 'profile' in r['test'].lower()]
+        notification_tests = [r for r in self.test_results if 'notification' in r['test'].lower()]
+        workflow_tests = [r for r in self.test_results if 'workflow' in r['test'].lower()]
+        
+        print(f"\n📊 BREAKDOWN:")
+        print(f"   👥 Management: {len([r for r in management_tests if r['status'] == 'PASS'])}/{len(management_tests)} passed")
+        print(f"   🔍 Visibility: {len([r for r in visibility_tests if r['status'] == 'PASS'])}/{len(visibility_tests)} passed")
+        print(f"   🔔 Notifications: {len([r for r in notification_tests if r['status'] == 'PASS'])}/{len(notification_tests)} passed")
+        print(f"   🔄 Workflow: {len([r for r in workflow_tests if r['status'] == 'PASS'])}/{len(workflow_tests)} passed")
         
         if failed > 0:
             print("\n❌ FAILED TESTS:")
