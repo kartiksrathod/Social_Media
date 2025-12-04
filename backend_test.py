@@ -83,12 +83,22 @@ class SocialVibeBackendTester:
                     })
                     if login_response.status_code == 200:
                         token_data = login_response.json()
-                        self.test_users[user_data["username"]] = {
-                            "token": token_data.get("access_token"),
-                            "user_id": token_data.get("user", {}).get("id"),
-                            "username": user_data["username"]
-                        }
-                        self.log_test(f"Login existing user {user_data['username']}", "PASS")
+                        token = token_data.get("access_token")
+                        
+                        # Get user info using the token
+                        me_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+                        me_response = requests.get(f"{self.base_url}/auth/me", headers=me_headers)
+                        
+                        if me_response.status_code == 200:
+                            user_info = me_response.json()
+                            self.test_users[user_data["username"]] = {
+                                "token": token,
+                                "user_id": user_info.get("id"),
+                                "username": user_data["username"]
+                            }
+                            self.log_test(f"Login existing user {user_data['username']}", "PASS")
+                        else:
+                            self.log_test(f"Get user info {user_data['username']}", "FAIL", f"Status: {me_response.status_code}")
                     else:
                         self.log_test(f"Login existing user {user_data['username']}", "FAIL", f"Status: {login_response.status_code}")
                 else:
