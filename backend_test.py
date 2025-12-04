@@ -546,46 +546,72 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Explore shows only public posts", "FAIL", str(e))
     
-    def test_delete_own_story(self):
-        """Test deleting own story"""
+    def test_user_profile_visibility_filtering(self):
+        """Test GET /api/posts/user/:username - Profile shows posts based on visibility"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_headers = self.get_auth_headers("bob_cf")
+            charlie_headers = self.get_auth_headers("charlie_cf")
+            alice_username = self.test_users["alice_cf"]["username"]
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            # Create a story to delete
-            image_file = self.create_sample_image_file()
-            files = {'file': ('delete_test.png', image_file, 'image/png')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Alice adds Bob to close friends
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
             
-            upload_response = requests.post(f"{self.base_url}/stories/upload", 
-                                          headers=upload_headers, files=files)
+            # Alice creates both public and close friends posts
+            public_post = {
+                "text": "Alice's public post on her profile! 📝 #public #profile",
+                "visibility": "public"
+            }
             
-            if upload_response.status_code == 200:
-                media_data = upload_response.json()
+            close_friends_post = {
+                "text": "Alice's close friends post on her profile! 🔒 #closefriends #profile",
+                "visibility": "close_friends"
+            }
+            
+            public_response = requests.post(f"{self.base_url}/posts", json=public_post, headers=alice_headers)
+            close_friends_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            
+            if public_response.status_code == 201 and close_friends_response.status_code == 201:
+                public_post_id = public_response.json()['id']
+                close_friends_post_id = close_friends_response.json()['id']
                 
-                story_data = {
-                    "media_url": media_data['url'],
-                    "media_type": "image"
-                }
+                # Bob (close friend) should see both posts on Alice's profile
+                bob_view_response = requests.get(f"{self.base_url}/posts/user/{alice_username}", headers=bob_headers)
                 
-                story_response = requests.post(f"{self.base_url}/stories", json=story_data, headers=headers)
-                
-                if story_response.status_code == 201:
-                    story = story_response.json()
-                    story_id = story['id']
+                if bob_view_response.status_code == 200:
+                    bob_view_posts = bob_view_response.json()
                     
-                    # Delete the story
-                    delete_response = requests.delete(f"{self.base_url}/stories/{story_id}", headers=headers)
+                    public_found = any(p.get('id') == public_post_id for p in bob_view_posts)
+                    close_friends_found = any(p.get('id') == close_friends_post_id for p in bob_view_posts)
                     
-                    if delete_response.status_code == 200:
-                        self.log_test("Delete own story", "PASS", f"Story {story_id} deleted successfully")
+                    if public_found and close_friends_found:
+                        self.log_test("Profile visibility - Close friend sees all", "PASS", "Bob sees both public and close friends posts")
                     else:
-                        self.log_test("Delete own story", "FAIL", f"Delete status: {delete_response.status_code}")
+                        self.log_test("Profile visibility - Close friend sees all", "FAIL", f"Bob missing posts: public={public_found}, close_friends={close_friends_found}")
                 else:
-                    self.log_test("Delete own story", "FAIL", "Story creation failed")
+                    self.log_test("Profile visibility - Close friend sees all", "FAIL", f"Bob profile view status: {bob_view_response.status_code}")
+                
+                # Charlie (not close friend) should only see public post
+                charlie_view_response = requests.get(f"{self.base_url}/posts/user/{alice_username}", headers=charlie_headers)
+                
+                if charlie_view_response.status_code == 200:
+                    charlie_view_posts = charlie_view_response.json()
+                    
+                    public_found = any(p.get('id') == public_post_id for p in charlie_view_posts)
+                    close_friends_found = any(p.get('id') == close_friends_post_id for p in charlie_view_posts)
+                    
+                    if public_found and not close_friends_found:
+                        self.log_test("Profile visibility - Non-close friend sees public only", "PASS", "Charlie sees only public post")
+                    else:
+                        self.log_test("Profile visibility - Non-close friend sees public only", "FAIL", f"Charlie sees: public={public_found}, close_friends={close_friends_found}")
+                else:
+                    self.log_test("Profile visibility - Non-close friend sees public only", "FAIL", f"Charlie profile view status: {charlie_view_response.status_code}")
             else:
-                self.log_test("Delete own story", "FAIL", "Image upload failed")
+                self.log_test("Profile visibility filtering", "FAIL", "Post creation failed")
         except Exception as e:
-            self.log_test("Delete own story", "FAIL", str(e))
+            self.log_test("Profile visibility filtering", "FAIL", str(e))
     
     def test_cleanup_expired_stories(self):
         """Test cleanup of expired stories"""
