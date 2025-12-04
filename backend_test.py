@@ -400,43 +400,68 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Edit post visibility", "FAIL", str(e))
     
-    def test_create_video_story(self):
-        """Test creating video story"""
+    def test_feed_filtering_close_friends(self):
+        """Test GET /api/posts/feed - Close friends can see close_friends posts"""
         try:
-            headers = self.get_auth_headers("storyuser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_headers = self.get_auth_headers("bob_cf")
+            charlie_headers = self.get_auth_headers("charlie_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            # First upload video
-            video_file = self.create_sample_video_file()
-            files = {'file': ('story_video.mp4', video_file, 'video/mp4')}
-            upload_headers = {k: v for k, v in headers.items() if k != 'Content-Type'}
+            # Alice adds Bob to close friends
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
             
-            upload_response = requests.post(f"{self.base_url}/stories/upload", 
-                                          headers=upload_headers, files=files)
+            # Bob follows Alice to see her posts in feed
+            alice_user_id = self.test_users["alice_cf"]["user_id"]
+            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
             
-            if upload_response.status_code == 200:
-                media_data = upload_response.json()
+            # Alice creates a close friends post
+            close_friends_post = {
+                "text": "Secret close friends post! Only Bob should see this 🤫 #secret",
+                "visibility": "close_friends"
+            }
+            
+            create_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            
+            if create_response.status_code == 201:
+                post = create_response.json()
+                post_id = post['id']
                 
-                # Create story
-                story_data = {
-                    "media_url": media_data['url'],
-                    "media_type": "video"
-                }
+                # Bob (close friend) should see the post in his feed
+                bob_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers)
                 
-                response = requests.post(f"{self.base_url}/stories", json=story_data, headers=headers)
-                
-                if response.status_code == 201:
-                    story = response.json()
-                    if story.get('media_type') == 'video' and 'expires_at' in story:
-                        self.video_story_id = story.get('id')
-                        self.log_test("Create video story", "PASS", f"Video story created: {story['id']}")
+                if bob_feed_response.status_code == 200:
+                    bob_feed = bob_feed_response.json()
+                    close_friends_post_found = any(p.get('id') == post_id for p in bob_feed)
+                    
+                    if close_friends_post_found:
+                        self.log_test("Feed filtering - Close friend can see", "PASS", "Bob can see Alice's close friends post")
                     else:
-                        self.log_test("Create video story", "FAIL", "Missing media_type or expires_at")
+                        self.log_test("Feed filtering - Close friend can see", "FAIL", "Bob cannot see Alice's close friends post")
                 else:
-                    self.log_test("Create video story", "FAIL", f"Status: {response.status_code}")
+                    self.log_test("Feed filtering - Close friend can see", "FAIL", f"Bob feed status: {bob_feed_response.status_code}")
+                
+                # Charlie (not close friend) should NOT see the post in his feed
+                charlie_user_id = self.test_users["charlie_cf"]["user_id"]
+                requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
+                
+                charlie_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=charlie_headers)
+                
+                if charlie_feed_response.status_code == 200:
+                    charlie_feed = charlie_feed_response.json()
+                    close_friends_post_found = any(p.get('id') == post_id for p in charlie_feed)
+                    
+                    if not close_friends_post_found:
+                        self.log_test("Feed filtering - Non-close friend cannot see", "PASS", "Charlie cannot see Alice's close friends post")
+                    else:
+                        self.log_test("Feed filtering - Non-close friend cannot see", "FAIL", "Charlie can see Alice's close friends post (should not)")
+                else:
+                    self.log_test("Feed filtering - Non-close friend cannot see", "FAIL", f"Charlie feed status: {charlie_feed_response.status_code}")
             else:
-                self.log_test("Create video story", "FAIL", "Video upload failed")
+                self.log_test("Feed filtering", "FAIL", f"Post creation failed: {create_response.status_code}")
         except Exception as e:
-            self.log_test("Create video story", "FAIL", str(e))
+            self.log_test("Feed filtering", "FAIL", str(e))
     
     def test_get_stories_with_view_status(self):
         """Test GET /api/stories with view status"""
