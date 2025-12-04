@@ -118,10 +118,10 @@ export default function AppLayout() {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-50 px-4 flex items-center justify-between">
          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-primary">
+                <Sparkles className="w-4 h-4 text-background" />
             </div>
-            <span className="font-heading font-bold text-xl">SocialVibe</span>
+            <span className="font-heading font-bold text-xl text-primary">SocialVibe</span>
          </div>
          <div className="flex items-center gap-2">
             <NotificationBell />
