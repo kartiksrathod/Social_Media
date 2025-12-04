@@ -114,6 +114,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/hashtags', hashtagRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/collaborations', collaborationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
