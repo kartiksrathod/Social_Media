@@ -14,10 +14,10 @@ export default function LandingPage() {
       <nav className="fixed w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-primary">
+              <Sparkles className="w-6 h-6 text-background" />
             </div>
-            <span className="font-heading font-bold text-2xl tracking-tight">SocialVibe</span>
+            <span className="font-heading font-bold text-2xl tracking-tight text-glow">SocialVibe</span>
           </div>
 
           {/* Desktop Menu */}
