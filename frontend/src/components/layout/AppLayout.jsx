@@ -44,10 +44,10 @@ const SidebarContent = ({ isMobile = false }) => {
   return (
     <div className="flex flex-col h-full py-6 px-4">
       <div className="flex items-center gap-3 mb-8 px-2">
-         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
-              <Sparkles className="w-6 h-6 text-white" />
+         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-primary">
+              <Sparkles className="w-6 h-6 text-background" />
         </div>
-        <h1 className="text-2xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
+        <h1 className="text-2xl font-heading font-bold text-primary">
           SocialVibe
         </h1>
       </div>
