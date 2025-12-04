@@ -641,6 +641,10 @@ class SocialVibeBackendTester:
             bob_user_id = self.test_users["bob_cf"]["user_id"]
             alice_username = self.test_users["alice_cf"]["username"]
             
+            # First, ensure Bob is not in close friends (remove if exists)
+            requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                          json={"user_id": bob_user_id}, headers=alice_headers)
+            
             # Get Bob's notifications before adding to close friends
             before_response = requests.get(f"{self.base_url}/notifications", headers=bob_headers)
             before_count = len(before_response.json()) if before_response.status_code == 200 else 0
