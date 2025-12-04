@@ -116,16 +116,16 @@ const SidebarContent = ({ isMobile = false }) => {
 export default function AppLayout() {
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 fixed left-0 top-0 bottom-0 border-r border-border/50 bg-card/50 backdrop-blur-md z-40">
+      {/* Desktop Sidebar - Refined surfaces */}
+      <aside className="hidden md:flex w-72 fixed left-0 top-0 bottom-0 border-r border-border bg-surface-800 backdrop-blur-md z-40">
         <SidebarContent />
       </aside>
 
-      {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-50 px-4 flex items-center justify-between">
+      {/* Mobile Header - Clean with accent */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-b border-border z-50 px-4 flex items-center justify-between">
          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-primary">
-                <Sparkles className="w-4 h-4 text-background" />
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center glow-subtle">
+                <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <span className="font-heading font-bold text-xl text-primary">SocialVibe</span>
          </div>
@@ -133,24 +133,24 @@ export default function AppLayout() {
             <NotificationBell />
             <Sheet>
                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="hover-accent">
                      <Menu className="w-6 h-6" />
                   </Button>
                </SheetTrigger>
-               <SheetContent side="left" className="w-80 p-0">
+               <SheetContent side="left" className="w-80 p-0 bg-surface-800 border-border">
                   <SidebarContent isMobile />
                </SheetContent>
             </Sheet>
          </div>
       </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-2xl md:ml-72 min-h-screen border-x border-border/50 pb-20 md:pb-0 pt-16 md:pt-0">
+      {/* Main Content Area - Natural background */}
+      <main className="flex-1 w-full max-w-2xl md:ml-72 min-h-screen border-x border-border pb-20 md:pb-0 pt-16 md:pt-0 bg-surface-900">
          <Outlet />
       </main>
 
-      {/* Right Sidebar (Suggestions) */}
-      <aside className="hidden lg:block w-80 fixed right-0 top-0 bottom-0 border-l border-border/50 p-6 bg-card/50 backdrop-blur-md z-40">
+      {/* Right Sidebar - Elevated surface */}
+      <aside className="hidden lg:block w-80 fixed right-0 top-0 bottom-0 border-l border-border p-6 bg-surface-800 backdrop-blur-md z-40">
          <div className="sticky top-6 space-y-6">
             {/* Search Bar */}
             <SearchBar />
