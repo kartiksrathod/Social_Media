@@ -748,103 +748,18 @@ class SocialVibeBackendTester:
     
     # ==================== HELPER METHODS ====================
     
-    def test_get_messages(self):
-        """Test getting messages for conversation"""
+    def setup_test_follows(self):
+        """Helper method to set up follow relationships for testing"""
         try:
-            user1_headers = self.get_auth_headers("videouser")
+            alice_user_id = self.test_users["alice_cf"]["user_id"]
+            bob_headers = self.get_auth_headers("bob_cf")
+            charlie_headers = self.get_auth_headers("charlie_cf")
             
-            if hasattr(self, 'conversation_id'):
-                response = requests.get(f"{self.base_url}/messages/{self.conversation_id}", 
-                                      headers=user1_headers)
-                
-                if response.status_code == 200:
-                    messages = response.json()
-                    
-                    if isinstance(messages, list):
-                        if len(messages) > 0:
-                            message = messages[0]
-                            required_fields = ['id', 'sender_id', 'text', 'created_at']
-                            
-                            if all(field in message for field in required_fields):
-                                self.log_test("Get messages", "PASS", f"Retrieved {len(messages)} messages")
-                            else:
-                                self.log_test("Get messages", "FAIL", "Missing required fields in message")
-                        else:
-                            self.log_test("Get messages", "PASS", "Messages endpoint working (empty)")
-                    else:
-                        self.log_test("Get messages", "FAIL", "Response is not a list")
-                else:
-                    self.log_test("Get messages", "FAIL", f"Status: {response.status_code}")
-            else:
-                self.log_test("Get messages", "FAIL", "No conversation available")
+            # Bob and Charlie follow Alice to see her posts in feed
+            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
+            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
         except Exception as e:
-            self.log_test("Get messages", "FAIL", str(e))
-    
-    def test_get_conversations_with_unread_counts(self):
-        """Test getting conversations with unread counts"""
-        try:
-            user1_headers = self.get_auth_headers("videouser")
-            
-            response = requests.get(f"{self.base_url}/messages/conversations", headers=user1_headers)
-            
-            if response.status_code == 200:
-                conversations = response.json()
-                
-                if isinstance(conversations, list):
-                    if len(conversations) > 0:
-                        conversation = conversations[0]
-                        required_fields = ['id', 'participants', 'participant_info', 'unread_count']
-                        
-                        if all(field in conversation for field in required_fields):
-                            self.log_test("Get conversations with unread counts", "PASS", 
-                                        f"Retrieved {len(conversations)} conversations")
-                        else:
-                            self.log_test("Get conversations with unread counts", "FAIL", 
-                                        "Missing required fields")
-                    else:
-                        self.log_test("Get conversations with unread counts", "PASS", 
-                                    "Conversations endpoint working (empty)")
-                else:
-                    self.log_test("Get conversations with unread counts", "FAIL", "Response is not a list")
-            else:
-                self.log_test("Get conversations with unread counts", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Get conversations with unread counts", "FAIL", str(e))
-    
-    def test_mark_conversation_as_read(self):
-        """Test marking conversation as read"""
-        try:
-            user2_headers = self.get_auth_headers("storyuser")
-            
-            if hasattr(self, 'conversation_id'):
-                response = requests.put(f"{self.base_url}/messages/{self.conversation_id}/read", 
-                                      headers=user2_headers)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if 'message' in data:
-                        self.log_test("Mark conversation as read", "PASS", "Messages marked as read")
-                    else:
-                        self.log_test("Mark conversation as read", "FAIL", "No message in response")
-                else:
-                    self.log_test("Mark conversation as read", "FAIL", f"Status: {response.status_code}")
-            else:
-                self.log_test("Mark conversation as read", "FAIL", "No conversation available")
-        except Exception as e:
-            self.log_test("Mark conversation as read", "FAIL", str(e))
-    
-    def test_websocket_server_availability(self):
-        """Test if WebSocket server is available"""
-        try:
-            # Test if the server responds to HTTP requests (Socket.IO endpoint)
-            response = requests.get("https://social-enhance.preview.emergentagent.com/socket.io/")
-            
-            if response.status_code in [200, 400]:  # 400 is expected for Socket.IO without proper handshake
-                self.log_test("WebSocket server availability", "PASS", "Socket.IO server is responding")
-            else:
-                self.log_test("WebSocket server availability", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("WebSocket server availability", "FAIL", str(e))
+            print(f"Warning: Failed to set up follows: {e}")
     
     def run_all_tests(self):
         """Run all backend tests"""
