@@ -68,6 +68,32 @@ const postSchema = new mongoose.Schema({
   mentions: [{
     type: String
   }],
+  image_tags: [{
+    image_index: {
+      type: Number,
+      required: true
+    },
+    x: {
+      type: Number,
+      required: true
+    },
+    y: {
+      type: Number,
+      required: true
+    },
+    user_id: {
+      type: String,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true
+    },
+    avatar: {
+      type: String,
+      default: null
+    }
+  }],
   likes: [{
     type: String
   }],
