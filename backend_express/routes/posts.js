@@ -363,8 +363,31 @@ router.get('/user/:username', authenticateToken, async (req, res) => {
       .sort({ created_at: -1 })
       .limit(limit);
 
+    // Filter posts based on visibility
+    const filteredPosts = posts.filter(post => {
+      // Show public posts to everyone
+      if (post.visibility === 'public') {
+        return true;
+      }
+      
+      // Show close_friends posts only to close friends (or the author themselves)
+      if (post.visibility === 'close_friends') {
+        if (targetUser.id === req.userId) {
+          return true; // Author can always see their own posts
+        }
+        
+        if (targetUser.close_friends.includes(req.userId)) {
+          return true;
+        }
+        
+        return false;
+      }
+      
+      return true;
+    });
+
     // Populate original posts for reposts
-    const postsWithOriginal = await Promise.all(posts.map(async (post) => {
+    const postsWithOriginal = await Promise.all(filteredPosts.map(async (post) => {
       if (post.is_repost && post.original_post_id) {
         const originalPost = await Post.findOne({ id: post.original_post_id });
         return postToPublic(post, req.userId, currentUser.saved_posts, originalPost);
