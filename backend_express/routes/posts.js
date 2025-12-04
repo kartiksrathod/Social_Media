@@ -327,7 +327,8 @@ router.get('/explore', authenticateToken, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const user = await User.findOne({ id: req.userId });
 
-    const posts = await Post.find({})
+    // Only show public posts in explore (don't show close friends posts)
+    const posts = await Post.find({ visibility: 'public' })
       .sort({ created_at: -1 })
       .limit(limit);
 
