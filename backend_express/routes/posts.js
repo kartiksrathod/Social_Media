@@ -365,7 +365,13 @@ router.get('/user/:username', authenticateToken, async (req, res) => {
       return res.status(404).json({ detail: 'User not found' });
     }
 
-    const posts = await Post.find({ author_id: targetUser.id })
+    // Include posts where user is author OR accepted collaborator
+    const posts = await Post.find({
+      $or: [
+        { author_id: targetUser.id },
+        { collaborator_id: targetUser.id, collaboration_status: 'accepted' }
+      ]
+    })
       .sort({ created_at: -1 })
       .limit(limit);
 
