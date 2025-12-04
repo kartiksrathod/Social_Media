@@ -253,25 +253,33 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Remove close friend - Not in list", "FAIL", str(e))
     
-    def test_video_posts_in_feed(self):
-        """Test that video posts appear in feed"""
+    def test_get_close_friends_list(self):
+        """Test GET /api/users/close-friends - Get close friends list"""
         try:
-            headers = self.get_auth_headers("videouser")
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
             
-            response = requests.get(f"{self.base_url}/posts/feed", headers=headers)
+            # Add Bob to close friends first
+            requests.post(f"{self.base_url}/users/close-friends/add", 
+                         json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            # Get close friends list
+            response = requests.get(f"{self.base_url}/users/close-friends", headers=alice_headers)
             
             if response.status_code == 200:
-                posts = response.json()
-                video_posts = [p for p in posts if p.get('video_url')]
-                
-                if video_posts:
-                    self.log_test("Video posts in feed", "PASS", f"Found {len(video_posts)} video posts in feed")
+                close_friends = response.json()
+                if isinstance(close_friends, list):
+                    bob_found = any(friend.get('id') == bob_user_id for friend in close_friends)
+                    if bob_found:
+                        self.log_test("Get close friends list", "PASS", f"Found {len(close_friends)} close friends including Bob")
+                    else:
+                        self.log_test("Get close friends list", "FAIL", "Bob not found in close friends list")
                 else:
-                    self.log_test("Video posts in feed", "FAIL", "No video posts found in feed")
+                    self.log_test("Get close friends list", "FAIL", "Response is not a list")
             else:
-                self.log_test("Video posts in feed", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Get close friends list", "FAIL", f"Status: {response.status_code}")
         except Exception as e:
-            self.log_test("Video posts in feed", "FAIL", str(e))
+            self.log_test("Get close friends list", "FAIL", str(e))
     
     # ==================== STORIES TESTS ====================
     
