@@ -238,7 +238,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Mentions & Tags (Autocomplete + Photo Tagging)"
+    - "Phase 1 Backend Testing Complete - Frontend Testing Next"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
