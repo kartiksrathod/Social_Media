@@ -3,12 +3,18 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Image, Video, X, Tag as TagIcon } from 'lucide-react';
+import { Image, Video, X, Tag as TagIcon, Globe, Users } from 'lucide-react';
 import { postsAPI, usersAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import MentionAutocomplete from './MentionAutocomplete';
 import ImageTagging from './ImageTagging';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 export default function CreatePost({ onPostCreated }) {
   const { user } = useAuth();
@@ -20,6 +26,7 @@ export default function CreatePost({ onPostCreated }) {
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisibility] = useState('public');
   
   // Mention autocomplete state
   const [showMentions, setShowMentions] = useState(false);
