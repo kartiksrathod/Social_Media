@@ -135,6 +135,10 @@ class SocialVibeBackendTester:
             alice_headers = self.get_auth_headers("alice_cf")
             bob_user_id = self.test_users["bob_cf"]["user_id"]
             
+            # First, ensure Bob is not in close friends (remove if exists)
+            requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                          json={"user_id": bob_user_id}, headers=alice_headers)
+            
             response = requests.post(f"{self.base_url}/users/close-friends/add", 
                                    json={"user_id": bob_user_id}, headers=alice_headers)
             
