@@ -173,6 +173,7 @@ const postSchema = new mongoose.Schema({
 // Indexes for performance
 postSchema.index({ id: 1 });
 postSchema.index({ author_id: 1 });
+postSchema.index({ collaborator_id: 1 });
 postSchema.index({ hashtags: 1 });
 postSchema.index({ created_at: -1 });
 
