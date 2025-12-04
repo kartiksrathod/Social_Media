@@ -142,6 +142,28 @@ const postSchema = new mongoose.Schema({
     type: String,
     enum: ['public', 'close_friends'],
     default: 'public'
+  },
+  // Collaborative post fields
+  is_collaborative: {
+    type: Boolean,
+    default: false
+  },
+  collaborator_id: {
+    type: String,
+    default: null
+  },
+  collaborator_username: {
+    type: String,
+    default: null
+  },
+  collaborator_avatar: {
+    type: String,
+    default: null
+  },
+  collaboration_status: {
+    type: String,
+    enum: ['pending', 'accepted', 'rejected'],
+    default: null
   }
 }, {
   collection: 'posts',
