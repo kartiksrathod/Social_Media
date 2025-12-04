@@ -283,7 +283,8 @@ export default function CreatePost({ onPostCreated }) {
         images: uploadedImageUrls,
         image_url: uploadedImageUrls[0] || null,
         video_url: videoUrl,
-        image_tags: imageTags
+        image_tags: imageTags,
+        visibility: visibility
       });
 
       toast.success('Post created successfully!');
@@ -294,6 +295,7 @@ export default function CreatePost({ onPostCreated }) {
       setImageTags([]);
       setVideoFile(null);
       setVideoPreview(null);
+      setVisibility('public');
       
       if (onPostCreated) {
         onPostCreated();
