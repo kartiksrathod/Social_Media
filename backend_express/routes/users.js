@@ -236,6 +236,125 @@ router.get('/:userId/following', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/users/close-friends/add - Add user to close friends
+router.post('/close-friends/add', authenticateToken, async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ detail: 'User ID required' });
+    }
+
+    if (user_id === req.userId) {
+      return res.status(400).json({ detail: 'Cannot add yourself to close friends' });
+    }
+
+    const targetUser = await User.findOne({ id: user_id });
+    if (!targetUser) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    const currentUser = await User.findOne({ id: req.userId });
+
+    if (currentUser.close_friends.includes(user_id)) {
+      return res.status(400).json({ detail: 'User already in close friends' });
+    }
+
+    // Add to close friends list
+    await User.updateOne(
+      { id: req.userId },
+      { $push: { close_friends: user_id } }
+    );
+
+    // Create notification
+    const notification = new Notification({
+      user_id: user_id,
+      actor_id: req.userId,
+      actor_username: currentUser.username,
+      actor_avatar: currentUser.avatar,
+      type: 'close_friend',
+      text: 'added you to their close friends'
+    });
+    await notification.save();
+
+    // Emit real-time notification
+    const io = req.app.get('io');
+    const userSockets = req.app.get('userSockets');
+    const targetSocketId = userSockets.get(user_id);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit('new_notification', notification);
+    }
+
+    res.json({ message: 'Successfully added to close friends' });
+  } catch (error) {
+    console.error('Add close friend error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// DELETE /api/users/close-friends/remove - Remove user from close friends
+router.delete('/close-friends/remove', authenticateToken, async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ detail: 'User ID required' });
+    }
+
+    const currentUser = await User.findOne({ id: req.userId });
+
+    if (!currentUser.close_friends.includes(user_id)) {
+      return res.status(400).json({ detail: 'User not in close friends' });
+    }
+
+    // Remove from close friends list
+    await User.updateOne(
+      { id: req.userId },
+      { $pull: { close_friends: user_id } }
+    );
+
+    res.json({ message: 'Successfully removed from close friends' });
+  } catch (error) {
+    console.error('Remove close friend error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/users/close-friends - Get current user's close friends list
+router.get('/close-friends', authenticateToken, async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ id: req.userId });
+    
+    if (!currentUser) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    const closeFriends = await User.find({ id: { $in: currentUser.close_friends } });
+    res.json(closeFriends.map(user => userToPublic(user, req.userId)));
+  } catch (error) {
+    console.error('Get close friends error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/users/:userId/is-close-friend - Check if user is in close friends
+router.get('/:userId/is-close-friend', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUser = await User.findOne({ id: req.userId });
+
+    if (!currentUser) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    const isCloseFriend = currentUser.close_friends.includes(userId);
+    res.json({ is_close_friend: isCloseFriend });
+  } catch (error) {
+    console.error('Check close friend error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 // GET /api/users/:username - Get user profile (must come AFTER specific routes)
 router.get('/:username', authenticateToken, async (req, res) => {
   try {
