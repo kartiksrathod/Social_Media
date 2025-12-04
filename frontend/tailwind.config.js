@@ -29,6 +29,15 @@ module.exports = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        
+        // Layered Surfaces - Natural depth
+        surface: {
+          900: 'hsl(var(--surface-900))',
+          800: 'hsl(var(--surface-800))',
+          700: 'hsl(var(--surface-700))',
+          600: 'hsl(var(--surface-600))',
+        },
+        
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
@@ -45,6 +54,14 @@ module.exports = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))'
         },
+        
+        // Text Hierarchy
+        text: {
+          primary: 'hsl(var(--text-primary))',
+          secondary: 'hsl(var(--text-secondary))',
+          muted: 'hsl(var(--text-muted))',
+        },
+        
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))'
@@ -57,7 +74,12 @@ module.exports = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
         },
-        border: 'hsl(var(--border))',
+        
+        // Borders with hierarchy
+        border: {
+          DEFAULT: 'hsl(var(--border))',
+          strong: 'hsl(var(--border-strong))',
+        },
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
       },
