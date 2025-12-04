@@ -418,6 +418,14 @@ export default function CreatePost({ onPostCreated }) {
                   </div>
                 )}
 
+                {/* Collaborator Selector */}
+                <CollaboratorSelector
+                  collaborator={collaborator}
+                  onCollaboratorChange={setCollaborator}
+                  open={collaboratorDialogOpen}
+                  onOpenChange={setCollaboratorDialogOpen}
+                />
+
                 <div className="flex items-center justify-between pt-2 border-t border-border">
                   <div className="flex gap-2">
                     <input
