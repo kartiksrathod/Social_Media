@@ -450,6 +450,39 @@ export default function CreatePost({ onPostCreated }) {
                         </span>
                       </Button>
                     </label>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="hover-accent"
+                        >
+                          {visibility === 'public' ? (
+                            <>
+                              <Globe className="h-4 w-4 mr-2" />
+                              Everyone
+                            </>
+                          ) : (
+                            <>
+                              <Users className="h-4 w-4 mr-2" />
+                              Close Friends
+                            </>
+                          )}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem onClick={() => setVisibility('public')}>
+                          <Globe className="h-4 w-4 mr-2" />
+                          Everyone
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setVisibility('close_friends')}>
+                          <Users className="h-4 w-4 mr-2" />
+                          Close Friends
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                   <Button type="submit" disabled={loading} className="button-primary">
                     {loading ? 'Posting...' : 'Post'}
