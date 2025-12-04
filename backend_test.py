@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-SocialVibe Backend Testing Suite - Phase 2 & 3 Features
-Tests Video Upload, Stories with 24h Expiry, and Direct Messaging with WebSocket
+SocialVibe Backend Testing Suite - Close Friends Feature
+Tests Close Friends Management, Post Visibility, Feed Filtering, and Notifications
 """
 
 import requests
