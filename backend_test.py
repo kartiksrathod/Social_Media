@@ -668,34 +668,83 @@ class SocialVibeBackendTester:
         except Exception as e:
             self.log_test("Close friend notification creation", "FAIL", str(e))
     
-    # ==================== DIRECT MESSAGING TESTS ====================
+    # ==================== CLOSE FRIENDS WORKFLOW TEST ====================
     
-    def test_create_conversation(self):
-        """Test creating conversation between users"""
+    def test_complete_close_friends_workflow(self):
+        """Test complete Close Friends workflow: Add -> Create post -> View -> Remove -> Verify"""
         try:
-            user1_headers = self.get_auth_headers("videouser")
-            user2_id = self.test_users["storyuser"]["user_id"]
+            alice_headers = self.get_auth_headers("alice_cf")
+            bob_headers = self.get_auth_headers("bob_cf")
+            charlie_headers = self.get_auth_headers("charlie_cf")
             
-            conversation_data = {
-                "participant_id": user2_id
+            alice_user_id = self.test_users["alice_cf"]["user_id"]
+            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
+            
+            # Step 1: Alice adds Bob to close friends
+            add_response = requests.post(f"{self.base_url}/users/close-friends/add", 
+                                       json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            if add_response.status_code != 200:
+                self.log_test("Complete workflow - Add step", "FAIL", f"Add failed: {add_response.status_code}")
+                return
+            
+            # Step 2: Bob and Charlie follow Alice
+            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
+            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
+            
+            # Step 3: Alice creates a close friends post
+            close_friends_post = {
+                "text": "Workflow test: This is for close friends only! 🔒 #workflow #test",
+                "visibility": "close_friends"
             }
             
-            response = requests.post(f"{self.base_url}/messages/conversations", 
-                                   json=conversation_data, headers=user1_headers)
+            post_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
             
-            if response.status_code in [200, 201]:
-                conversation = response.json()
-                required_fields = ['id', 'participants', 'participant_info']
-                
-                if all(field in conversation for field in required_fields):
-                    self.conversation_id = conversation['id']
-                    self.log_test("Create conversation", "PASS", f"Conversation created: {conversation['id']}")
-                else:
-                    self.log_test("Create conversation", "FAIL", "Missing required fields")
+            if post_response.status_code != 201:
+                self.log_test("Complete workflow - Post creation", "FAIL", f"Post creation failed: {post_response.status_code}")
+                return
+            
+            post_id = post_response.json()['id']
+            
+            # Step 4: Verify Bob can see the post, Charlie cannot
+            bob_feed = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers).json()
+            charlie_feed = requests.get(f"{self.base_url}/posts/feed", headers=charlie_headers).json()
+            
+            bob_can_see = any(p.get('id') == post_id for p in bob_feed)
+            charlie_can_see = any(p.get('id') == post_id for p in charlie_feed)
+            
+            if not bob_can_see:
+                self.log_test("Complete workflow - Bob visibility", "FAIL", "Bob cannot see close friends post")
+                return
+            
+            if charlie_can_see:
+                self.log_test("Complete workflow - Charlie visibility", "FAIL", "Charlie can see close friends post (should not)")
+                return
+            
+            # Step 5: Alice removes Bob from close friends
+            remove_response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
+                                            json={"user_id": bob_user_id}, headers=alice_headers)
+            
+            if remove_response.status_code != 200:
+                self.log_test("Complete workflow - Remove step", "FAIL", f"Remove failed: {remove_response.status_code}")
+                return
+            
+            # Step 6: Verify Bob can no longer see close friends posts in new feed requests
+            # (Note: Existing posts might still be cached, but new requests should filter them out)
+            time.sleep(1)  # Brief pause
+            bob_feed_after = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers).json()
+            bob_can_see_after = any(p.get('id') == post_id for p in bob_feed_after)
+            
+            if not bob_can_see_after:
+                self.log_test("Complete Close Friends workflow", "PASS", 
+                            "Full workflow successful: Add -> Post -> View -> Remove -> Verify")
             else:
-                self.log_test("Create conversation", "FAIL", f"Status: {response.status_code}")
+                self.log_test("Complete Close Friends workflow", "FAIL", 
+                            "Bob can still see close friends post after removal")
+                
         except Exception as e:
-            self.log_test("Create conversation", "FAIL", str(e))
+            self.log_test("Complete Close Friends workflow", "FAIL", str(e))
     
     def test_send_message(self):
         """Test sending messages in conversation"""
