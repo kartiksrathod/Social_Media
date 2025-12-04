@@ -17,6 +17,7 @@ const notificationRoutes = require('./routes/notifications');
 const hashtagRoutes = require('./routes/hashtags');
 const storyRoutes = require('./routes/stories');
 const messageRoutes = require('./routes/messages');
+const collaborationRoutes = require('./routes/collaborations');
 
 // Create Express app and HTTP server
 const app = express();
