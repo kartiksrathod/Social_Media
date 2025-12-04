@@ -26,8 +26,8 @@ export default function LandingPage() {
             <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">Stories</a>
             <a href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">Pricing</a>
             <div className="flex items-center gap-4 ml-4">
-              <Button variant="ghost" onClick={() => navigate('/login')}>Login</Button>
-              <Button onClick={() => navigate('/signup')} className="shadow-lg shadow-primary/25">Get Started</Button>
+              <Button variant="ghost" onClick={() => navigate('/login')} className="hover:text-primary">Login</Button>
+              <Button onClick={() => navigate('/signup')} className="button-neon bg-primary hover:bg-primary/90">Get Started</Button>
             </div>
           </div>
 
