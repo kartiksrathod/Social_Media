@@ -4,11 +4,12 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Image, Video, X, Tag as TagIcon, Globe, Users } from 'lucide-react';
-import { postsAPI, usersAPI } from '../../lib/api';
+import { postsAPI, usersAPI, collaborationsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import MentionAutocomplete from './MentionAutocomplete';
 import ImageTagging from './ImageTagging';
+import CollaboratorSelector from './CollaboratorSelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,10 @@ export default function CreatePost({ onPostCreated }) {
   const [videoPreview, setVideoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [visibility, setVisibility] = useState('public');
+  
+  // Collaborator state
+  const [collaborator, setCollaborator] = useState(null);
+  const [collaboratorDialogOpen, setCollaboratorDialogOpen] = useState(false);
   
   // Mention autocomplete state
   const [showMentions, setShowMentions] = useState(false);
