@@ -337,16 +337,16 @@ export default function PostCard({ post, onUpdate }) {
         </div>
       </CardHeader>
       
-      <CardContent className={`p-4 pt-2 space-y-4 ${isRepost && post.repost_text ? 'border-l-2 border-border/50 ml-4 bg-muted/20' : ''}`}>
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+      <CardContent className={`p-4 pt-2 space-y-4 ${isRepost && post.repost_text ? 'border-l-2 border-primary/30 ml-4 bg-primary/5' : ''}`}>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
           {renderTextWithHashtagsAndMentions(post.text)}
           {post.edited_at && !isRepost && (
-            <span className="text-xs text-muted-foreground ml-2">(edited)</span>
+            <span className="text-xs text-text-muted ml-2">(edited)</span>
           )}
         </p>
         
         {postImages.length > 0 && (
-          <div className="relative rounded-xl overflow-hidden border border-border/50 bg-muted">
+          <div className="relative rounded-xl overflow-hidden border border-border bg-surface-700">
             <img 
               src={postImages[currentImageIndex]} 
               alt="Post content" 
@@ -354,13 +354,13 @@ export default function PostCard({ post, onUpdate }) {
             />
             {postImages.length > 1 && (
               <>
-                <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
+                <div className="absolute top-2 right-2 bg-black/60 text-white px-2 py-1 rounded-full text-xs backdrop-blur-sm">
                   {currentImageIndex + 1} / {postImages.length}
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-8 w-8 backdrop-blur-sm"
                   onClick={prevImage}
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -368,7 +368,7 @@ export default function PostCard({ post, onUpdate }) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-8 w-8 backdrop-blur-sm"
                   onClick={nextImage}
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -379,7 +379,7 @@ export default function PostCard({ post, onUpdate }) {
         )}
 
         {post.video_url && (
-          <div className="rounded-xl overflow-hidden border border-border/50 bg-muted">
+          <div className="rounded-xl overflow-hidden border border-border bg-surface-700">
             <video 
               src={post.video_url} 
               controls 
