@@ -470,7 +470,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Collaborative Posts - Backend testing (4 tasks)"
+    - "Comments + Replies System - Backend testing (3 tasks) - COMPLETED ✅"
     - "Enhanced Mentions & Image Tagging - Frontend testing (4 tasks)"
     - "Close Friends - Frontend testing (3 tasks)"
     - "Collaborative Posts - Frontend testing (5 tasks)"
