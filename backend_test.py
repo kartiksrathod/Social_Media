@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-SocialVibe Backend Testing Suite - Track A Comments Upgrade Pack
-Tests Comment Emoji Reactions, Sorting & Filtering, Real-time Updates, and @Mentions
+SocialVibe Backend Testing Suite - DEPLOYMENT READINESS CHECK
+Comprehensive testing of all core backend functionality for production deployment
 """
 
 import requests
@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 BASE_URL = "https://deploy-readiness-14.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
-class CommentsUpgradePackTester:
+class SocialVibeDeploymentTester:
     def __init__(self):
         self.base_url = BASE_URL
         self.headers = HEADERS.copy()
