@@ -543,7 +543,7 @@ agent_communication:
       - GET /api/posts/feed (filtered by visibility)
       - Notification creation for close_friend type
 
-user_problem_statement: "Phase 2: Implement Reactions System (like, love, laugh, wow, sad, angry) to replace simple likes"
+user_problem_statement: "Phase 3: Implement Comments + Replies System with likes, edit, delete, notifications, and real-time updates"
 
 backend:
   - task: "Reactions System Backend"
