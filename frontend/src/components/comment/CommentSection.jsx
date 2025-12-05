@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { X, MessageCircle } from 'lucide-react';
+import { X, MessageCircle, ArrowUpDown } from 'lucide-react';
 import { commentsAPI } from '../../lib/api';
 import CommentInput from './CommentInput';
 import CommentItem from './CommentItem';
+import { useSocket } from '../../contexts/SocketContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
   const [comments, setComments] = useState([]);
@@ -10,9 +18,17 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(initialCommentCount);
+  const [sortBy, setSortBy] = useState('newest'); // newest, most_liked, most_replied
   const limit = 20;
+  const { socket } = useSocket();
   
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const sortOptions = [
+    { value: 'newest', label: 'Newest First' },
+    { value: 'most_liked', label: 'Most Liked' },
+    { value: 'most_replied', label: 'Most Replied' },
+  ];
 
   useEffect(() => {
     loadComments();
