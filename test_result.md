@@ -868,12 +868,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Comments + Replies System - Frontend testing (5 tasks) - READY FOR TESTING ✅"
-    - "CommentSection Component"
-    - "CommentItem Component"
-    - "CommentInput Component"
-    - "CommentReplies Component"
-    - "PostCard Comment Integration"
+    - "Comments + Replies System - Frontend testing (5 tasks) - TESTING NOW 🔄"
+    - "CommentSection Component - modal display, input, pagination"
+    - "CommentItem Component - likes, replies, edit/delete"
+    - "CommentInput Component - 500 char limit, submit/cancel"
+    - "CommentReplies Component - nested display"
+    - "PostCard Comment Integration - button, count, modal"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
