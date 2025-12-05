@@ -127,9 +127,9 @@ class SocialVibeBackendTester:
         png_header = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
         return io.BytesIO(png_header)
     
-    # ==================== CLOSE FRIENDS MANAGEMENT TESTS ====================
+    # ==================== COLLABORATIVE POSTS CREATION TESTS ====================
     
-    def test_add_close_friend_success(self):
+    def test_create_collaborative_post_success(self):
         """Test POST /api/users/close-friends/add - Success case"""
         try:
             alice_headers = self.get_auth_headers("alice_cf")
