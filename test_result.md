@@ -1074,6 +1074,62 @@ test_plan:
 
 agent_communication:
     - agent: "main"
+      message: |
+        PHASE 4: TRACK A - COMMENTS UPGRADE PACK IMPLEMENTATION COMPLETE 🚀
+        
+        Implemented all 4 features from Track A:
+        
+        ✅ BACKEND (4 tasks):
+        1. Emoji Reactions on Comments:
+           - Added reactions array to Comment model (user_id, type: like/love/laugh/wow/sad/angry, created_at)
+           - POST /api/comments/:commentId/react - toggle reaction with notifications
+           - DELETE /api/comments/:commentId/react/:type - remove reaction
+           - Returns reaction_summary and user_reaction in all responses
+           - WebSocket event 'comment_reaction' for real-time sync
+        
+        2. Sort & Filter Comments:
+           - GET /api/comments/:postId accepts sort parameter (newest/most_liked/most_replied)
+           - GET /api/comments/:commentId/replies supports sorting
+           - MongoDB sort criteria: newest (-created_at), most_liked (-like_count), most_replied (-reply_count)
+        
+        3. Real-time Comment Updates:
+           - WebSocket events: new_comment, edit_comment, delete_comment, comment_reaction
+           - Post rooms (post_${postId}) for targeted updates
+           - join_post_room and leave_post_room handlers in server.js
+           - All CRUD operations emit WebSocket events
+        
+        4. @Mentions in Comments:
+           - extractMentions function parses @username from text
+           - mentioned_user_ids stored in Comment model
+           - Notifications sent to mentioned users with 'comment' type
+           - WebSocket delivery for real-time notifications
+        
+        ✅ FRONTEND (4 tasks):
+        1. CommentSection - Sort Dropdown & WebSocket:
+           - Sort dropdown with 3 options (Newest First, Most Liked, Most Replied)
+           - WebSocket listeners for new_comment, edit_comment, delete_comment, comment_reaction
+           - Auto-updates comment list in real-time
+        
+        2. CommentItem - Emoji Reactions & Mentions:
+           - Integrated ReactionButton component (same as posts)
+           - Emoji picker on hover, quick react on click
+           - renderTextWithMentions - clickable @username links
+           - Optimistic updates for reactions
+        
+        3. CommentInput - Mention Autocomplete:
+           - MentionAutocomplete triggers on @ symbol
+           - Real-time user search with dropdown
+           - Auto-insert @username on selection
+        
+        4. Frontend API Integration:
+           - commentsAPI.react(commentId, type)
+           - commentsAPI.removeReaction(commentId, type)
+           - getPostComments with sort parameter
+        
+        All services running: Backend Express.js on 8001, Frontend on 3000, MongoDB, WebSocket.
+        Ready for comprehensive backend testing of all 4 new features.
+    
+    - agent: "main"
       message: "PHASE 4: COMMENTS + REPLIES FRONTEND - STARTING TESTING 🚀 All services running: Backend Express.js on 8001 (via uvicorn shim), Frontend on 3000, MongoDB. Backend testing completed ✅ - all 3 backend tasks working perfectly (100% success rate). Frontend components implemented: (1) CommentSection - modal with input, comments list, pagination. (2) CommentItem - likes, reply button, edit/delete menu, (edited) tag, [deleted] placeholder. (3) CommentInput - 500 char limit/counter, submit/cancel, @username context. (4) CommentReplies - nested display with indent. (5) PostCard Integration - comment button with count, opens modal. About to test all 5 frontend tasks with comprehensive UI testing."
     - agent: "main"
       message: "NEW TESTING SESSION - PHASE 4 FRONTEND: All services restarted and running (backend on 8001, frontend on 3000, mongodb, websocket). Installed frontend dependencies with yarn. Ready to test Comments + Replies UI comprehensively: 1) Click comment button on post to open CommentSection modal, 2) Add new comment with CommentInput (test 500 char limit), 3) Click like button on comment, 4) Click reply button to add nested reply, 5) Test edit/delete menu on own comments, 6) Verify (edited) tag shows after edit, 7) Test [deleted] placeholder for deleted comments with replies, 8) Test 'View replies' toggle for nested comments, 9) Test pagination with 'Load more' button. Backend is 100% working so frontend should integrate smoothly."
