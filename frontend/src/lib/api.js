@@ -138,4 +138,27 @@ export const collaborationsAPI = {
   getPending: () => api.get('/collaborations/pending'),
 };
 
+// ==================== COMMENTS ====================
+export const commentsAPI = {
+  // Create comment or reply
+  create: (data) => api.post('/comments', data),
+  
+  // Get comments for a post
+  getPostComments: (postId, limit = 20, offset = 0) => 
+    api.get(`/comments/${postId}`, { params: { limit, offset } }),
+  
+  // Get replies for a comment
+  getReplies: (commentId) => api.get(`/comments/${commentId}/replies`),
+  
+  // Edit comment
+  update: (commentId, text) => api.put(`/comments/${commentId}`, { text }),
+  
+  // Delete comment
+  delete: (commentId) => api.delete(`/comments/${commentId}`),
+  
+  // Like/unlike comment
+  like: (commentId) => api.post(`/comments/${commentId}/like`),
+  unlike: (commentId) => api.delete(`/comments/${commentId}/like`),
+};
+
 export default api;
