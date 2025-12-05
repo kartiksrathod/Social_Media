@@ -644,7 +644,118 @@ class SocialVibeDeploymentTester:
                 
         except Exception as e:
             self.log_test("Error Handling", "FAIL", str(e))
-        """Create a test comment for reaction testing"""
+    
+    # ==================== MAIN TEST RUNNER ====================
+    
+    def run_all_tests(self):
+        """Run all deployment readiness tests"""
+        print("🚀 Starting SocialVibe Backend Deployment Readiness Testing")
+        print("=" * 80)
+        
+        # Setup
+        print("\n📋 Setting up test environment...")
+        self.create_test_users()
+        
+        # 1. Authentication System
+        print("\n🔐 Testing Authentication System...")
+        self.test_auth_signup()
+        self.test_auth_login()
+        self.test_auth_me()
+        
+        # 2. User Management
+        print("\n👥 Testing User Management...")
+        self.test_users_search()
+        self.test_users_follow_unfollow()
+        self.test_users_upload_avatar()
+        
+        # 3. Posts System
+        print("\n📝 Testing Posts System...")
+        self.test_posts_create()
+        self.test_posts_upload_image()
+        self.test_posts_feed()
+        self.test_posts_explore()
+        self.test_posts_like_unlike()
+        self.test_posts_edit_delete()
+        
+        # 4. Notifications
+        print("\n🔔 Testing Notifications...")
+        self.test_notifications_get()
+        self.test_notifications_mark_read()
+        
+        # 5. Hashtags
+        print("\n#️⃣ Testing Hashtags...")
+        self.test_hashtags_trending()
+        self.test_hashtags_posts_by_tag()
+        
+        # 6. Save/Bookmark
+        print("\n🔖 Testing Save/Bookmark...")
+        self.test_posts_save_unsave()
+        self.test_posts_saved()
+        
+        # 7. Image Tagging & Mentions
+        print("\n🏷️ Testing Image Tagging & Mentions...")
+        self.test_posts_with_image_tags()
+        self.test_posts_with_mentions()
+        
+        # 8. Error Handling
+        print("\n⚠️ Testing Error Handling...")
+        self.test_error_handling()
+        
+        # Summary
+        print("\n" + "=" * 80)
+        print("📊 DEPLOYMENT READINESS TESTING SUMMARY")
+        print("=" * 80)
+        
+        passed = len([r for r in self.test_results if r['status'] == 'PASS'])
+        failed = len([r for r in self.test_results if r['status'] == 'FAIL'])
+        total = len(self.test_results)
+        
+        print(f"✅ PASSED: {passed}")
+        print(f"❌ FAILED: {failed}")
+        print(f"📈 SUCCESS RATE: {(passed/total)*100:.1f}%")
+        
+        # Categorize results by feature
+        auth_tests = [r for r in self.test_results if 'auth' in r['test'].lower()]
+        user_tests = [r for r in self.test_results if 'user' in r['test'].lower()]
+        post_tests = [r for r in self.test_results if 'post' in r['test'].lower()]
+        notification_tests = [r for r in self.test_results if 'notification' in r['test'].lower()]
+        hashtag_tests = [r for r in self.test_results if 'hashtag' in r['test'].lower()]
+        error_tests = [r for r in self.test_results if 'error' in r['test'].lower()]
+        
+        print(f"\n📊 BREAKDOWN BY FEATURE:")
+        print(f"   🔐 Authentication: {len([r for r in auth_tests if r['status'] == 'PASS'])}/{len(auth_tests)} passed")
+        print(f"   👥 User Management: {len([r for r in user_tests if r['status'] == 'PASS'])}/{len(user_tests)} passed")
+        print(f"   📝 Posts System: {len([r for r in post_tests if r['status'] == 'PASS'])}/{len(post_tests)} passed")
+        print(f"   🔔 Notifications: {len([r for r in notification_tests if r['status'] == 'PASS'])}/{len(notification_tests)} passed")
+        print(f"   #️⃣ Hashtags: {len([r for r in hashtag_tests if r['status'] == 'PASS'])}/{len(hashtag_tests)} passed")
+        print(f"   ⚠️ Error Handling: {len([r for r in error_tests if r['status'] == 'PASS'])}/{len(error_tests)} passed")
+        
+        if failed > 0:
+            print("\n❌ FAILED TESTS:")
+            for result in self.test_results:
+                if result['status'] == 'FAIL':
+                    print(f"   • {result['test']}: {result['details']}")
+        
+        # Deployment readiness assessment
+        critical_failures = []
+        for result in self.test_results:
+            if result['status'] == 'FAIL' and any(critical in result['test'].lower() 
+                for critical in ['auth', 'login', 'signup', 'posts create', 'posts feed']):
+                critical_failures.append(result['test'])
+        
+        print(f"\n🚀 DEPLOYMENT READINESS:")
+        if len(critical_failures) == 0:
+            print("   ✅ READY FOR DEPLOYMENT - All critical features working")
+        else:
+            print("   ❌ NOT READY - Critical failures detected:")
+            for failure in critical_failures:
+                print(f"      • {failure}")
+        
+        return self.test_results
+
+if __name__ == "__main__":
+    tester = SocialVibeDeploymentTester()
+    results = tester.run_all_tests()
         try:
             headers = self.get_auth_headers(author_username)
             comment_data = {
