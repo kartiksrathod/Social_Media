@@ -1130,6 +1130,22 @@ agent_communication:
         Ready for comprehensive backend testing of all 4 new features.
     
     - agent: "main"
+      message: |
+        NEW SESSION - TRACK A COMMENTS UPGRADE PACK TESTING 🧪
+        All services restarted and running (backend on 8001, frontend on 3000, mongodb, websocket).
+        Code exploration completed - verified all Track A features are fully implemented:
+        ✅ Backend: reactions array in Comment model, POST/DELETE /api/comments/:commentId/react endpoints, sort parameter support, WebSocket events (new_comment, edit_comment, delete_comment, comment_reaction), extractMentions function, mentioned_user_ids in comments
+        ✅ Frontend: ReactionButton in CommentItem, sortBy dropdown in CommentSection, renderTextWithMentions for clickable links, MentionAutocomplete in CommentInput, WebSocket listeners
+        
+        About to test backend with comprehensive scenarios:
+        1. Comment emoji reactions - toggle 6 reaction types, notifications, WebSocket events
+        2. Comment sorting - newest/most_liked/most_replied for comments and replies
+        3. Real-time updates - new/edit/delete/reaction WebSocket events
+        4. @Mentions - extraction, notifications, mentioned_user_ids storage
+        
+        Calling backend testing agent now.
+    
+    - agent: "main"
       message: "PHASE 4: COMMENTS + REPLIES FRONTEND - STARTING TESTING 🚀 All services running: Backend Express.js on 8001 (via uvicorn shim), Frontend on 3000, MongoDB. Backend testing completed ✅ - all 3 backend tasks working perfectly (100% success rate). Frontend components implemented: (1) CommentSection - modal with input, comments list, pagination. (2) CommentItem - likes, reply button, edit/delete menu, (edited) tag, [deleted] placeholder. (3) CommentInput - 500 char limit/counter, submit/cancel, @username context. (4) CommentReplies - nested display with indent. (5) PostCard Integration - comment button with count, opens modal. About to test all 5 frontend tasks with comprehensive UI testing."
     - agent: "main"
       message: "NEW TESTING SESSION - PHASE 4 FRONTEND: All services restarted and running (backend on 8001, frontend on 3000, mongodb, websocket). Installed frontend dependencies with yarn. Ready to test Comments + Replies UI comprehensively: 1) Click comment button on post to open CommentSection modal, 2) Add new comment with CommentInput (test 500 char limit), 3) Click like button on comment, 4) Click reply button to add nested reply, 5) Test edit/delete menu on own comments, 6) Verify (edited) tag shows after edit, 7) Test [deleted] placeholder for deleted comments with replies, 8) Test 'View replies' toggle for nested comments, 9) Test pagination with 'Load more' button. Backend is 100% working so frontend should integrate smoothly."
