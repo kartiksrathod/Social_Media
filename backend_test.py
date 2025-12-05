@@ -129,39 +129,53 @@ class CommentsUpgradePackTester:
         png_header = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
         return io.BytesIO(png_header)
     
-    # ==================== COLLABORATIVE POSTS CREATION TESTS ====================
+    # ==================== SETUP METHODS ====================
     
-    def test_create_collaborative_post_success(self):
-        """Test POST /api/collaborations/invite - Create collaborative post with invite"""
+    def create_test_post(self, author_username="alice_comments"):
+        """Create a test post for comment testing"""
         try:
-            alice_headers = self.get_auth_headers("alice_collab")
-            bob_username = self.test_users["bob_collab"]["username"]
-            
+            headers = self.get_auth_headers(author_username)
             post_data = {
-                "text": "Let's collaborate on this amazing post! 🤝 #collaboration #socialvibe",
-                "collaborator_username": bob_username,
+                "text": "This is a test post for comment reactions and mentions! 🚀 #testing #comments",
                 "visibility": "public"
             }
             
-            response = requests.post(f"{self.base_url}/collaborations/invite", 
-                                   json=post_data, headers=alice_headers)
+            response = requests.post(f"{self.base_url}/posts", json=post_data, headers=headers)
             
             if response.status_code == 201:
                 post = response.json()
-                if (post.get('is_collaborative') == True and 
-                    post.get('collaboration_status') == 'pending' and
-                    post.get('collaborator_username') == bob_username):
-                    self.collaborative_posts.append(post['id'])
-                    self.log_test("Create collaborative post - Success", "PASS", 
-                                f"Collaborative post created with pending status: {post['id']}")
-                else:
-                    self.log_test("Create collaborative post - Success", "FAIL", 
-                                f"Post missing collaborative fields: {post}")
+                self.test_posts.append(post['id'])
+                self.log_test(f"Create test post by {author_username}", "PASS", f"Post created: {post['id']}")
+                return post['id']
             else:
-                self.log_test("Create collaborative post - Success", "FAIL", 
-                            f"Status: {response.status_code}, Response: {response.text}")
+                self.log_test(f"Create test post by {author_username}", "FAIL", f"Status: {response.status_code}")
+                return None
         except Exception as e:
-            self.log_test("Create collaborative post - Success", "FAIL", str(e))
+            self.log_test(f"Create test post by {author_username}", "FAIL", str(e))
+            return None
+    
+    def create_test_comment(self, post_id, author_username="alice_comments", text="Test comment for reactions! 💬"):
+        """Create a test comment for reaction testing"""
+        try:
+            headers = self.get_auth_headers(author_username)
+            comment_data = {
+                "post_id": post_id,
+                "text": text
+            }
+            
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=headers)
+            
+            if response.status_code == 201:
+                comment = response.json()
+                self.test_comments.append(comment['id'])
+                self.log_test(f"Create test comment by {author_username}", "PASS", f"Comment created: {comment['id']}")
+                return comment['id']
+            else:
+                self.log_test(f"Create test comment by {author_username}", "FAIL", f"Status: {response.status_code}")
+                return None
+        except Exception as e:
+            self.log_test(f"Create test comment by {author_username}", "FAIL", str(e))
+            return None
     
     def test_add_close_friend_missing_user_id(self):
         """Test POST /api/users/close-friends/add - Missing user_id"""
