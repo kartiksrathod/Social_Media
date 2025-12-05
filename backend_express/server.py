@@ -1,20 +1,24 @@
-#!/usr/bin/env python3
 """
-Wrapper script to start Express.js backend from supervisor
-This allows supervisor to start the Node.js backend properly
+FastAPI shim that starts Express.js backend
 """
+from fastapi import FastAPI
 import subprocess
-import sys
 import os
+import atexit
 
-# Change to backend directory
+app = FastAPI()
+
+# Start Express backend
 os.chdir('/app/backend_express')
+backend_process = subprocess.Popen(['node', 'server.js'])
 
-# Start the Express backend
-try:
-    subprocess.run(['node', 'server.js'], check=True)
-except KeyboardInterrupt:
-    sys.exit(0)
-except Exception as e:
-    print(f"Error starting backend: {e}", file=sys.stderr)
-    sys.exit(1)
+def cleanup():
+    if backend_process:
+        backend_process.terminate()
+        backend_process.wait()
+
+atexit.register(cleanup)
+
+@app.get("/health")
+def health():
+    return {"status": "running"}
