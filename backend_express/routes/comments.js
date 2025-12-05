@@ -65,6 +65,29 @@ router.post('/', authenticateToken, async (req, res) => {
 
     await comment.save();
 
+    // Create notifications for mentioned users
+    for (const mentionedUserId of mentioned_user_ids) {
+      const notification = new Notification({
+        user_id: mentionedUserId,
+        actor_id: user_id,
+        actor_username: username,
+        actor_avatar: avatar,
+        type: 'comment', // Using existing type
+        post_id: post_id,
+        comment_id: comment.id,
+        text: `mentioned you in a comment: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`
+      });
+      await notification.save();
+
+      // Emit WebSocket event for real-time notification
+      if (req.app.get('io')) {
+        req.app.get('io').to(mentionedUserId).emit('notification', {
+          ...notification.toObject(),
+          id: notification.id
+        });
+      }
+    }
+
     // Update counts
     if (parent_comment_id && parentComment) {
       // This is a reply - update parent comment reply count
