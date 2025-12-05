@@ -643,6 +643,18 @@ backend_previous:
           comment: "✅ PASSED: Comment likes and notifications working perfectly. POST /api/comments/:commentId/like toggles like/unlike with accurate like_count updates and has_liked status. DELETE /api/comments/:commentId/like provides alternative unlike endpoint. All 3 notification types work correctly: 'comment' (post author notified when someone comments), 'comment_reply' (comment author notified when someone replies), 'comment_like' (comment author notified when someone likes). Notifications include proper structure (actor_id, actor_username, type, post_id, comment_id, text) and are delivered via WebSocket for real-time updates. Self-notification prevention works (no notifications for self-comments/self-likes). Comprehensive testing with 34 test scenarios achieved 100% success rate."
 
 frontend:
+  - task: "CommentSection - Sort Option Persistence"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentSection.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "ENHANCEMENT: Added localStorage persistence for comment sort preference. Updated sortBy state initialization to load saved preference from localStorage.getItem('commentSortPreference') with 'newest' as default. Updated handleSortChange to save preference via localStorage.setItem('commentSortPreference', value) when user changes sort option. Users' sort preference (newest/most_liked/most_replied) now persists across sessions and page refreshes for consistent UX."
+
   - task: "CommentSection - Sort Dropdown & WebSocket"
     implemented: true
     working: "pending_test"
