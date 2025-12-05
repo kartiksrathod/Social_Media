@@ -642,6 +642,56 @@ backend_previous:
           agent: "testing"
           comment: "✅ PASSED: Comment likes and notifications working perfectly. POST /api/comments/:commentId/like toggles like/unlike with accurate like_count updates and has_liked status. DELETE /api/comments/:commentId/like provides alternative unlike endpoint. All 3 notification types work correctly: 'comment' (post author notified when someone comments), 'comment_reply' (comment author notified when someone replies), 'comment_like' (comment author notified when someone likes). Notifications include proper structure (actor_id, actor_username, type, post_id, comment_id, text) and are delivered via WebSocket for real-time updates. Self-notification prevention works (no notifications for self-comments/self-likes). Comprehensive testing with 34 test scenarios achieved 100% success rate."
 
+frontend:
+  - task: "CommentSection - Sort Dropdown & WebSocket"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentSection.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Updated CommentSection with sort dropdown (Newest First, Most Liked, Most Replied) in header. Added sortBy state and handleSortChange function. Comments reload when sort changes. Integrated WebSocket listeners: join_post_room on mount, listen for new_comment (adds to list), edit_comment (updates in list), delete_comment (soft/hard delete handling), comment_reaction (updates reactions). Reactions and user_reaction included in all comment data. Socket cleanup on unmount."
+  
+  - task: "CommentItem - Emoji Reactions & Mentions"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentItem.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Replaced simple like button with ReactionButton component (same as posts). Added handleReact and handleRemoveReaction functions with optimistic updates. Added renderTextWithMentions function to parse @username and render as clickable links (navigate to profile on click). Mentions styled with purple color and hover underline. ReactionButton shows hover picker, quick react, reaction counts, top 3 reactions. Reply button updated with better styling."
+  
+  - task: "CommentInput - Mention Autocomplete"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentInput.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Integrated MentionAutocomplete component from posts. Added showMentions and mentionSearch state. handleTextChange tracks cursor position and detects @ symbol. When @ typed, shows autocomplete dropdown with user search. handleMentionSelect inserts @username into text and closes dropdown. Autocomplete appears above textarea with proper positioning. Uses existing usersAPI.search endpoint for user lookup."
+  
+  - task: "Frontend API Integration - Reactions & Sorting"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/lib/api.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Added commentsAPI.react(commentId, type) endpoint (POST /api/comments/:commentId/react with reaction_type). Added commentsAPI.removeReaction(commentId, type) endpoint (DELETE /api/comments/:commentId/react/:type). Updated getPostComments to accept sort parameter (newest/most_liked/most_replied). All API methods use proper authentication headers from localStorage token."
+
+frontend_previous:
   - task: "CommentSection Component"
     implemented: true
     working: "pending_test"
