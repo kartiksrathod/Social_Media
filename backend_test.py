@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-SocialVibe Backend Testing Suite - Collaborative Posts Feature
-Tests Collaborative Posts Creation, Invites, Accept/Reject, Feed Filtering, and Notifications
+SocialVibe Backend Testing Suite - Track A Comments Upgrade Pack
+Tests Comment Emoji Reactions, Sorting & Filtering, Real-time Updates, and @Mentions
 """
 
 import requests
@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 BASE_URL = "https://comment-upgrade.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
-class SocialVibeBackendTester:
+class CommentsUpgradePackTester:
     def __init__(self):
         self.base_url = BASE_URL
         self.headers = HEADERS.copy()
