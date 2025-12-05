@@ -144,8 +144,8 @@ export const commentsAPI = {
   create: (data) => api.post('/comments', data),
   
   // Get comments for a post
-  getPostComments: (postId, limit = 20, offset = 0) => 
-    api.get(`/comments/${postId}`, { params: { limit, offset } }),
+  getPostComments: (postId, limit = 20, offset = 0, sort = 'newest') => 
+    api.get(`/comments/${postId}`, { params: { limit, offset, sort } }),
   
   // Get replies for a comment
   getReplies: (commentId) => api.get(`/comments/${commentId}/replies`),
