@@ -163,12 +163,36 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <MessageCircle className="w-5 h-5 text-purple-600" />
             <h2 className="text-lg font-semibold">
               Comments {total > 0 && `(${total})`}
             </h2>
+            
+            {/* Sort Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 gap-1.5">
+                  <ArrowUpDown className="w-4 h-4" />
+                  <span className="text-xs">
+                    {sortOptions.find(opt => opt.value === sortBy)?.label}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {sortOptions.map(option => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    className={sortBy === option.value ? 'bg-accent' : ''}
+                  >
+                    {option.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+          
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
