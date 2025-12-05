@@ -591,6 +591,66 @@ backend:
           agent: "testing"
           comment: "✅ PASSED: Comment likes and notifications working perfectly. POST /api/comments/:commentId/like toggles like/unlike with accurate like_count updates and has_liked status. DELETE /api/comments/:commentId/like provides alternative unlike endpoint. All 3 notification types work correctly: 'comment' (post author notified when someone comments), 'comment_reply' (comment author notified when someone replies), 'comment_like' (comment author notified when someone likes). Notifications include proper structure (actor_id, actor_username, type, post_id, comment_id, text) and are delivered via WebSocket for real-time updates. Self-notification prevention works (no notifications for self-comments/self-likes). Comprehensive testing with 34 test scenarios achieved 100% success rate."
 
+  - task: "CommentSection Component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentSection.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Created CommentSection modal component with full comment display. Features: modal overlay with fixed positioning, header with comment count, CommentInput at top for adding comments, scrollable comments list with loading/empty states, 'Load more' pagination button. Integrated with commentsAPI for fetching and creating comments. Component shows modal when commentsOpen is true."
+
+  - task: "CommentItem Component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentItem.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Created CommentItem component for individual comment display. Features: user avatar and username, timestamp with date-fns formatting, comment text with 500 char limit, like button with optimistic updates and heart icon, reply button that opens reply input, edit/delete menu (3-dot) for own comments, '[deleted]' placeholder for deleted comments with replies, '(edited)' tag for edited comments. Supports inline editing with CommentInput component. Reply count display with 'View/Hide replies' toggle."
+
+  - task: "CommentInput Component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentInput.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Created reusable CommentInput component for adding comments and replies. Features: textarea with 500 character limit and counter, submit button with Send icon, cancel button for replies/edits, 'Replying to @username' context display, auto-focus support, loading state during submission, placeholder customization. Used for top-level comments, replies, and inline editing."
+
+  - task: "CommentReplies Component"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/comment/CommentReplies.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Created CommentReplies component for nested reply display. Features: fetches replies using commentsAPI.getReplies, displays replies with left border indent for visual hierarchy, loading state, empty state (returns null if no replies), reuses CommentItem for each reply. Replies are sorted by created_at ascending (oldest first)."
+
+  - task: "PostCard Comment Integration"
+    implemented: true
+    working: "pending_test"
+    file: "/app/frontend/src/components/post/PostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "pending_test"
+          agent: "main"
+          comment: "Integrated CommentSection into PostCard. Replaced old Dialog-based comment implementation with new CommentSection modal. Features: comment button shows comment count from state, clicking button opens CommentSection modal, modal renders conditionally when commentsOpen is true, passes postId, onClose handler, and initialCommentCount to CommentSection. Removed old comment state (comments, commentText, loadingComment) and old comment functions (loadComments, handleAddComment). Comment count updates in real-time as users add/delete comments."
+
 frontend:
   - task: "Reactions System UI"
     implemented: true
