@@ -12,7 +12,7 @@ import io
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://replyfeature.preview.emergentagent.com/api"
+BASE_URL = "https://replyhub.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SocialVibeBackendTester:
