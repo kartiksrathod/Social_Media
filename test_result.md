@@ -868,12 +868,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Video Upload and Posts Backend"
-    - "Stories Backend with 24h Expiry"
-    - "Direct Messaging Backend with WebSocket"
-    - "Video Posts UI"
-    - "Stories UI with 24h Expiry"
-    - "Direct Messaging UI with Real-time"
+    - "Comments + Replies System - Frontend testing (5 tasks) - READY FOR TESTING ✅"
+    - "CommentSection Component"
+    - "CommentItem Component"
+    - "CommentInput Component"
+    - "CommentReplies Component"
+    - "PostCard Comment Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
