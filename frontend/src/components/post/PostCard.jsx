@@ -426,58 +426,15 @@ export default function PostCard({ post, onUpdate }) {
               onRemoveReaction={handleRemoveReaction}
             />
 
-            <Dialog open={commentsOpen} onOpenChange={(open) => {
-              setCommentsOpen(open);
-              if (open) loadComments();
-            }}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="group px-2 h-8 hover-accent">
-                  <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-medium">{post.comments_count}</span>
-                </Button>
-              </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Comments</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <form onSubmit={handleAddComment} className="flex gap-3">
-                  <Input 
-                    placeholder="Write a comment..." 
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    disabled={loadingComment}
-                  />
-                  <Button type="submit" disabled={loadingComment || !commentText.trim()}>
-                    {loadingComment ? 'Posting...' : 'Post'}
-                  </Button>
-                </form>
-                <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                  {comments.length === 0 ? (
-                    <p className="text-center text-muted-foreground text-sm py-8">
-                      No comments yet. Be the first to comment!
-                    </p>
-                  ) : (
-                    comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-3">
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={comment.avatar} />
-                          <AvatarFallback>{comment.username?.charAt(0).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="bg-muted/50 p-3 rounded-xl rounded-tl-none text-sm flex-1">
-                          <span className="font-semibold block text-xs mb-1">@{comment.username}</span>
-                          {comment.text}
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {formatTime(comment.created_at)}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="group px-2 h-8 hover-accent"
+              onClick={() => setCommentsOpen(true)}
+            >
+              <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-medium">{commentCount}</span>
+            </Button>
           </div>
 
           <div className="flex items-center gap-2">
