@@ -969,12 +969,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Comments + Replies System - Frontend testing (5 tasks) - TESTING NOW 🔄"
-    - "CommentSection Component - modal display, input, pagination"
-    - "CommentItem Component - likes, replies, edit/delete"
-    - "CommentInput Component - 500 char limit, submit/cancel"
-    - "CommentReplies Component - nested display"
-    - "PostCard Comment Integration - button, count, modal"
+    - "Track A Comments Upgrade Pack - Backend testing (4 tasks) 🔄"
+    - "Comment Emoji Reactions - react/remove endpoints, notifications, WebSocket"
+    - "Comment Sorting & Filtering - newest/most_liked/most_replied"
+    - "Real-time Comment Updates - new/edit/delete/reaction WebSocket events"
+    - "Comment Mentions - extraction, notifications, mentioned_user_ids"
+    - "After backend: Frontend testing (4 tasks)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
