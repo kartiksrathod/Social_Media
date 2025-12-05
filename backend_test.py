@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-SocialVibe Backend Testing Suite - Close Friends Feature
-Tests Close Friends Management, Post Visibility, Feed Filtering, and Notifications
+SocialVibe Backend Testing Suite - Collaborative Posts Feature
+Tests Collaborative Posts Creation, Invites, Accept/Reject, Feed Filtering, and Notifications
 """
 
 import requests
