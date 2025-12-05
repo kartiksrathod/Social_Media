@@ -308,28 +308,108 @@ class SocialVibeDeploymentTester:
         except Exception as e:
             self.log_test("Posts Upload Image", "FAIL", str(e))
     
-    def create_test_post(self, author_username="alice_deploy"):
-        """Create a test post for comment testing"""
+    def test_posts_feed(self):
+        """Test GET /api/posts/feed - Get personalized feed"""
         try:
-            headers = self.get_auth_headers(author_username)
+            headers = self.get_auth_headers("alice_deploy")
+            response = requests.get(f"{self.base_url}/posts/feed", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list) or "posts" in data:
+                    posts = data if isinstance(data, list) else data.get("posts", [])
+                    self.log_test("Posts Feed", "PASS", f"Feed returned {len(posts)} posts")
+                else:
+                    self.log_test("Posts Feed", "FAIL", f"Unexpected response format: {type(data)}")
+            else:
+                self.log_test("Posts Feed", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Posts Feed", "FAIL", str(e))
+    
+    def test_posts_explore(self):
+        """Test GET /api/posts/explore - Get all public posts"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            response = requests.get(f"{self.base_url}/posts/explore", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list) or "posts" in data:
+                    posts = data if isinstance(data, list) else data.get("posts", [])
+                    self.log_test("Posts Explore", "PASS", f"Explore returned {len(posts)} posts")
+                else:
+                    self.log_test("Posts Explore", "FAIL", f"Unexpected response format: {type(data)}")
+            else:
+                self.log_test("Posts Explore", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Posts Explore", "FAIL", str(e))
+    
+    def test_posts_like_unlike(self):
+        """Test POST /api/posts/:postId/like and unlike"""
+        try:
+            if not self.test_posts:
+                # Create a test post first
+                self.test_posts_create()
+                if not self.test_posts:
+                    self.log_test("Posts Like/Unlike", "FAIL", "No test post available")
+                    return
+            
+            headers = self.get_auth_headers("bob_deploy")
+            post_id = self.test_posts[0]
+            
+            # Test like
+            like_response = requests.post(f"{self.base_url}/posts/{post_id}/like", headers=headers)
+            
+            if like_response.status_code in [200, 201]:
+                # Test unlike
+                unlike_response = requests.post(f"{self.base_url}/posts/{post_id}/unlike", headers=headers)
+                
+                if unlike_response.status_code in [200, 201]:
+                    self.log_test("Posts Like/Unlike", "PASS", "Like and unlike successful")
+                else:
+                    self.log_test("Posts Like/Unlike", "FAIL", f"Unlike failed: {unlike_response.status_code}")
+            else:
+                self.log_test("Posts Like/Unlike", "FAIL", f"Like failed: {like_response.status_code}")
+        except Exception as e:
+            self.log_test("Posts Like/Unlike", "FAIL", str(e))
+    
+    def test_posts_edit_delete(self):
+        """Test PUT /api/posts/:postId and DELETE /api/posts/:postId"""
+        try:
+            # Create a test post for editing/deleting
+            headers = self.get_auth_headers("alice_deploy")
             post_data = {
-                "text": "This is a test post for comment reactions and mentions! 🚀 #testing #comments",
+                "text": "Test post for editing and deleting",
                 "visibility": "public"
             }
             
-            response = requests.post(f"{self.base_url}/posts", json=post_data, headers=headers)
+            create_response = requests.post(f"{self.base_url}/posts", json=post_data, headers=headers)
             
-            if response.status_code == 201:
-                post = response.json()
-                self.test_posts.append(post['id'])
-                self.log_test(f"Create test post by {author_username}", "PASS", f"Post created: {post['id']}")
-                return post['id']
+            if create_response.status_code in [200, 201]:
+                post_id = create_response.json()["id"]
+                
+                # Test edit
+                edit_data = {
+                    "text": "Updated test post content",
+                    "visibility": "public"
+                }
+                
+                edit_response = requests.put(f"{self.base_url}/posts/{post_id}", json=edit_data, headers=headers)
+                
+                if edit_response.status_code in [200, 201]:
+                    # Test delete
+                    delete_response = requests.delete(f"{self.base_url}/posts/{post_id}", headers=headers)
+                    
+                    if delete_response.status_code in [200, 204]:
+                        self.log_test("Posts Edit/Delete", "PASS", "Edit and delete successful")
+                    else:
+                        self.log_test("Posts Edit/Delete", "FAIL", f"Delete failed: {delete_response.status_code}")
+                else:
+                    self.log_test("Posts Edit/Delete", "FAIL", f"Edit failed: {edit_response.status_code}")
             else:
-                self.log_test(f"Create test post by {author_username}", "FAIL", f"Status: {response.status_code}")
-                return None
+                self.log_test("Posts Edit/Delete", "FAIL", f"Post creation failed: {create_response.status_code}")
         except Exception as e:
-            self.log_test(f"Create test post by {author_username}", "FAIL", str(e))
-            return None
+            self.log_test("Posts Edit/Delete", "FAIL", str(e))
     
     def create_test_comment(self, post_id, author_username="alice_comments", text="Test comment for reactions! 💬"):
         """Create a test comment for reaction testing"""
