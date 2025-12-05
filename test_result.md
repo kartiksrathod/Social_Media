@@ -548,39 +548,48 @@ user_problem_statement: "Phase 3: Implement Comments + Replies System with likes
 backend:
   - task: "Comment Model & Schema"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/models/Comment.js, /app/backend_express/models/Post.js, /app/backend_express/models/Notification.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created Comment model with fields: id, post_id, user_id, username, avatar, text (500 char max), parent_comment_id (for replies), likes array, like_count, reply_count, is_edited, created_at, updated_at. Added comment_count field to Post model. Added comment, comment_reply, comment_like notification types. Added comment_id field to Notification model. All indexes created for performance."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Comment model correctly accepts all fields and validates constraints. Post.comment_count field increments/decrements properly. Notification model supports comment, comment_reply, comment_like types with comment_id field. Parent_comment_id enables nested replies. Text validation enforces 500 character limit. All schema fields work perfectly with proper indexing for performance."
   
   - task: "Comment CRUD Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/routes/comments.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created complete comment API: POST /api/comments (create comment/reply), GET /api/comments/:postId (get top-level comments with pagination), GET /api/comments/:commentId/replies (get nested replies), PUT /api/comments/:commentId (edit), DELETE /api/comments/:commentId (delete with soft-delete if has replies). All endpoints have proper validation, authorization, and error handling."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: All CRUD endpoints working flawlessly. POST /api/comments creates top-level comments and replies with proper validation (rejects missing post_id/text, text >500 chars, non-existent posts/parents). GET /api/comments/:postId returns paginated top-level comments with has_liked status. GET /api/comments/:commentId/replies returns nested replies sorted by created_at ASC. PUT /api/comments/:commentId edits own comments with authorization checks (rejects editing others' comments). DELETE /api/comments/:commentId implements smart deletion: soft-delete (text='[deleted]') if has replies, hard-delete if no replies. All error handling and edge cases work correctly."
   
   - task: "Comment Likes & Notifications"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/routes/comments.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented comment like system: POST /api/comments/:commentId/like (toggle like/unlike), DELETE /api/comments/:commentId/like (unlike). Like count tracking with optimistic updates. Notifications: 'comment' (someone comments on your post), 'comment_reply' (someone replies to your comment), 'comment_like' (someone likes your comment). All notifications sent via WebSocket for real-time delivery. Self-comment/self-like prevention implemented."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Comment likes and notifications working perfectly. POST /api/comments/:commentId/like toggles like/unlike with accurate like_count updates and has_liked status. DELETE /api/comments/:commentId/like provides alternative unlike endpoint. All 3 notification types work correctly: 'comment' (post author notified when someone comments), 'comment_reply' (comment author notified when someone replies), 'comment_like' (comment author notified when someone likes). Notifications include proper structure (actor_id, actor_username, type, post_id, comment_id, text) and are delivered via WebSocket for real-time updates. Self-notification prevention works (no notifications for self-comments/self-likes). Comprehensive testing with 34 test scenarios achieved 100% success rate."
 
 frontend:
   - task: "Reactions System UI"
