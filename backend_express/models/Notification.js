@@ -33,6 +33,10 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  comment_id: {
+    type: String,
+    default: null
+  },
   text: {
     type: String,
     default: null
