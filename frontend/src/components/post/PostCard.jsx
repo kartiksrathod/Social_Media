@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import RepostDialog from './RepostDialog';
 import ReactionButton from './ReactionButton';
+import CommentSection from '../comment/CommentSection';
 
 export default function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
