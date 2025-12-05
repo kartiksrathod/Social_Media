@@ -32,19 +32,89 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
 
   useEffect(() => {
     loadComments();
-  }, [postId]);
+  }, [postId, sortBy]);
+
+  // WebSocket listeners for real-time updates
+  useEffect(() => {
+    if (!socket) return;
+
+    // Join post room for real-time updates
+    socket.emit('join_post_room', postId);
+
+    // Listen for new comments
+    socket.on('new_comment', (data) => {
+      if (data.comment.post_id === postId && !data.parent_comment_id) {
+        setComments(prev => [data.comment, ...prev]);
+        setTotal(prev => prev + 1);
+      }
+    });
+
+    // Listen for edited comments
+    socket.on('edit_comment', (data) => {
+      if (data.comment.post_id === postId) {
+        setComments(prev => prev.map(c => 
+          c.id === data.comment.id ? data.comment : c
+        ));
+      }
+    });
+
+    // Listen for deleted comments
+    socket.on('delete_comment', (data) => {
+      if (data.is_soft_delete) {
+        // Soft delete - update comment text to [deleted]
+        setComments(prev => prev.map(c => 
+          c.id === data.comment_id 
+            ? { ...c, text: '[deleted]', username: '[deleted]', avatar: null }
+            : c
+        ));
+      } else {
+        // Hard delete - remove from list
+        setComments(prev => prev.filter(c => c.id !== data.comment_id));
+        setTotal(prev => Math.max(0, prev - 1));
+      }
+    });
+
+    // Listen for comment reactions
+    socket.on('comment_reaction', (data) => {
+      setComments(prev => prev.map(c => {
+        if (c.id === data.comment_id) {
+          const reactionSummary = {};
+          data.reactions.forEach(r => {
+            reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+          });
+          const userReaction = data.reactions.find(r => r.user_id === currentUser.id);
+          return {
+            ...c,
+            reactions: data.reactions,
+            reaction_summary: reactionSummary,
+            user_reaction: userReaction ? userReaction.type : null
+          };
+        }
+        return c;
+      }));
+    });
+
+    return () => {
+      socket.off('new_comment');
+      socket.off('edit_comment');
+      socket.off('delete_comment');
+      socket.off('comment_reaction');
+      socket.emit('leave_post_room', postId);
+    };
+  }, [socket, postId, currentUser.id]);
 
   const loadComments = async (loadMore = false) => {
     try {
       setLoading(true);
       const currentOffset = loadMore ? offset : 0;
-      const response = await commentsAPI.getPostComments(postId, limit, currentOffset);
+      const response = await commentsAPI.getPostComments(postId, limit, currentOffset, sortBy);
       const newComments = response.data.comments || [];
       
       if (loadMore) {
         setComments([...comments, ...newComments]);
       } else {
         setComments(newComments);
+        setOffset(0);
       }
       
       setTotal(response.data.total || 0);
@@ -55,6 +125,12 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSortChange = (value) => {
+    setSortBy(value);
+    setOffset(0);
+    setComments([]);
   };
 
   const handleAddComment = async (text) => {
