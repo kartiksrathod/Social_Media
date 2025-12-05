@@ -12,7 +12,7 @@ import io
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://deploy-readiness-14.preview.emergentagent.com/api"
+BASE_URL = "https://app-readiness-6.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class SocialVibeDeploymentTester:
