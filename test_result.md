@@ -141,15 +141,18 @@ backend:
 
   - task: "Collaborative Posts - API endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/routes/collaborations.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created collaboration endpoints: POST /api/collaborations/invite (create post with collaborator invite), POST /api/collaborations/:postId/accept (accept invite), POST /api/collaborations/:postId/reject (reject and convert to regular post), GET /api/collaborations/pending (get pending invites). Notifications created for invites and acceptances. Prevents self-collaboration and duplicates."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: All 4 collaboration endpoints working perfectly. POST /api/collaborations/invite creates posts with proper validation (rejects self-collaboration, missing/non-existent collaborators). POST /api/collaborations/:postId/accept changes status to 'accepted' with proper authorization. POST /api/collaborations/:postId/reject converts to regular post (removes collaborative fields). GET /api/collaborations/pending returns correct pending invites. All error handling and edge cases working correctly."
 
   - task: "Collaborative Posts - Feed and profile filtering"
     implemented: true
