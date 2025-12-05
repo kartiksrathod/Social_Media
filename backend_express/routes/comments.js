@@ -122,15 +122,23 @@ router.post('/', authenticateToken, async (req, res) => {
 router.get('/:postId', authenticateToken, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { limit = 20, offset = 0 } = req.query;
+    const { limit = 20, offset = 0, sort = 'newest' } = req.query;
     const { user_id } = req.user;
+
+    // Determine sort criteria
+    let sortCriteria = { created_at: -1 }; // Default: newest first
+    if (sort === 'most_liked') {
+      sortCriteria = { like_count: -1, created_at: -1 };
+    } else if (sort === 'most_replied') {
+      sortCriteria = { reply_count: -1, created_at: -1 };
+    }
 
     // Get top-level comments (parent_comment_id is null)
     const comments = await Comment.find({ 
       post_id: postId, 
       parent_comment_id: null 
     })
-      .sort({ created_at: -1 })
+      .sort(sortCriteria)
       .skip(parseInt(offset))
       .limit(parseInt(limit));
 
@@ -140,12 +148,22 @@ router.get('/:postId', authenticateToken, async (req, res) => {
       parent_comment_id: null 
     });
 
-    // Format comments with user like status
-    const formattedComments = comments.map(comment => ({
-      ...comment.toObject(),
-      id: comment.id,
-      has_liked: comment.likes.includes(user_id)
-    }));
+    // Format comments with user like status and reaction data
+    const formattedComments = comments.map(comment => {
+      const reactionSummary = {};
+      comment.reactions.forEach(r => {
+        reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+      });
+      const userReaction = comment.reactions.find(r => r.user_id === user_id);
+
+      return {
+        ...comment.toObject(),
+        id: comment.id,
+        has_liked: comment.likes.includes(user_id),
+        user_reaction: userReaction ? userReaction.type : null,
+        reaction_summary: reactionSummary
+      };
+    });
 
     res.json({
       comments: formattedComments,
