@@ -126,15 +126,18 @@ backend:
 
   - task: "Collaborative Posts - Notification types"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/models/Notification.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added collab_invite and collab_accepted notification types to enum. Notifications sent when collaboration is invited and accepted."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Notification model correctly supports collab_invite and collab_accepted types. Notifications are automatically created with proper structure (actor_id, actor_username, type, post_id, text) when collaborations are invited and accepted. Real-time WebSocket delivery working correctly."
 
   - task: "Collaborative Posts - API endpoints"
     implemented: true
