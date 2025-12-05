@@ -22,10 +22,8 @@ export default function PostCard({ post, onUpdate }) {
   const [liked, setLiked] = useState(post.is_liked);
   const [likeCount, setLikeCount] = useState(post.likes_count);
   const [saved, setSaved] = useState(post.is_saved);
-  const [comments, setComments] = useState(post.comments || []);
-  const [commentText, setCommentText] = useState('');
-  const [loadingComment, setLoadingComment] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(post.comments_count || 0);
   const [copied, setCopied] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editText, setEditText] = useState(post.text);
