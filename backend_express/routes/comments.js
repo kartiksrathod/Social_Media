@@ -401,6 +401,14 @@ router.delete('/:commentId', authenticateToken, async (req, res) => {
       }
     }
 
+    // Emit WebSocket event for real-time deletion
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post_${comment.post_id}`).emit('delete_comment', {
+        comment_id: commentId,
+        is_soft_delete: replyCount > 0
+      });
+    }
+
     res.json({ detail: 'Comment deleted successfully' });
   } catch (error) {
     console.error('Error deleting comment:', error);
