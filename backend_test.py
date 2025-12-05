@@ -117,18 +117,6 @@ class CommentsUpgradePackTester:
         headers["Authorization"] = f"Bearer {token}"
         return headers
     
-    def create_sample_video_file(self):
-        """Create a small sample video file for testing"""
-        # Create a minimal MP4 file (just headers, not a real video)
-        mp4_header = b'\x00\x00\x00\x20ftypmp41\x00\x00\x00\x00mp41isom\x00\x00\x00\x08free'
-        return io.BytesIO(mp4_header)
-    
-    def create_sample_image_file(self):
-        """Create a small sample image file for testing"""
-        # Create a minimal PNG file
-        png_header = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
-        return io.BytesIO(png_header)
-    
     # ==================== SETUP METHODS ====================
     
     def create_test_post(self, author_username="alice_comments"):
@@ -177,697 +165,838 @@ class CommentsUpgradePackTester:
             self.log_test(f"Create test comment by {author_username}", "FAIL", str(e))
             return None
     
-    def test_add_close_friend_missing_user_id(self):
-        """Test POST /api/users/close-friends/add - Missing user_id"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            
-            response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                   json={}, headers=alice_headers)
-            
-            if response.status_code == 400:
-                self.log_test("Add close friend - Missing user_id", "PASS", "Correctly rejected missing user_id")
-            else:
-                self.log_test("Add close friend - Missing user_id", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Add close friend - Missing user_id", "FAIL", str(e))
+    # ==================== FEATURE 1: COMMENT EMOJI REACTIONS ====================
     
-    def test_add_close_friend_nonexistent_user(self):
-        """Test POST /api/users/close-friends/add - Non-existent user"""
+    def test_comment_reaction_add_all_types(self):
+        """Test POST /api/comments/:commentId/react - Add all 6 reaction types"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                   json={"user_id": "nonexistent-user-id"}, headers=alice_headers)
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for all reactions! 😊")
+            if not comment_id:
+                return
             
-            if response.status_code == 404:
-                self.log_test("Add close friend - Non-existent user", "PASS", "Correctly rejected non-existent user")
-            else:
-                self.log_test("Add close friend - Non-existent user", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Add close friend - Non-existent user", "FAIL", str(e))
-    
-    def test_add_close_friend_self(self):
-        """Test POST /api/users/close-friends/add - Cannot add self"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            alice_user_id = self.test_users["alice_cf"]["user_id"]
+            bob_headers = self.get_auth_headers("bob_comments")
+            reaction_types = ['like', 'love', 'laugh', 'wow', 'sad', 'angry']
             
-            response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                   json={"user_id": alice_user_id}, headers=alice_headers)
-            
-            if response.status_code == 400:
-                self.log_test("Add close friend - Self add", "PASS", "Correctly rejected self-add")
-            else:
-                self.log_test("Add close friend - Self add", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Add close friend - Self add", "FAIL", str(e))
-    
-    def test_add_close_friend_duplicate(self):
-        """Test POST /api/users/close-friends/add - Already in close friends"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            
-            # First add Bob (should succeed)
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            # Try to add Bob again (should fail)
-            response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                   json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            if response.status_code == 400:
-                self.log_test("Add close friend - Duplicate", "PASS", "Correctly rejected duplicate add")
-            else:
-                self.log_test("Add close friend - Duplicate", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Add close friend - Duplicate", "FAIL", str(e))
-    
-    def test_remove_close_friend_success(self):
-        """Test DELETE /api/users/close-friends/remove - Success case"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            
-            # First add Bob to close friends
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            # Now remove Bob
-            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                                     json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if 'message' in data and 'successfully' in data['message'].lower():
-                    self.log_test("Remove close friend - Success", "PASS", f"Bob removed from Alice's close friends")
-                else:
-                    self.log_test("Remove close friend - Success", "FAIL", f"Unexpected response: {data}")
-            else:
-                self.log_test("Remove close friend - Success", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
-        except Exception as e:
-            self.log_test("Remove close friend - Success", "FAIL", str(e))
-    
-    def test_remove_close_friend_missing_user_id(self):
-        """Test DELETE /api/users/close-friends/remove - Missing user_id"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            
-            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                                     json={}, headers=alice_headers)
-            
-            if response.status_code == 400:
-                self.log_test("Remove close friend - Missing user_id", "PASS", "Correctly rejected missing user_id")
-            else:
-                self.log_test("Remove close friend - Missing user_id", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Remove close friend - Missing user_id", "FAIL", str(e))
-    
-    def test_remove_close_friend_not_in_list(self):
-        """Test DELETE /api/users/close-friends/remove - User not in close friends"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
-            
-            # Try to remove Charlie without adding him first
-            response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                                     json={"user_id": charlie_user_id}, headers=alice_headers)
-            
-            if response.status_code == 400:
-                self.log_test("Remove close friend - Not in list", "PASS", "Correctly rejected removal of non-close friend")
-            else:
-                self.log_test("Remove close friend - Not in list", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Remove close friend - Not in list", "FAIL", str(e))
-    
-    def test_get_close_friends_list(self):
-        """Test GET /api/users/close-friends - Get close friends list"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            
-            # Add Bob to close friends first
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            # Get close friends list
-            response = requests.get(f"{self.base_url}/users/close-friends", headers=alice_headers)
-            
-            if response.status_code == 200:
-                close_friends = response.json()
-                if isinstance(close_friends, list):
-                    bob_found = any(friend.get('id') == bob_user_id for friend in close_friends)
-                    if bob_found:
-                        self.log_test("Get close friends list", "PASS", f"Found {len(close_friends)} close friends including Bob")
-                    else:
-                        self.log_test("Get close friends list", "FAIL", "Bob not found in close friends list")
-                else:
-                    self.log_test("Get close friends list", "FAIL", "Response is not a list")
-            else:
-                self.log_test("Get close friends list", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Get close friends list", "FAIL", str(e))
-    
-    def test_check_is_close_friend(self):
-        """Test GET /api/users/:userId/is-close-friend - Check close friend status"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
-            
-            # Add Bob to close friends
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            # Check Bob's status (should be true)
-            response = requests.get(f"{self.base_url}/users/{bob_user_id}/is-close-friend", headers=alice_headers)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('is_close_friend') == True:
-                    self.log_test("Check is close friend - True case", "PASS", "Bob correctly identified as close friend")
-                else:
-                    self.log_test("Check is close friend - True case", "FAIL", f"Expected true, got: {data}")
-            else:
-                self.log_test("Check is close friend - True case", "FAIL", f"Status: {response.status_code}")
-            
-            # Check Charlie's status (should be false)
-            response = requests.get(f"{self.base_url}/users/{charlie_user_id}/is-close-friend", headers=alice_headers)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('is_close_friend') == False:
-                    self.log_test("Check is close friend - False case", "PASS", "Charlie correctly identified as not close friend")
-                else:
-                    self.log_test("Check is close friend - False case", "FAIL", f"Expected false, got: {data}")
-            else:
-                self.log_test("Check is close friend - False case", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Check is close friend", "FAIL", str(e))
-    
-    # ==================== POST VISIBILITY TESTS ====================
-    
-    def test_create_post_with_visibility(self):
-        """Test POST /api/posts with visibility parameter"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            
-            # Create public post
-            public_post_data = {
-                "text": "This is a public post for everyone to see! #public #socialvibe",
-                "visibility": "public"
-            }
-            
-            response = requests.post(f"{self.base_url}/posts", json=public_post_data, headers=alice_headers)
-            
-            if response.status_code == 201:
-                post = response.json()
-                if post.get('visibility') == 'public':
-                    self.log_test("Create public post", "PASS", f"Public post created: {post['id']}")
-                else:
-                    self.log_test("Create public post", "FAIL", f"Expected public visibility, got: {post.get('visibility')}")
-            else:
-                self.log_test("Create public post", "FAIL", f"Status: {response.status_code}")
-            
-            # Create close friends post
-            close_friends_post_data = {
-                "text": "This is a close friends only post! Secret stuff here 🤫 #closefriends",
-                "visibility": "close_friends"
-            }
-            
-            response = requests.post(f"{self.base_url}/posts", json=close_friends_post_data, headers=alice_headers)
-            
-            if response.status_code == 201:
-                post = response.json()
-                if post.get('visibility') == 'close_friends':
-                    self.close_friends_posts.append(post['id'])
-                    self.log_test("Create close friends post", "PASS", f"Close friends post created: {post['id']}")
-                else:
-                    self.log_test("Create close friends post", "FAIL", f"Expected close_friends visibility, got: {post.get('visibility')}")
-            else:
-                self.log_test("Create close friends post", "FAIL", f"Status: {response.status_code}")
-        except Exception as e:
-            self.log_test("Create post with visibility", "FAIL", str(e))
-    
-    def test_edit_post_visibility(self):
-        """Test PUT /api/posts/:postId with visibility parameter"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            
-            # Create a public post first
-            post_data = {
-                "text": "This post will change visibility! #test",
-                "visibility": "public"
-            }
-            
-            create_response = requests.post(f"{self.base_url}/posts", json=post_data, headers=alice_headers)
-            
-            if create_response.status_code == 201:
-                post = create_response.json()
-                post_id = post['id']
-                
-                # Edit post to change visibility to close_friends
-                edit_data = {
-                    "text": "This post is now for close friends only! #test #closefriends",
-                    "visibility": "close_friends"
-                }
-                
-                response = requests.put(f"{self.base_url}/posts/{post_id}", json=edit_data, headers=alice_headers)
+            for reaction_type in reaction_types:
+                response = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                       json={"reaction_type": reaction_type}, headers=bob_headers)
                 
                 if response.status_code == 200:
-                    updated_post = response.json()
-                    if updated_post.get('visibility') == 'close_friends':
-                        self.log_test("Edit post visibility", "PASS", f"Post visibility changed to close_friends")
+                    data = response.json()
+                    if (data.get('user_reaction') == reaction_type and 
+                        data.get('reaction_summary', {}).get(reaction_type, 0) >= 1):
+                        self.log_test(f"Add {reaction_type} reaction", "PASS", f"Reaction added successfully")
                     else:
-                        self.log_test("Edit post visibility", "FAIL", f"Expected close_friends, got: {updated_post.get('visibility')}")
+                        self.log_test(f"Add {reaction_type} reaction", "FAIL", f"Reaction not properly stored: {data}")
                 else:
-                    self.log_test("Edit post visibility", "FAIL", f"Edit status: {response.status_code}")
-            else:
-                self.log_test("Edit post visibility", "FAIL", f"Create status: {create_response.status_code}")
+                    self.log_test(f"Add {reaction_type} reaction", "FAIL", f"Status: {response.status_code}")
+                
+                # Remove reaction to test next one
+                requests.delete(f"{self.base_url}/comments/{comment_id}/react/{reaction_type}", headers=bob_headers)
+                
         except Exception as e:
-            self.log_test("Edit post visibility", "FAIL", str(e))
+            self.log_test("Add all reaction types", "FAIL", str(e))
     
-    def test_feed_filtering_close_friends(self):
-        """Test GET /api/posts/feed - Close friends can see close_friends posts"""
+    def test_comment_reaction_toggle_behavior(self):
+        """Test reaction toggle behavior - same reaction removes it"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_headers = self.get_auth_headers("bob_cf")
-            charlie_headers = self.get_auth_headers("charlie_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # Alice adds Bob to close friends
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for toggle! 🔄")
+            if not comment_id:
+                return
             
-            # Bob follows Alice to see her posts in feed
-            alice_user_id = self.test_users["alice_cf"]["user_id"]
-            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
+            bob_headers = self.get_auth_headers("bob_comments")
             
-            # Alice creates a close friends post
-            close_friends_post = {
-                "text": "Secret close friends post! Only Bob should see this 🤫 #secret",
-                "visibility": "close_friends"
-            }
+            # Add like reaction
+            response1 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                    json={"reaction_type": "like"}, headers=bob_headers)
             
-            create_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
-            
-            if create_response.status_code == 201:
-                post = create_response.json()
-                post_id = post['id']
-                
-                # Bob (close friend) should see the post in his feed
-                bob_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers)
-                
-                if bob_feed_response.status_code == 200:
-                    bob_feed = bob_feed_response.json()
-                    close_friends_post_found = any(p.get('id') == post_id for p in bob_feed)
+            if response1.status_code == 200:
+                data1 = response1.json()
+                if data1.get('user_reaction') == 'like':
+                    # Add same reaction again (should remove it)
+                    response2 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                            json={"reaction_type": "like"}, headers=bob_headers)
                     
-                    if close_friends_post_found:
-                        self.log_test("Feed filtering - Close friend can see", "PASS", "Bob can see Alice's close friends post")
+                    if response2.status_code == 200:
+                        data2 = response2.json()
+                        if data2.get('user_reaction') is None:
+                            self.log_test("Reaction toggle behavior", "PASS", "Like reaction toggled off successfully")
+                        else:
+                            self.log_test("Reaction toggle behavior", "FAIL", f"Reaction not removed: {data2}")
                     else:
-                        self.log_test("Feed filtering - Close friend can see", "FAIL", "Bob cannot see Alice's close friends post")
+                        self.log_test("Reaction toggle behavior", "FAIL", f"Toggle status: {response2.status_code}")
                 else:
-                    self.log_test("Feed filtering - Close friend can see", "FAIL", f"Bob feed status: {bob_feed_response.status_code}")
-                
-                # Charlie (not close friend) should NOT see the post in his feed
-                charlie_user_id = self.test_users["charlie_cf"]["user_id"]
-                requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
-                
-                charlie_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=charlie_headers)
-                
-                if charlie_feed_response.status_code == 200:
-                    charlie_feed = charlie_feed_response.json()
-                    close_friends_post_found = any(p.get('id') == post_id for p in charlie_feed)
-                    
-                    if not close_friends_post_found:
-                        self.log_test("Feed filtering - Non-close friend cannot see", "PASS", "Charlie cannot see Alice's close friends post")
-                    else:
-                        self.log_test("Feed filtering - Non-close friend cannot see", "FAIL", "Charlie can see Alice's close friends post (should not)")
-                else:
-                    self.log_test("Feed filtering - Non-close friend cannot see", "FAIL", f"Charlie feed status: {charlie_feed_response.status_code}")
+                    self.log_test("Reaction toggle behavior", "FAIL", "Initial reaction not added")
             else:
-                self.log_test("Feed filtering", "FAIL", f"Post creation failed: {create_response.status_code}")
+                self.log_test("Reaction toggle behavior", "FAIL", f"Initial status: {response1.status_code}")
+                
         except Exception as e:
-            self.log_test("Feed filtering", "FAIL", str(e))
+            self.log_test("Reaction toggle behavior", "FAIL", str(e))
     
-    def test_author_can_see_own_close_friends_posts(self):
-        """Test that authors can always see their own close_friends posts"""
+    def test_comment_reaction_change_type(self):
+        """Test changing reaction type (like to love)"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # Alice creates a close friends post
-            close_friends_post = {
-                "text": "Alice's own close friends post! She should see this in her own feed 📝 #ownpost",
-                "visibility": "close_friends"
-            }
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for reaction change! 🔄")
+            if not comment_id:
+                return
             
-            create_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            bob_headers = self.get_auth_headers("bob_comments")
             
-            if create_response.status_code == 201:
-                post = create_response.json()
-                post_id = post['id']
+            # Add like reaction
+            response1 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                    json={"reaction_type": "like"}, headers=bob_headers)
+            
+            if response1.status_code == 200:
+                # Change to love reaction
+                response2 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                        json={"reaction_type": "love"}, headers=bob_headers)
                 
-                # Alice should see her own close friends post in her feed
-                alice_feed_response = requests.get(f"{self.base_url}/posts/feed", headers=alice_headers)
-                
-                if alice_feed_response.status_code == 200:
-                    alice_feed = alice_feed_response.json()
-                    own_post_found = any(p.get('id') == post_id for p in alice_feed)
-                    
-                    if own_post_found:
-                        self.log_test("Author sees own close friends posts", "PASS", "Alice can see her own close friends post")
+                if response2.status_code == 200:
+                    data2 = response2.json()
+                    if (data2.get('user_reaction') == 'love' and 
+                        data2.get('reaction_summary', {}).get('like', 0) == 0 and
+                        data2.get('reaction_summary', {}).get('love', 0) == 1):
+                        self.log_test("Change reaction type", "PASS", "Reaction changed from like to love")
                     else:
-                        self.log_test("Author sees own close friends posts", "FAIL", "Alice cannot see her own close friends post")
+                        self.log_test("Change reaction type", "FAIL", f"Reaction not properly changed: {data2}")
                 else:
-                    self.log_test("Author sees own close friends posts", "FAIL", f"Alice feed status: {alice_feed_response.status_code}")
+                    self.log_test("Change reaction type", "FAIL", f"Change status: {response2.status_code}")
             else:
-                self.log_test("Author sees own close friends posts", "FAIL", f"Post creation failed: {create_response.status_code}")
+                self.log_test("Change reaction type", "FAIL", f"Initial status: {response1.status_code}")
+                
         except Exception as e:
-            self.log_test("Author sees own close friends posts", "FAIL", str(e))
+            self.log_test("Change reaction type", "FAIL", str(e))
     
-    def test_explore_shows_only_public_posts(self):
-        """Test GET /api/posts/explore - Should show only public posts"""
+    def test_comment_reaction_notifications(self):
+        """Test that reactions create notifications for comment author"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_headers = self.get_auth_headers("bob_cf")
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # Alice creates both public and close friends posts
-            public_post = {
-                "text": "This is a public post for explore! Everyone should see this 🌍 #public #explore",
-                "visibility": "public"
-            }
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for notifications! 🔔")
+            if not comment_id:
+                return
             
-            close_friends_post = {
-                "text": "This is a close friends post! Should NOT appear in explore 🔒 #secret",
-                "visibility": "close_friends"
-            }
+            alice_headers = self.get_auth_headers("alice_comments")
+            bob_headers = self.get_auth_headers("bob_comments")
             
-            public_response = requests.post(f"{self.base_url}/posts", json=public_post, headers=alice_headers)
-            close_friends_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
+            # Get Alice's notifications before reaction
+            before_response = requests.get(f"{self.base_url}/notifications", headers=alice_headers)
+            before_count = len(before_response.json()) if before_response.status_code == 200 else 0
             
-            if public_response.status_code == 201 and close_friends_response.status_code == 201:
-                public_post_id = public_response.json()['id']
-                close_friends_post_id = close_friends_response.json()['id']
+            # Bob reacts to Alice's comment
+            reaction_response = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                            json={"reaction_type": "love"}, headers=bob_headers)
+            
+            if reaction_response.status_code == 200:
+                # Wait for notification
+                time.sleep(1)
                 
-                # Check explore feed (should only show public post)
-                explore_response = requests.get(f"{self.base_url}/posts/explore", headers=bob_headers)
+                # Get Alice's notifications after reaction
+                after_response = requests.get(f"{self.base_url}/notifications", headers=alice_headers)
                 
-                if explore_response.status_code == 200:
-                    explore_posts = explore_response.json()
+                if after_response.status_code == 200:
+                    notifications = after_response.json()
+                    after_count = len(notifications)
                     
-                    public_found = any(p.get('id') == public_post_id for p in explore_posts)
-                    close_friends_found = any(p.get('id') == close_friends_post_id for p in explore_posts)
+                    # Look for reaction notification
+                    reaction_notification = None
+                    for notif in notifications:
+                        if (notif.get('type') == 'comment_like' and 
+                            notif.get('actor_username') == 'bob_comments' and
+                            'reacted ❤️' in notif.get('text', '')):
+                            reaction_notification = notif
+                            break
                     
-                    if public_found and not close_friends_found:
-                        self.log_test("Explore shows only public posts", "PASS", "Public post visible, close friends post hidden")
-                    elif not public_found:
-                        self.log_test("Explore shows only public posts", "FAIL", "Public post not found in explore")
-                    elif close_friends_found:
-                        self.log_test("Explore shows only public posts", "FAIL", "Close friends post found in explore (should be hidden)")
+                    if reaction_notification:
+                        self.log_test("Reaction notifications", "PASS", 
+                                    f"Notification created: {reaction_notification['text']}")
                     else:
-                        self.log_test("Explore shows only public posts", "FAIL", "Neither post found in explore")
+                        self.log_test("Reaction notifications", "FAIL", 
+                                    f"No reaction notification found. Before: {before_count}, After: {after_count}")
                 else:
-                    self.log_test("Explore shows only public posts", "FAIL", f"Explore status: {explore_response.status_code}")
+                    self.log_test("Reaction notifications", "FAIL", 
+                                f"Failed to get notifications: {after_response.status_code}")
             else:
-                self.log_test("Explore shows only public posts", "FAIL", "Post creation failed")
+                self.log_test("Reaction notifications", "FAIL", 
+                            f"Reaction failed: {reaction_response.status_code}")
+                
         except Exception as e:
-            self.log_test("Explore shows only public posts", "FAIL", str(e))
+            self.log_test("Reaction notifications", "FAIL", str(e))
     
-    def test_user_profile_visibility_filtering(self):
-        """Test GET /api/posts/user/:username - Profile shows posts based on visibility"""
+    def test_comment_reaction_delete_endpoint(self):
+        """Test DELETE /api/comments/:commentId/react/:reactionType"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_headers = self.get_auth_headers("bob_cf")
-            charlie_headers = self.get_auth_headers("charlie_cf")
-            alice_username = self.test_users["alice_cf"]["username"]
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # Alice adds Bob to close friends
-            requests.post(f"{self.base_url}/users/close-friends/add", 
-                         json={"user_id": bob_user_id}, headers=alice_headers)
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for delete reaction! 🗑️")
+            if not comment_id:
+                return
             
-            # Alice creates both public and close friends posts
-            public_post = {
-                "text": "Alice's public post on her profile! 📝 #public #profile",
-                "visibility": "public"
-            }
+            bob_headers = self.get_auth_headers("bob_comments")
             
-            close_friends_post = {
-                "text": "Alice's close friends post on her profile! 🔒 #closefriends #profile",
-                "visibility": "close_friends"
-            }
+            # Add reaction
+            add_response = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                       json={"reaction_type": "wow"}, headers=bob_headers)
             
-            public_response = requests.post(f"{self.base_url}/posts", json=public_post, headers=alice_headers)
-            close_friends_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
-            
-            if public_response.status_code == 201 and close_friends_response.status_code == 201:
-                public_post_id = public_response.json()['id']
-                close_friends_post_id = close_friends_response.json()['id']
+            if add_response.status_code == 200:
+                # Remove reaction using DELETE endpoint
+                delete_response = requests.delete(f"{self.base_url}/comments/{comment_id}/react/wow", 
+                                                headers=bob_headers)
                 
-                # Bob (close friend) should see both posts on Alice's profile
-                bob_view_response = requests.get(f"{self.base_url}/posts/user/{alice_username}", headers=bob_headers)
-                
-                if bob_view_response.status_code == 200:
-                    bob_view_posts = bob_view_response.json()
-                    
-                    public_found = any(p.get('id') == public_post_id for p in bob_view_posts)
-                    close_friends_found = any(p.get('id') == close_friends_post_id for p in bob_view_posts)
-                    
-                    if public_found and close_friends_found:
-                        self.log_test("Profile visibility - Close friend sees all", "PASS", "Bob sees both public and close friends posts")
+                if delete_response.status_code == 200:
+                    data = delete_response.json()
+                    if (data.get('user_reaction') is None and 
+                        data.get('reaction_summary', {}).get('wow', 0) == 0):
+                        self.log_test("Delete reaction endpoint", "PASS", "Reaction removed via DELETE endpoint")
                     else:
-                        self.log_test("Profile visibility - Close friend sees all", "FAIL", f"Bob missing posts: public={public_found}, close_friends={close_friends_found}")
+                        self.log_test("Delete reaction endpoint", "FAIL", f"Reaction not removed: {data}")
                 else:
-                    self.log_test("Profile visibility - Close friend sees all", "FAIL", f"Bob profile view status: {bob_view_response.status_code}")
-                
-                # Charlie (not close friend) should only see public post
-                charlie_view_response = requests.get(f"{self.base_url}/posts/user/{alice_username}", headers=charlie_headers)
-                
-                if charlie_view_response.status_code == 200:
-                    charlie_view_posts = charlie_view_response.json()
-                    
-                    public_found = any(p.get('id') == public_post_id for p in charlie_view_posts)
-                    close_friends_found = any(p.get('id') == close_friends_post_id for p in charlie_view_posts)
-                    
-                    if public_found and not close_friends_found:
-                        self.log_test("Profile visibility - Non-close friend sees public only", "PASS", "Charlie sees only public post")
-                    else:
-                        self.log_test("Profile visibility - Non-close friend sees public only", "FAIL", f"Charlie sees: public={public_found}, close_friends={close_friends_found}")
-                else:
-                    self.log_test("Profile visibility - Non-close friend sees public only", "FAIL", f"Charlie profile view status: {charlie_view_response.status_code}")
+                    self.log_test("Delete reaction endpoint", "FAIL", f"Delete status: {delete_response.status_code}")
             else:
-                self.log_test("Profile visibility filtering", "FAIL", "Post creation failed")
+                self.log_test("Delete reaction endpoint", "FAIL", f"Add status: {add_response.status_code}")
+                
         except Exception as e:
-            self.log_test("Profile visibility filtering", "FAIL", str(e))
+            self.log_test("Delete reaction endpoint", "FAIL", str(e))
     
-    def test_close_friend_notification_creation(self):
-        """Test that close_friend notifications are created when adding to close friends"""
+    # ==================== FEATURE 2: COMMENT SORTING & FILTERING ====================
+    
+    def test_comment_sorting_newest(self):
+        """Test GET /api/comments/:postId with sort=newest"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_headers = self.get_auth_headers("bob_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            alice_username = self.test_users["alice_cf"]["username"]
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # First, ensure Bob is not in close friends (remove if exists)
-            requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                          json={"user_id": bob_user_id}, headers=alice_headers)
+            # Create multiple comments with delays
+            comment1_id = self.create_test_comment(post_id, "alice_comments", "First comment")
+            time.sleep(1)
+            comment2_id = self.create_test_comment(post_id, "bob_comments", "Second comment")
+            time.sleep(1)
+            comment3_id = self.create_test_comment(post_id, "charlie_comments", "Third comment")
             
-            # Get Bob's notifications before adding to close friends
+            if not all([comment1_id, comment2_id, comment3_id]):
+                return
+            
+            alice_headers = self.get_auth_headers("alice_comments")
+            
+            # Get comments sorted by newest
+            response = requests.get(f"{self.base_url}/comments/{post_id}?sort=newest", headers=alice_headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                comments = data.get('comments', [])
+                
+                if len(comments) >= 3:
+                    # Check if sorted by newest (most recent first)
+                    comment_ids = [c['id'] for c in comments]
+                    if comment_ids[0] == comment3_id and comment_ids[1] == comment2_id and comment_ids[2] == comment1_id:
+                        self.log_test("Comment sorting - newest", "PASS", "Comments sorted by newest correctly")
+                    else:
+                        self.log_test("Comment sorting - newest", "FAIL", f"Wrong order: {comment_ids}")
+                else:
+                    self.log_test("Comment sorting - newest", "FAIL", f"Expected 3 comments, got {len(comments)}")
+            else:
+                self.log_test("Comment sorting - newest", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Comment sorting - newest", "FAIL", str(e))
+    
+    def test_comment_sorting_most_liked(self):
+        """Test GET /api/comments/:postId with sort=most_liked"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            # Create comments
+            comment1_id = self.create_test_comment(post_id, "alice_comments", "Comment with 0 likes")
+            comment2_id = self.create_test_comment(post_id, "bob_comments", "Comment with 2 likes")
+            comment3_id = self.create_test_comment(post_id, "charlie_comments", "Comment with 1 like")
+            
+            if not all([comment1_id, comment2_id, comment3_id]):
+                return
+            
+            # Add likes to create different like counts
+            bob_headers = self.get_auth_headers("bob_comments")
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            diana_headers = self.get_auth_headers("diana_comments")
+            
+            # comment2 gets 2 likes
+            requests.post(f"{self.base_url}/comments/{comment2_id}/like", headers=charlie_headers)
+            requests.post(f"{self.base_url}/comments/{comment2_id}/like", headers=diana_headers)
+            
+            # comment3 gets 1 like
+            requests.post(f"{self.base_url}/comments/{comment3_id}/like", headers=diana_headers)
+            
+            alice_headers = self.get_auth_headers("alice_comments")
+            
+            # Get comments sorted by most liked
+            response = requests.get(f"{self.base_url}/comments/{post_id}?sort=most_liked", headers=alice_headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                comments = data.get('comments', [])
+                
+                if len(comments) >= 3:
+                    # Check if sorted by like count (highest first)
+                    like_counts = [c.get('like_count', 0) for c in comments]
+                    if like_counts[0] >= like_counts[1] >= like_counts[2]:
+                        self.log_test("Comment sorting - most liked", "PASS", 
+                                    f"Comments sorted by likes: {like_counts}")
+                    else:
+                        self.log_test("Comment sorting - most liked", "FAIL", 
+                                    f"Wrong like order: {like_counts}")
+                else:
+                    self.log_test("Comment sorting - most liked", "FAIL", f"Expected 3 comments, got {len(comments)}")
+            else:
+                self.log_test("Comment sorting - most liked", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Comment sorting - most liked", "FAIL", str(e))
+    
+    def test_comment_sorting_most_replied(self):
+        """Test GET /api/comments/:postId with sort=most_replied"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            # Create parent comments
+            comment1_id = self.create_test_comment(post_id, "alice_comments", "Comment with 0 replies")
+            comment2_id = self.create_test_comment(post_id, "bob_comments", "Comment with 2 replies")
+            comment3_id = self.create_test_comment(post_id, "charlie_comments", "Comment with 1 reply")
+            
+            if not all([comment1_id, comment2_id, comment3_id]):
+                return
+            
+            # Add replies to create different reply counts
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            diana_headers = self.get_auth_headers("diana_comments")
+            
+            # comment2 gets 2 replies
+            requests.post(f"{self.base_url}/comments", json={
+                "post_id": post_id,
+                "text": "Reply 1 to comment2",
+                "parent_comment_id": comment2_id
+            }, headers=charlie_headers)
+            
+            requests.post(f"{self.base_url}/comments", json={
+                "post_id": post_id,
+                "text": "Reply 2 to comment2",
+                "parent_comment_id": comment2_id
+            }, headers=diana_headers)
+            
+            # comment3 gets 1 reply
+            requests.post(f"{self.base_url}/comments", json={
+                "post_id": post_id,
+                "text": "Reply 1 to comment3",
+                "parent_comment_id": comment3_id
+            }, headers=diana_headers)
+            
+            alice_headers = self.get_auth_headers("alice_comments")
+            
+            # Get comments sorted by most replied
+            response = requests.get(f"{self.base_url}/comments/{post_id}?sort=most_replied", headers=alice_headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                comments = data.get('comments', [])
+                
+                if len(comments) >= 3:
+                    # Check if sorted by reply count (highest first)
+                    reply_counts = [c.get('reply_count', 0) for c in comments]
+                    if reply_counts[0] >= reply_counts[1] >= reply_counts[2]:
+                        self.log_test("Comment sorting - most replied", "PASS", 
+                                    f"Comments sorted by replies: {reply_counts}")
+                    else:
+                        self.log_test("Comment sorting - most replied", "FAIL", 
+                                    f"Wrong reply order: {reply_counts}")
+                else:
+                    self.log_test("Comment sorting - most replied", "FAIL", f"Expected 3 comments, got {len(comments)}")
+            else:
+                self.log_test("Comment sorting - most replied", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Comment sorting - most replied", "FAIL", str(e))
+    
+    def test_reply_sorting(self):
+        """Test GET /api/comments/:commentId/replies with sort parameter"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            parent_comment_id = self.create_test_comment(post_id, "alice_comments", "Parent comment for reply sorting")
+            if not parent_comment_id:
+                return
+            
+            # Create replies with delays
+            bob_headers = self.get_auth_headers("bob_comments")
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            diana_headers = self.get_auth_headers("diana_comments")
+            
+            reply1_response = requests.post(f"{self.base_url}/comments", json={
+                "post_id": post_id,
+                "text": "First reply",
+                "parent_comment_id": parent_comment_id
+            }, headers=bob_headers)
+            
+            time.sleep(1)
+            
+            reply2_response = requests.post(f"{self.base_url}/comments", json={
+                "post_id": post_id,
+                "text": "Second reply",
+                "parent_comment_id": parent_comment_id
+            }, headers=charlie_headers)
+            
+            if reply1_response.status_code == 201 and reply2_response.status_code == 201:
+                reply1_id = reply1_response.json()['id']
+                reply2_id = reply2_response.json()['id']
+                
+                # Test newest sort for replies
+                alice_headers = self.get_auth_headers("alice_comments")
+                response = requests.get(f"{self.base_url}/comments/{parent_comment_id}/replies?sort=newest", 
+                                      headers=alice_headers)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    replies = data.get('replies', [])
+                    
+                    if len(replies) >= 2:
+                        reply_ids = [r['id'] for r in replies]
+                        if reply_ids[0] == reply2_id and reply_ids[1] == reply1_id:
+                            self.log_test("Reply sorting - newest", "PASS", "Replies sorted by newest correctly")
+                        else:
+                            self.log_test("Reply sorting - newest", "FAIL", f"Wrong order: {reply_ids}")
+                    else:
+                        self.log_test("Reply sorting - newest", "FAIL", f"Expected 2 replies, got {len(replies)}")
+                else:
+                    self.log_test("Reply sorting - newest", "FAIL", f"Status: {response.status_code}")
+            else:
+                self.log_test("Reply sorting - newest", "FAIL", "Failed to create replies")
+                
+        except Exception as e:
+            self.log_test("Reply sorting - newest", "FAIL", str(e))
+    
+    # ==================== FEATURE 3: @MENTIONS IN COMMENTS ====================
+    
+    def test_comment_mentions_extraction(self):
+        """Test @mentions extraction and storage in mentioned_user_ids"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            
+            # Create comment with mentions
+            comment_data = {
+                "post_id": post_id,
+                "text": "Hey @alice_comments and @bob_comments check this out! 👋"
+            }
+            
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=charlie_headers)
+            
+            if response.status_code == 201:
+                comment = response.json()
+                mentioned_user_ids = comment.get('mentioned_user_ids', [])
+                
+                alice_user_id = self.test_users["alice_comments"]["user_id"]
+                bob_user_id = self.test_users["bob_comments"]["user_id"]
+                
+                if alice_user_id in mentioned_user_ids and bob_user_id in mentioned_user_ids:
+                    self.log_test("Mention extraction", "PASS", 
+                                f"Mentions extracted: {len(mentioned_user_ids)} users")
+                else:
+                    self.log_test("Mention extraction", "FAIL", 
+                                f"Missing mentions. Expected: [{alice_user_id}, {bob_user_id}], Got: {mentioned_user_ids}")
+            else:
+                self.log_test("Mention extraction", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Mention extraction", "FAIL", str(e))
+    
+    def test_comment_mentions_notifications(self):
+        """Test that @mentions create notifications for mentioned users"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            alice_headers = self.get_auth_headers("alice_comments")
+            bob_headers = self.get_auth_headers("bob_comments")
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            
+            # Get Bob's notifications before mention
             before_response = requests.get(f"{self.base_url}/notifications", headers=bob_headers)
             before_count = len(before_response.json()) if before_response.status_code == 200 else 0
             
-            # Alice adds Bob to close friends
-            add_response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                       json={"user_id": bob_user_id}, headers=alice_headers)
+            # Charlie mentions Bob in a comment
+            comment_data = {
+                "post_id": post_id,
+                "text": "Hey @bob_comments, what do you think about this? 🤔"
+            }
             
-            if add_response.status_code == 200:
-                # Wait a moment for notification to be created
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=charlie_headers)
+            
+            if response.status_code == 201:
+                # Wait for notification
                 time.sleep(1)
                 
-                # Get Bob's notifications after adding to close friends
+                # Get Bob's notifications after mention
                 after_response = requests.get(f"{self.base_url}/notifications", headers=bob_headers)
                 
                 if after_response.status_code == 200:
                     notifications = after_response.json()
                     after_count = len(notifications)
                     
-                    # Look for close_friend notification
-                    close_friend_notification = None
+                    # Look for mention notification
+                    mention_notification = None
                     for notif in notifications:
-                        if (notif.get('type') == 'close_friend' and 
-                            notif.get('actor_username') == alice_username):
-                            close_friend_notification = notif
+                        if (notif.get('type') == 'comment' and 
+                            notif.get('actor_username') == 'charlie_comments' and
+                            'mentioned you in a comment' in notif.get('text', '')):
+                            mention_notification = notif
                             break
                     
-                    if close_friend_notification:
-                        required_fields = ['actor_id', 'actor_username', 'type', 'text']
-                        if all(field in close_friend_notification for field in required_fields):
-                            self.log_test("Close friend notification creation", "PASS", 
-                                        f"Notification created with correct structure: {close_friend_notification['text']}")
-                        else:
-                            self.log_test("Close friend notification creation", "FAIL", 
-                                        f"Missing required fields in notification: {close_friend_notification}")
+                    if mention_notification:
+                        self.log_test("Mention notifications", "PASS", 
+                                    f"Notification created: {mention_notification['text']}")
                     else:
-                        self.log_test("Close friend notification creation", "FAIL", 
-                                    f"No close_friend notification found. Before: {before_count}, After: {after_count}")
+                        self.log_test("Mention notifications", "FAIL", 
+                                    f"No mention notification found. Before: {before_count}, After: {after_count}")
                 else:
-                    self.log_test("Close friend notification creation", "FAIL", 
+                    self.log_test("Mention notifications", "FAIL", 
                                 f"Failed to get notifications: {after_response.status_code}")
             else:
-                self.log_test("Close friend notification creation", "FAIL", 
-                            f"Failed to add close friend: {add_response.status_code}")
-        except Exception as e:
-            self.log_test("Close friend notification creation", "FAIL", str(e))
-    
-    # ==================== CLOSE FRIENDS WORKFLOW TEST ====================
-    
-    def test_complete_close_friends_workflow(self):
-        """Test complete Close Friends workflow: Add -> Create post -> View -> Remove -> Verify"""
-        try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_headers = self.get_auth_headers("bob_cf")
-            charlie_headers = self.get_auth_headers("charlie_cf")
-            
-            alice_user_id = self.test_users["alice_cf"]["user_id"]
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
-            charlie_user_id = self.test_users["charlie_cf"]["user_id"]
-            
-            # Step 0: Ensure Bob is not in close friends initially (remove if exists)
-            requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                          json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            # Step 1: Alice adds Bob to close friends
-            add_response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                       json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            if add_response.status_code != 200:
-                self.log_test("Complete workflow - Add step", "FAIL", f"Add failed: {add_response.status_code}")
-                return
-            
-            # Step 2: Bob and Charlie follow Alice
-            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
-            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
-            
-            # Step 3: Alice creates a close friends post
-            close_friends_post = {
-                "text": "Workflow test: This is for close friends only! 🔒 #workflow #test",
-                "visibility": "close_friends"
-            }
-            
-            post_response = requests.post(f"{self.base_url}/posts", json=close_friends_post, headers=alice_headers)
-            
-            if post_response.status_code != 201:
-                self.log_test("Complete workflow - Post creation", "FAIL", f"Post creation failed: {post_response.status_code}")
-                return
-            
-            post_id = post_response.json()['id']
-            
-            # Step 4: Verify Bob can see the post, Charlie cannot
-            bob_feed = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers).json()
-            charlie_feed = requests.get(f"{self.base_url}/posts/feed", headers=charlie_headers).json()
-            
-            bob_can_see = any(p.get('id') == post_id for p in bob_feed)
-            charlie_can_see = any(p.get('id') == post_id for p in charlie_feed)
-            
-            if not bob_can_see:
-                self.log_test("Complete workflow - Bob visibility", "FAIL", "Bob cannot see close friends post")
-                return
-            
-            if charlie_can_see:
-                self.log_test("Complete workflow - Charlie visibility", "FAIL", "Charlie can see close friends post (should not)")
-                return
-            
-            # Step 5: Alice removes Bob from close friends
-            remove_response = requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                                            json={"user_id": bob_user_id}, headers=alice_headers)
-            
-            if remove_response.status_code != 200:
-                self.log_test("Complete workflow - Remove step", "FAIL", f"Remove failed: {remove_response.status_code}")
-                return
-            
-            # Step 6: Verify Bob can no longer see close friends posts in new feed requests
-            # (Note: Existing posts might still be cached, but new requests should filter them out)
-            time.sleep(1)  # Brief pause
-            bob_feed_after = requests.get(f"{self.base_url}/posts/feed", headers=bob_headers).json()
-            bob_can_see_after = any(p.get('id') == post_id for p in bob_feed_after)
-            
-            if not bob_can_see_after:
-                self.log_test("Complete Close Friends workflow", "PASS", 
-                            "Full workflow successful: Add -> Post -> View -> Remove -> Verify")
-            else:
-                self.log_test("Complete Close Friends workflow", "FAIL", 
-                            "Bob can still see close friends post after removal")
+                self.log_test("Mention notifications", "FAIL", 
+                            f"Comment creation failed: {response.status_code}")
                 
         except Exception as e:
-            self.log_test("Complete Close Friends workflow", "FAIL", str(e))
+            self.log_test("Mention notifications", "FAIL", str(e))
     
-    # ==================== HELPER METHODS ====================
-    
-    def setup_test_follows(self):
-        """Helper method to set up follow relationships for testing"""
+    def test_comment_mentions_self_mention_prevention(self):
+        """Test that self-mentions don't create notifications"""
         try:
-            alice_user_id = self.test_users["alice_cf"]["user_id"]
-            bob_headers = self.get_auth_headers("bob_cf")
-            charlie_headers = self.get_auth_headers("charlie_cf")
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
             
-            # Bob and Charlie follow Alice to see her posts in feed
-            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=bob_headers)
-            requests.post(f"{self.base_url}/users/{alice_user_id}/follow", headers=charlie_headers)
+            alice_headers = self.get_auth_headers("alice_comments")
+            
+            # Get Alice's notifications before self-mention
+            before_response = requests.get(f"{self.base_url}/notifications", headers=alice_headers)
+            before_count = len(before_response.json()) if before_response.status_code == 200 else 0
+            
+            # Alice mentions herself
+            comment_data = {
+                "post_id": post_id,
+                "text": "I'm mentioning myself @alice_comments in this comment! 😄"
+            }
+            
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=alice_headers)
+            
+            if response.status_code == 201:
+                # Wait a moment
+                time.sleep(1)
+                
+                # Get Alice's notifications after self-mention
+                after_response = requests.get(f"{self.base_url}/notifications", headers=alice_headers)
+                
+                if after_response.status_code == 200:
+                    notifications = after_response.json()
+                    after_count = len(notifications)
+                    
+                    # Look for self-mention notification (should not exist)
+                    self_mention_notification = None
+                    for notif in notifications:
+                        if (notif.get('type') == 'comment' and 
+                            notif.get('actor_username') == 'alice_comments' and
+                            'mentioned you in a comment' in notif.get('text', '')):
+                            self_mention_notification = notif
+                            break
+                    
+                    if not self_mention_notification:
+                        self.log_test("Self-mention prevention", "PASS", 
+                                    "No notification created for self-mention")
+                    else:
+                        self.log_test("Self-mention prevention", "FAIL", 
+                                    f"Self-mention notification created: {self_mention_notification}")
+                else:
+                    self.log_test("Self-mention prevention", "FAIL", 
+                                f"Failed to get notifications: {after_response.status_code}")
+            else:
+                self.log_test("Self-mention prevention", "FAIL", 
+                            f"Comment creation failed: {response.status_code}")
+                
         except Exception as e:
-            print(f"Warning: Failed to set up follows: {e}")
+            self.log_test("Self-mention prevention", "FAIL", str(e))
+    
+    def test_comment_mentions_multiple_mentions(self):
+        """Test multiple mentions in a single comment"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            diana_headers = self.get_auth_headers("diana_comments")
+            
+            # Create comment with multiple mentions
+            comment_data = {
+                "post_id": post_id,
+                "text": "Hey @alice_comments, @bob_comments, and @charlie_comments! Let's discuss this together! 🗣️"
+            }
+            
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=diana_headers)
+            
+            if response.status_code == 201:
+                comment = response.json()
+                mentioned_user_ids = comment.get('mentioned_user_ids', [])
+                
+                alice_user_id = self.test_users["alice_comments"]["user_id"]
+                bob_user_id = self.test_users["bob_comments"]["user_id"]
+                charlie_user_id = self.test_users["charlie_comments"]["user_id"]
+                
+                expected_ids = {alice_user_id, bob_user_id, charlie_user_id}
+                actual_ids = set(mentioned_user_ids)
+                
+                if expected_ids == actual_ids:
+                    self.log_test("Multiple mentions", "PASS", 
+                                f"All 3 mentions extracted correctly")
+                else:
+                    self.log_test("Multiple mentions", "FAIL", 
+                                f"Expected: {expected_ids}, Got: {actual_ids}")
+            else:
+                self.log_test("Multiple mentions", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Multiple mentions", "FAIL", str(e))
+    
+    def test_comment_mentions_nonexistent_user(self):
+        """Test mentions of non-existent users are ignored"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            alice_headers = self.get_auth_headers("alice_comments")
+            
+            # Create comment with valid and invalid mentions
+            comment_data = {
+                "post_id": post_id,
+                "text": "Hey @bob_comments and @nonexistent_user, check this out! 👀"
+            }
+            
+            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=alice_headers)
+            
+            if response.status_code == 201:
+                comment = response.json()
+                mentioned_user_ids = comment.get('mentioned_user_ids', [])
+                
+                bob_user_id = self.test_users["bob_comments"]["user_id"]
+                
+                if len(mentioned_user_ids) == 1 and mentioned_user_ids[0] == bob_user_id:
+                    self.log_test("Nonexistent user mentions", "PASS", 
+                                "Only valid mentions stored, invalid ones ignored")
+                else:
+                    self.log_test("Nonexistent user mentions", "FAIL", 
+                                f"Expected: [{bob_user_id}], Got: {mentioned_user_ids}")
+            else:
+                self.log_test("Nonexistent user mentions", "FAIL", f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Nonexistent user mentions", "FAIL", str(e))
+    
+    # ==================== FEATURE 4: REAL-TIME WEBSOCKET EVENTS ====================
+    
+    def test_websocket_events_structure(self):
+        """Test that WebSocket events are properly structured (basic validation)"""
+        try:
+            # This is a basic test since we can't easily test WebSocket events in this HTTP-based test suite
+            # We'll verify that the endpoints that should emit WebSocket events are working
+            
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            comment_id = self.create_test_comment(post_id, "alice_comments", "Test comment for WebSocket events")
+            if not comment_id:
+                return
+            
+            bob_headers = self.get_auth_headers("bob_comments")
+            
+            # Test that reaction endpoint works (should emit comment_reaction event)
+            reaction_response = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                            json={"reaction_type": "like"}, headers=bob_headers)
+            
+            # Test that edit endpoint works (should emit edit_comment event)
+            edit_response = requests.put(f"{self.base_url}/comments/{comment_id}", 
+                                       json={"text": "Updated comment text for WebSocket test"}, 
+                                       headers=self.get_auth_headers("alice_comments"))
+            
+            if reaction_response.status_code == 200 and edit_response.status_code == 200:
+                self.log_test("WebSocket events structure", "PASS", 
+                            "Endpoints that emit WebSocket events are functional")
+            else:
+                self.log_test("WebSocket events structure", "FAIL", 
+                            f"Reaction: {reaction_response.status_code}, Edit: {edit_response.status_code}")
+                
+        except Exception as e:
+            self.log_test("WebSocket events structure", "FAIL", str(e))
+    
+    # ==================== INTEGRATION TESTS ====================
+    
+    def test_complete_comments_workflow(self):
+        """Test complete workflow: Create comment -> Add reactions -> Sort -> Mention users"""
+        try:
+            # Setup
+            post_id = self.create_test_post("alice_comments")
+            if not post_id:
+                return
+            
+            # Step 1: Create comment with mention
+            charlie_headers = self.get_auth_headers("charlie_comments")
+            comment_data = {
+                "post_id": post_id,
+                "text": "Great post @alice_comments! I love this content 🔥"
+            }
+            
+            comment_response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=charlie_headers)
+            
+            if comment_response.status_code != 201:
+                self.log_test("Complete workflow - Comment creation", "FAIL", f"Status: {comment_response.status_code}")
+                return
+            
+            comment_id = comment_response.json()['id']
+            
+            # Step 2: Add reactions from different users
+            bob_headers = self.get_auth_headers("bob_comments")
+            diana_headers = self.get_auth_headers("diana_comments")
+            
+            reaction1 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                    json={"reaction_type": "love"}, headers=bob_headers)
+            reaction2 = requests.post(f"{self.base_url}/comments/{comment_id}/react", 
+                                    json={"reaction_type": "wow"}, headers=diana_headers)
+            
+            if reaction1.status_code != 200 or reaction2.status_code != 200:
+                self.log_test("Complete workflow - Reactions", "FAIL", 
+                            f"Reaction1: {reaction1.status_code}, Reaction2: {reaction2.status_code}")
+                return
+            
+            # Step 3: Verify comment appears in sorted list
+            alice_headers = self.get_auth_headers("alice_comments")
+            comments_response = requests.get(f"{self.base_url}/comments/{post_id}?sort=newest", headers=alice_headers)
+            
+            if comments_response.status_code == 200:
+                data = comments_response.json()
+                comments = data.get('comments', [])
+                
+                # Find our comment
+                our_comment = None
+                for c in comments:
+                    if c['id'] == comment_id:
+                        our_comment = c
+                        break
+                
+                if our_comment:
+                    # Verify reactions are present
+                    reaction_summary = our_comment.get('reaction_summary', {})
+                    mentioned_users = our_comment.get('mentioned_user_ids', [])
+                    alice_user_id = self.test_users["alice_comments"]["user_id"]
+                    
+                    if (reaction_summary.get('love', 0) >= 1 and 
+                        reaction_summary.get('wow', 0) >= 1 and
+                        alice_user_id in mentioned_users):
+                        self.log_test("Complete workflow", "PASS", 
+                                    "Full workflow successful: Comment -> Reactions -> Mentions -> Sorting")
+                    else:
+                        self.log_test("Complete workflow", "FAIL", 
+                                    f"Missing data: reactions={reaction_summary}, mentions={mentioned_users}")
+                else:
+                    self.log_test("Complete workflow", "FAIL", "Comment not found in sorted list")
+            else:
+                self.log_test("Complete workflow", "FAIL", f"Comments fetch status: {comments_response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Complete workflow", "FAIL", str(e))
+    
+    # ==================== MAIN TEST RUNNER ====================
     
     def run_all_tests(self):
-        """Run all Close Friends backend tests"""
-        print("🚀 Starting SocialVibe Backend Testing Suite - Close Friends Feature")
-        print("=" * 70)
+        """Run all Track A Comments Upgrade Pack tests"""
+        print("🚀 Starting SocialVibe Backend Testing Suite - Track A Comments Upgrade Pack")
+        print("=" * 80)
         
         # Setup
         print("\n📋 Setting up test environment...")
         self.create_test_users()
-        self.setup_test_follows()
         
-        # Close Friends Management Tests
-        print("\n👥 Testing Close Friends Management...")
-        self.test_add_close_friend_success()
-        self.test_add_close_friend_missing_user_id()
-        self.test_add_close_friend_nonexistent_user()
-        self.test_add_close_friend_self()
-        self.test_add_close_friend_duplicate()
+        # Feature 1: Comment Emoji Reactions
+        print("\n😊 Testing Comment Emoji Reactions...")
+        self.test_comment_reaction_add_all_types()
+        self.test_comment_reaction_toggle_behavior()
+        self.test_comment_reaction_change_type()
+        self.test_comment_reaction_notifications()
+        self.test_comment_reaction_delete_endpoint()
         
-        print("\n🗑️ Testing Close Friends Removal...")
-        self.test_remove_close_friend_success()
-        self.test_remove_close_friend_missing_user_id()
-        self.test_remove_close_friend_not_in_list()
+        # Feature 2: Comment Sorting & Filtering
+        print("\n📊 Testing Comment Sorting & Filtering...")
+        self.test_comment_sorting_newest()
+        self.test_comment_sorting_most_liked()
+        self.test_comment_sorting_most_replied()
+        self.test_reply_sorting()
         
-        print("\n📋 Testing Close Friends List & Status...")
-        self.test_get_close_friends_list()
-        self.test_check_is_close_friend()
+        # Feature 3: @Mentions in Comments
+        print("\n👥 Testing @Mentions in Comments...")
+        self.test_comment_mentions_extraction()
+        self.test_comment_mentions_notifications()
+        self.test_comment_mentions_self_mention_prevention()
+        self.test_comment_mentions_multiple_mentions()
+        self.test_comment_mentions_nonexistent_user()
         
-        # Post Visibility Tests
-        print("\n📝 Testing Post Visibility...")
-        self.test_create_post_with_visibility()
-        self.test_edit_post_visibility()
+        # Feature 4: Real-time WebSocket Events
+        print("\n🔄 Testing Real-time WebSocket Events...")
+        self.test_websocket_events_structure()
         
-        # Feed Filtering Tests
-        print("\n🔍 Testing Feed Filtering...")
-        self.test_feed_filtering_close_friends()
-        self.test_author_can_see_own_close_friends_posts()
-        self.test_explore_shows_only_public_posts()
-        self.test_user_profile_visibility_filtering()
-        
-        # Notification Tests
-        print("\n🔔 Testing Notifications...")
-        self.test_close_friend_notification_creation()
-        
-        # Complete Workflow Test
-        print("\n🔄 Testing Complete Workflow...")
-        self.test_complete_close_friends_workflow()
+        # Integration Tests
+        print("\n🔗 Testing Integration Workflows...")
+        self.test_complete_comments_workflow()
         
         # Summary
-        print("\n" + "=" * 70)
-        print("📊 CLOSE FRIENDS TESTING SUMMARY")
-        print("=" * 70)
+        print("\n" + "=" * 80)
+        print("📊 TRACK A COMMENTS UPGRADE PACK TESTING SUMMARY")
+        print("=" * 80)
         
         passed = len([r for r in self.test_results if r['status'] == 'PASS'])
         failed = len([r for r in self.test_results if r['status'] == 'FAIL'])
@@ -877,17 +1006,19 @@ class CommentsUpgradePackTester:
         print(f"❌ FAILED: {failed}")
         print(f"📈 SUCCESS RATE: {(passed/total)*100:.1f}%")
         
-        # Categorize results
-        management_tests = [r for r in self.test_results if 'close friend' in r['test'].lower() and ('add' in r['test'].lower() or 'remove' in r['test'].lower() or 'list' in r['test'].lower() or 'check' in r['test'].lower())]
-        visibility_tests = [r for r in self.test_results if 'post' in r['test'].lower() or 'visibility' in r['test'].lower() or 'feed' in r['test'].lower() or 'explore' in r['test'].lower() or 'profile' in r['test'].lower()]
-        notification_tests = [r for r in self.test_results if 'notification' in r['test'].lower()]
+        # Categorize results by feature
+        reaction_tests = [r for r in self.test_results if 'reaction' in r['test'].lower()]
+        sorting_tests = [r for r in self.test_results if 'sorting' in r['test'].lower()]
+        mention_tests = [r for r in self.test_results if 'mention' in r['test'].lower()]
+        websocket_tests = [r for r in self.test_results if 'websocket' in r['test'].lower()]
         workflow_tests = [r for r in self.test_results if 'workflow' in r['test'].lower()]
         
-        print(f"\n📊 BREAKDOWN:")
-        print(f"   👥 Management: {len([r for r in management_tests if r['status'] == 'PASS'])}/{len(management_tests)} passed")
-        print(f"   🔍 Visibility: {len([r for r in visibility_tests if r['status'] == 'PASS'])}/{len(visibility_tests)} passed")
-        print(f"   🔔 Notifications: {len([r for r in notification_tests if r['status'] == 'PASS'])}/{len(notification_tests)} passed")
-        print(f"   🔄 Workflow: {len([r for r in workflow_tests if r['status'] == 'PASS'])}/{len(workflow_tests)} passed")
+        print(f"\n📊 BREAKDOWN BY FEATURE:")
+        print(f"   😊 Emoji Reactions: {len([r for r in reaction_tests if r['status'] == 'PASS'])}/{len(reaction_tests)} passed")
+        print(f"   📊 Sorting & Filtering: {len([r for r in sorting_tests if r['status'] == 'PASS'])}/{len(sorting_tests)} passed")
+        print(f"   👥 @Mentions: {len([r for r in mention_tests if r['status'] == 'PASS'])}/{len(mention_tests)} passed")
+        print(f"   🔄 WebSocket Events: {len([r for r in websocket_tests if r['status'] == 'PASS'])}/{len(websocket_tests)} passed")
+        print(f"   🔗 Integration: {len([r for r in workflow_tests if r['status'] == 'PASS'])}/{len(workflow_tests)} passed")
         
         if failed > 0:
             print("\n❌ FAILED TESTS:")
@@ -898,5 +1029,5 @@ class CommentsUpgradePackTester:
         return self.test_results
 
 if __name__ == "__main__":
-    tester = SocialVibeBackendTester()
+    tester = CommentsUpgradePackTester()
     results = tester.run_all_tests()
