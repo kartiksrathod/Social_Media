@@ -12,7 +12,7 @@ import io
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://comment-upgrade.preview.emergentagent.com/api"
+BASE_URL = "https://mention-alerts.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class CommentsUpgradePackTester:

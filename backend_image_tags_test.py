@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://comment-upgrade.preview.emergentagent.com/api"
+BASE_URL = "https://mention-alerts.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ImageTagsBackendTester:
