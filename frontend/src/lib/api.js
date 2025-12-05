@@ -159,6 +159,10 @@ export const commentsAPI = {
   // Like/unlike comment
   like: (commentId) => api.post(`/comments/${commentId}/like`),
   unlike: (commentId) => api.delete(`/comments/${commentId}/like`),
+  
+  // Reactions (emoji reactions)
+  react: (commentId, type) => api.post(`/comments/${commentId}/react`, { reaction_type: type }),
+  removeReaction: (commentId, type) => api.delete(`/comments/${commentId}/react/${type}`),
 };
 
 export default api;
