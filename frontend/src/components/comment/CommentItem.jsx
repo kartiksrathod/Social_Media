@@ -58,30 +58,64 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
     return parts.length > 0 ? parts : text;
   };
 
-  const handleLike = async () => {
-    if (isLiking) return;
-    
-    setIsLiking(true);
-    const previousLiked = hasLiked;
-    const previousCount = localLikeCount;
-    
+  const handleReact = async (reactionType) => {
     // Optimistic update
-    setHasLiked(!hasLiked);
-    setLocalLikeCount(hasLiked ? localLikeCount - 1 : localLikeCount + 1);
+    const prevReaction = userReaction;
+    const prevCounts = { ...reactionCounts };
+
+    if (prevReaction) {
+      setReactionCounts(prev => ({
+        ...prev,
+        [prevReaction]: Math.max(0, (prev[prevReaction] || 0) - 1)
+      }));
+    }
+
+    if (prevReaction === reactionType) {
+      // Removing reaction
+      setUserReaction(null);
+    } else {
+      // Adding/changing reaction
+      setUserReaction(reactionType);
+      setReactionCounts(prev => ({
+        ...prev,
+        [reactionType]: (prev[reactionType] || 0) + 1
+      }));
+    }
 
     try {
-      if (hasLiked) {
-        await commentsAPI.unlike(comment.id);
-      } else {
-        await commentsAPI.like(comment.id);
-      }
+      const response = await commentsAPI.react(comment.id, reactionType);
+      setReactionCounts(response.data.reaction_summary || {});
+      setUserReaction(response.data.user_reaction);
     } catch (error) {
-      console.error('Failed to like comment:', error);
+      console.error('Failed to react to comment:', error);
       // Revert on error
-      setHasLiked(previousLiked);
-      setLocalLikeCount(previousCount);
-    } finally {
-      setIsLiking(false);
+      setUserReaction(prevReaction);
+      setReactionCounts(prevCounts);
+    }
+  };
+
+  const handleRemoveReaction = async () => {
+    const prevReaction = userReaction;
+    const prevCounts = { ...reactionCounts };
+
+    // Optimistic update
+    if (prevReaction) {
+      setReactionCounts(prev => ({
+        ...prev,
+        [prevReaction]: Math.max(0, (prev[prevReaction] || 0) - 1)
+      }));
+    }
+    setUserReaction(null);
+
+    try {
+      const response = await commentsAPI.removeReaction(comment.id, prevReaction);
+      setReactionCounts(response.data.reaction_summary || {});
+      setUserReaction(null);
+    } catch (error) {
+      console.error('Failed to remove reaction:', error);
+      // Revert on error
+      setUserReaction(prevReaction);
+      setReactionCounts(prevCounts);
     }
   };
 
