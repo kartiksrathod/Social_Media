@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 
 # Configuration
-BASE_URL = "https://replyflow-1.preview.emergentagent.com/api"
+BASE_URL = "https://social-comments-2.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class CollaborativePostsTester:
