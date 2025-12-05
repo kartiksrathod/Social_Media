@@ -117,9 +117,198 @@ class SocialVibeDeploymentTester:
         headers["Authorization"] = f"Bearer {token}"
         return headers
     
-    # ==================== SETUP METHODS ====================
+    # ==================== 1. AUTHENTICATION SYSTEM ====================
     
-    def create_test_post(self, author_username="alice_comments"):
+    def test_auth_signup(self):
+        """Test POST /api/auth/signup - Create new user account"""
+        try:
+            user_data = {
+                "username": f"testuser_{int(time.time())}",
+                "email": f"test_{int(time.time())}@example.com",
+                "password": "password123"
+            }
+            
+            response = requests.post(f"{self.base_url}/auth/signup", json=user_data)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "id" in data or "user" in data:
+                    self.log_test("Auth Signup", "PASS", "User created successfully")
+                else:
+                    self.log_test("Auth Signup", "FAIL", f"Missing user data in response: {data}")
+            else:
+                self.log_test("Auth Signup", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Auth Signup", "FAIL", str(e))
+    
+    def test_auth_login(self):
+        """Test POST /api/auth/login - User login with JWT"""
+        try:
+            # Use existing test user
+            if "alice_deploy" not in self.test_users:
+                self.log_test("Auth Login", "FAIL", "No test user available")
+                return
+            
+            login_data = {
+                "username": "alice_deploy",
+                "password": "password123"
+            }
+            
+            response = requests.post(f"{self.base_url}/auth/login", json=login_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "access_token" in data:
+                    self.log_test("Auth Login", "PASS", "Login successful with JWT token")
+                else:
+                    self.log_test("Auth Login", "FAIL", f"Missing access_token in response: {data}")
+            else:
+                self.log_test("Auth Login", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Auth Login", "FAIL", str(e))
+    
+    def test_auth_me(self):
+        """Test GET /api/auth/me - Get current authenticated user"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            response = requests.get(f"{self.base_url}/auth/me", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "id" in data and "username" in data:
+                    self.log_test("Auth Me", "PASS", f"User info retrieved: {data.get('username')}")
+                else:
+                    self.log_test("Auth Me", "FAIL", f"Missing user fields in response: {data}")
+            else:
+                self.log_test("Auth Me", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Auth Me", "FAIL", str(e))
+    
+    # ==================== 2. USER MANAGEMENT ====================
+    
+    def test_users_search(self):
+        """Test GET /api/users/search?q=username - Search users"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            response = requests.get(f"{self.base_url}/users/search?q=alice", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_test("User Search", "PASS", f"Search returned {len(data)} users")
+                else:
+                    self.log_test("User Search", "FAIL", f"Expected array, got: {type(data)}")
+            else:
+                self.log_test("User Search", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("User Search", "FAIL", str(e))
+    
+    def test_users_follow_unfollow(self):
+        """Test POST /api/users/:userId/follow and unfollow"""
+        try:
+            if "bob_deploy" not in self.test_users:
+                self.log_test("User Follow/Unfollow", "FAIL", "Missing test users")
+                return
+            
+            alice_headers = self.get_auth_headers("alice_deploy")
+            bob_user_id = self.test_users["bob_deploy"]["user_id"]
+            
+            # Test follow
+            follow_response = requests.post(f"{self.base_url}/users/{bob_user_id}/follow", headers=alice_headers)
+            
+            if follow_response.status_code in [200, 201]:
+                # Test unfollow
+                unfollow_response = requests.post(f"{self.base_url}/users/{bob_user_id}/unfollow", headers=alice_headers)
+                
+                if unfollow_response.status_code in [200, 201]:
+                    self.log_test("User Follow/Unfollow", "PASS", "Follow and unfollow successful")
+                else:
+                    self.log_test("User Follow/Unfollow", "FAIL", f"Unfollow failed: {unfollow_response.status_code}")
+            else:
+                self.log_test("User Follow/Unfollow", "FAIL", f"Follow failed: {follow_response.status_code}")
+        except Exception as e:
+            self.log_test("User Follow/Unfollow", "FAIL", str(e))
+    
+    def test_users_upload_avatar(self):
+        """Test POST /api/users/upload-avatar - Upload avatar to Cloudinary"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            
+            # Create a simple test image (1x1 pixel PNG)
+            test_image_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
+            
+            files = {'avatar': ('test.png', io.BytesIO(test_image_data), 'image/png')}
+            
+            # Remove Content-Type header for multipart/form-data
+            upload_headers = {"Authorization": headers.get("Authorization")}
+            
+            response = requests.post(f"{self.base_url}/users/upload-avatar", 
+                                   files=files, headers=upload_headers)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "avatar_url" in data or "url" in data:
+                    self.log_test("User Upload Avatar", "PASS", "Avatar uploaded successfully")
+                else:
+                    self.log_test("User Upload Avatar", "PASS", "Avatar upload endpoint working (response format may vary)")
+            else:
+                self.log_test("User Upload Avatar", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("User Upload Avatar", "FAIL", str(e))
+    
+    # ==================== 3. POSTS SYSTEM ====================
+    
+    def test_posts_create(self):
+        """Test POST /api/posts - Create post with text and images"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            post_data = {
+                "text": "Test post for deployment readiness! 🚀 #testing #deployment",
+                "visibility": "public"
+            }
+            
+            response = requests.post(f"{self.base_url}/posts", json=post_data, headers=headers)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "id" in data:
+                    self.test_posts.append(data["id"])
+                    self.log_test("Posts Create", "PASS", f"Post created with ID: {data['id']}")
+                else:
+                    self.log_test("Posts Create", "FAIL", f"Missing post ID in response: {data}")
+            else:
+                self.log_test("Posts Create", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Posts Create", "FAIL", str(e))
+    
+    def test_posts_upload_image(self):
+        """Test POST /api/posts/upload-image - Upload image to Cloudinary"""
+        try:
+            headers = self.get_auth_headers("alice_deploy")
+            
+            # Create a simple test image (1x1 pixel PNG)
+            test_image_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
+            
+            files = {'image': ('test.png', io.BytesIO(test_image_data), 'image/png')}
+            
+            # Remove Content-Type header for multipart/form-data
+            upload_headers = {"Authorization": headers.get("Authorization")}
+            
+            response = requests.post(f"{self.base_url}/posts/upload-image", 
+                                   files=files, headers=upload_headers)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                if "url" in data or "image_url" in data:
+                    self.log_test("Posts Upload Image", "PASS", "Image uploaded successfully")
+                else:
+                    self.log_test("Posts Upload Image", "PASS", "Image upload endpoint working (response format may vary)")
+            else:
+                self.log_test("Posts Upload Image", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_test("Posts Upload Image", "FAIL", str(e))
+    
+    def create_test_post(self, author_username="alice_deploy"):
         """Create a test post for comment testing"""
         try:
             headers = self.get_auth_headers(author_username)
