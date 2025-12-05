@@ -373,4 +373,154 @@ router.delete('/:commentId/like', authenticateToken, async (req, res) => {
   }
 });
 
+// React to a comment (emoji reactions)
+router.post('/:commentId/react', authenticateToken, async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { reaction_type } = req.body;
+    const { user_id, username, avatar } = req.user;
+
+    // Validate reaction type
+    const validReactions = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
+    if (!reaction_type || !validReactions.includes(reaction_type)) {
+      return res.status(400).json({ detail: 'Invalid reaction type' });
+    }
+
+    // Find comment
+    const comment = await Comment.findOne({ id: commentId });
+    if (!comment) {
+      return res.status(404).json({ detail: 'Comment not found' });
+    }
+
+    // Check if user already reacted
+    const existingReaction = comment.reactions.find(r => r.user_id === user_id);
+
+    if (existingReaction) {
+      if (existingReaction.type === reaction_type) {
+        // Same reaction - remove it (toggle off)
+        comment.reactions = comment.reactions.filter(r => r.user_id !== user_id);
+      } else {
+        // Different reaction - update it
+        existingReaction.type = reaction_type;
+        existingReaction.created_at = new Date();
+      }
+    } else {
+      // New reaction - add it
+      comment.reactions.push({
+        user_id,
+        type: reaction_type,
+        created_at: new Date()
+      });
+
+      // Create notification for comment author (if not self-reaction)
+      if (comment.user_id !== user_id) {
+        const reactionEmojis = {
+          like: '👍',
+          love: '❤️',
+          laugh: '😂',
+          wow: '😮',
+          sad: '😢',
+          angry: '😡'
+        };
+        
+        const notification = new Notification({
+          user_id: comment.user_id,
+          actor_id: user_id,
+          actor_username: username,
+          actor_avatar: avatar,
+          type: 'comment_like',
+          post_id: comment.post_id,
+          comment_id: comment.id,
+          text: `reacted ${reactionEmojis[reaction_type]} to your comment`
+        });
+        await notification.save();
+
+        // Emit WebSocket event for real-time notification
+        if (req.app.get('io')) {
+          req.app.get('io').to(comment.user_id).emit('notification', {
+            ...notification.toObject(),
+            id: notification.id
+          });
+        }
+      }
+    }
+
+    await comment.save();
+
+    // Emit WebSocket event for real-time reaction update
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post_${comment.post_id}`).emit('comment_reaction', {
+        comment_id: commentId,
+        user_id,
+        reaction_type: existingReaction && existingReaction.type === reaction_type ? null : reaction_type,
+        reactions: comment.reactions
+      });
+    }
+
+    // Calculate reaction summary
+    const reactionSummary = {};
+    comment.reactions.forEach(r => {
+      reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+    });
+
+    const userReaction = comment.reactions.find(r => r.user_id === user_id);
+
+    res.json({
+      ...comment.toObject(),
+      id: comment.id,
+      has_liked: comment.likes.includes(user_id),
+      user_reaction: userReaction ? userReaction.type : null,
+      reaction_summary: reactionSummary
+    });
+  } catch (error) {
+    console.error('Error reacting to comment:', error);
+    res.status(500).json({ detail: 'Failed to react to comment' });
+  }
+});
+
+// Remove reaction from a comment
+router.delete('/:commentId/react/:reactionType', authenticateToken, async (req, res) => {
+  try {
+    const { commentId, reactionType } = req.params;
+    const { user_id } = req.user;
+
+    // Find comment
+    const comment = await Comment.findOne({ id: commentId });
+    if (!comment) {
+      return res.status(404).json({ detail: 'Comment not found' });
+    }
+
+    // Remove user's reaction
+    comment.reactions = comment.reactions.filter(r => r.user_id !== user_id);
+    await comment.save();
+
+    // Emit WebSocket event for real-time reaction update
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post_${comment.post_id}`).emit('comment_reaction', {
+        comment_id: commentId,
+        user_id,
+        reaction_type: null,
+        reactions: comment.reactions
+      });
+    }
+
+    // Calculate reaction summary
+    const reactionSummary = {};
+    comment.reactions.forEach(r => {
+      reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+    });
+
+    res.json({
+      ...comment.toObject(),
+      id: comment.id,
+      has_liked: comment.likes.includes(user_id),
+      user_reaction: null,
+      reaction_summary: reactionSummary
+    });
+  } catch (error) {
+    console.error('Error removing reaction:', error);
+    res.status(500).json({ detail: 'Failed to remove reaction' });
+  }
+});
+
 module.exports = router;
