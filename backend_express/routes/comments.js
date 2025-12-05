@@ -5,6 +5,17 @@ const Post = require('../models/Post');
 const Notification = require('../models/Notification');
 const { authenticateToken } = require('../middleware/auth');
 
+// Extract mentions from text
+function extractMentions(text) {
+  const mentionRegex = /@(\w+)/g;
+  const mentions = [];
+  let match;
+  while ((match = mentionRegex.exec(text)) !== null) {
+    mentions.push(match[1]);
+  }
+  return [...new Set(mentions)]; // Remove duplicates
+}
+
 // Create a comment or reply
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -35,6 +46,12 @@ router.post('/', authenticateToken, async (req, res) => {
       }
     }
 
+    // Extract mentions
+    const mentionedUsernames = extractMentions(text);
+    const User = require('../models/User');
+    const mentionedUsers = await User.find({ username: { $in: mentionedUsernames } });
+    const mentioned_user_ids = mentionedUsers.map(u => u.id).filter(id => id !== user_id);
+
     // Create comment
     const comment = new Comment({
       post_id,
@@ -42,7 +59,8 @@ router.post('/', authenticateToken, async (req, res) => {
       username,
       avatar,
       text,
-      parent_comment_id: parent_comment_id || null
+      parent_comment_id: parent_comment_id || null,
+      mentioned_user_ids
     });
 
     await comment.save();
