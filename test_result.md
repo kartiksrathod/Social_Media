@@ -546,17 +546,41 @@ agent_communication:
 user_problem_statement: "Phase 3: Implement Comments + Replies System with likes, edit, delete, notifications, and real-time updates"
 
 backend:
-  - task: "Reactions System Backend"
+  - task: "Comment Model & Schema"
     implemented: true
     working: "NA"
-    file: "/app/backend_express/routes/posts.js, /app/backend_express/models/Post.js"
+    file: "/app/backend_express/models/Comment.js, /app/backend_express/models/Post.js, /app/backend_express/models/Notification.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Added reactions field to Post model with user_id, type (like/love/laugh/wow/sad/angry), created_at. Created endpoints: POST /api/posts/:postId/react (add/change reaction), DELETE /api/posts/:postId/react (remove), GET /api/posts/:postId/reactions (get details). Updated postToPublic helper to include reaction_counts and user_reaction. Real-time notifications for new reactions. Needs testing."
+          comment: "Created Comment model with fields: id, post_id, user_id, username, avatar, text (500 char max), parent_comment_id (for replies), likes array, like_count, reply_count, is_edited, created_at, updated_at. Added comment_count field to Post model. Added comment, comment_reply, comment_like notification types. Added comment_id field to Notification model. All indexes created for performance."
+  
+  - task: "Comment CRUD Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/comments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created complete comment API: POST /api/comments (create comment/reply), GET /api/comments/:postId (get top-level comments with pagination), GET /api/comments/:commentId/replies (get nested replies), PUT /api/comments/:commentId (edit), DELETE /api/comments/:commentId (delete with soft-delete if has replies). All endpoints have proper validation, authorization, and error handling."
+  
+  - task: "Comment Likes & Notifications"
+    implemented: true
+    working: "NA"
+    file: "/app/backend_express/routes/comments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented comment like system: POST /api/comments/:commentId/like (toggle like/unlike), DELETE /api/comments/:commentId/like (unlike). Like count tracking with optimistic updates. Notifications: 'comment' (someone comments on your post), 'comment_reply' (someone replies to your comment), 'comment_like' (someone likes your comment). All notifications sent via WebSocket for real-time delivery. Self-comment/self-like prevention implemented."
 
 frontend:
   - task: "Reactions System UI"
