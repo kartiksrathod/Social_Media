@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, X } from 'lucide-react';
+import MentionAutocomplete from '../post/MentionAutocomplete';
 
 const CommentInput = ({ 
   onSubmit, 
@@ -12,6 +13,9 @@ const CommentInput = ({
 }) => {
   const [text, setText] = useState(initialValue);
   const [loading, setLoading] = useState(false);
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionSearch, setMentionSearch] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
   const textareaRef = useRef(null);
   const maxLength = 500;
 
@@ -20,6 +24,53 @@ const CommentInput = ({
       textareaRef.current.focus();
     }
   }, [autoFocus]);
+
+  const handleTextChange = (e) => {
+    const newText = e.target.value;
+    const cursorPos = e.target.selectionStart;
+    setText(newText);
+    setCursorPosition(cursorPos);
+
+    // Check for @ mention trigger
+    const textBeforeCursor = newText.substring(0, cursorPos);
+    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+    
+    if (lastAtSymbol !== -1 && lastAtSymbol === cursorPos - 1) {
+      // Just typed @
+      setShowMentions(true);
+      setMentionSearch('');
+    } else if (lastAtSymbol !== -1) {
+      const textAfterAt = textBeforeCursor.substring(lastAtSymbol + 1);
+      // Check if there's no space after @
+      if (!textAfterAt.includes(' ')) {
+        setShowMentions(true);
+        setMentionSearch(textAfterAt);
+      } else {
+        setShowMentions(false);
+      }
+    } else {
+      setShowMentions(false);
+    }
+  };
+
+  const handleMentionSelect = (username) => {
+    const textBeforeCursor = text.substring(0, cursorPosition);
+    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+    const textAfterCursor = text.substring(cursorPosition);
+    
+    const newText = text.substring(0, lastAtSymbol) + `@${username} ` + textAfterCursor;
+    setText(newText);
+    setShowMentions(false);
+    
+    // Focus back on textarea
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+      const newCursorPos = lastAtSymbol + username.length + 2;
+      setTimeout(() => {
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }, 0);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
