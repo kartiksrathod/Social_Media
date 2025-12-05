@@ -1,24 +1,19 @@
 """
-FastAPI shim that starts Express.js backend
+Start Express.js backend server directly
 """
-from fastapi import FastAPI
 import subprocess
 import os
-import atexit
+import sys
 
-app = FastAPI()
-
-# Start Express backend
+# Change to Express.js directory
 os.chdir('/app/backend_express')
-backend_process = subprocess.Popen(['node', 'server.js'])
 
-def cleanup():
-    if backend_process:
-        backend_process.terminate()
-        backend_process.wait()
-
-atexit.register(cleanup)
-
-@app.get("/health")
-def health():
-    return {"status": "running"}
+# Start Express.js server
+try:
+    subprocess.run(['node', 'server.js'], check=True)
+except KeyboardInterrupt:
+    print("Server stopped")
+    sys.exit(0)
+except Exception as e:
+    print(f"Error starting server: {e}")
+    sys.exit(1)
