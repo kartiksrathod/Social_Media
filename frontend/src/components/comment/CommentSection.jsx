@@ -18,7 +18,10 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(initialCommentCount);
-  const [sortBy, setSortBy] = useState('newest'); // newest, most_liked, most_replied
+  // Load saved sort preference from localStorage, default to 'newest'
+  const [sortBy, setSortBy] = useState(() => {
+    return localStorage.getItem('commentSortPreference') || 'newest';
+  });
   const limit = 20;
   const { socket } = useSocket();
   
