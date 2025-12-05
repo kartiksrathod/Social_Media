@@ -548,6 +548,55 @@ user_problem_statement: "Phase 4: Implement Track A - Comments Upgrade Pack: (1)
 previous_implementations: "Phase 3: Comments + Replies System with likes, edit, delete, notifications, and real-time updates - COMPLETED ✅"
 
 backend:
+  - task: "Comment Emoji Reactions - Model & Endpoints"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/models/Comment.js, /app/backend_express/routes/comments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added reactions array field to Comment model (user_id, type: like/love/laugh/wow/sad/angry, created_at). Added mentioned_user_ids array for @mentions. Created POST /api/comments/:commentId/react endpoint (toggle reaction, optimistic updates, notifications). Created DELETE /api/comments/:commentId/react/:reactionType endpoint. Reactions include full reaction_summary and user_reaction in responses. WebSocket event 'comment_reaction' emitted for real-time updates. Self-reaction notifications prevented."
+  
+  - task: "Comment Sorting & Filtering"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/comments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated GET /api/comments/:postId to accept sort parameter (newest/most_liked/most_replied). Added sorting logic with MongoDB sort criteria: newest (created_at: -1), most_liked (like_count: -1, created_at: -1), most_replied (reply_count: -1, created_at: -1). Updated GET /api/comments/:commentId/replies to support sorting. Both endpoints now return reaction_summary and user_reaction for each comment/reply."
+  
+  - task: "Real-time Comment Updates via WebSocket"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/comments.js, /app/backend_express/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added WebSocket events for real-time updates: 'new_comment' (emitted when comment created), 'edit_comment' (emitted when comment edited), 'delete_comment' (emitted when comment deleted with is_soft_delete flag), 'comment_reaction' (emitted when reaction added/removed). Added join_post_room and leave_post_room socket handlers in server.js. All comment CRUD operations emit WebSocket events to post room (post_${postId}) for real-time synchronization across clients."
+  
+  - task: "Comment Mentions - Extraction & Notifications"
+    implemented: true
+    working: "pending_test"
+    file: "/app/backend_express/routes/comments.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created extractMentions function to parse @username from comment text using regex /@(\w+)/g. Updated POST /api/comments to extract mentions, look up mentioned users, store mentioned_user_ids in comment. Create 'comment' type notifications for each mentioned user (excluding self-mentions) with text 'mentioned you in a comment: [preview]'. Notifications sent via WebSocket for real-time delivery. Duplicate mentions filtered out."
+
+backend_previous:
   - task: "Comment Model & Schema"
     implemented: true
     working: true
