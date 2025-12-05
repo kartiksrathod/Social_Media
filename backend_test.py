@@ -39,11 +39,12 @@ class CommentsUpgradePackTester:
             print(f"   Details: {details}")
     
     def create_test_users(self):
-        """Create test users for Collaborative Posts testing"""
+        """Create test users for Comments Upgrade Pack testing"""
         users = [
-            {"username": "alice_collab", "email": "alice@collab.com", "password": "password123"},
-            {"username": "bob_collab", "email": "bob@collab.com", "password": "password123"},
-            {"username": "charlie_collab", "email": "charlie@collab.com", "password": "password123"}
+            {"username": "alice_comments", "email": "alice@comments.com", "password": "password123"},
+            {"username": "bob_comments", "email": "bob@comments.com", "password": "password123"},
+            {"username": "charlie_comments", "email": "charlie@comments.com", "password": "password123"},
+            {"username": "diana_comments", "email": "diana@comments.com", "password": "password123"}
         ]
         
         for user_data in users:
