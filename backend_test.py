@@ -21,7 +21,7 @@ class SocialVibeBackendTester:
         self.headers = HEADERS.copy()
         self.test_users = {}
         self.test_results = []
-        self.close_friends_posts = []
+        self.collaborative_posts = []
         
     def log_test(self, test_name, status, details=""):
         """Log test results"""
