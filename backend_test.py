@@ -39,12 +39,12 @@ class SocialVibeDeploymentTester:
             print(f"   Details: {details}")
     
     def create_test_users(self):
-        """Create test users for Comments Upgrade Pack testing"""
+        """Create test users for comprehensive testing"""
         users = [
-            {"username": "alice_comments", "email": "alice@comments.com", "password": "password123"},
-            {"username": "bob_comments", "email": "bob@comments.com", "password": "password123"},
-            {"username": "charlie_comments", "email": "charlie@comments.com", "password": "password123"},
-            {"username": "diana_comments", "email": "diana@comments.com", "password": "password123"}
+            {"username": "alice_deploy", "email": "alice@deploy.com", "password": "password123"},
+            {"username": "bob_deploy", "email": "bob@deploy.com", "password": "password123"},
+            {"username": "charlie_deploy", "email": "charlie@deploy.com", "password": "password123"},
+            {"username": "diana_deploy", "email": "diana@deploy.com", "password": "password123"}
         ]
         
         for user_data in users:
