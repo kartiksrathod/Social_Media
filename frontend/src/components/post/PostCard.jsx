@@ -98,33 +98,6 @@ export default function PostCard({ post, onUpdate }) {
     }
   };
 
-  const loadComments = async () => {
-    try {
-      const response = await postsAPI.getComments(post.id);
-      setComments(response.data);
-    } catch (error) {
-      toast.error('Failed to load comments');
-    }
-  };
-
-  const handleAddComment = async (e) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-
-    setLoadingComment(true);
-    try {
-      const response = await postsAPI.addComment(post.id, commentText.trim());
-      setComments([...comments, response.data]);
-      setCommentText('');
-      toast.success('Comment added');
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to add comment');
-    } finally {
-      setLoadingComment(false);
-    }
-  };
-
   const handleSave = async () => {
     try {
       if (saved) {
