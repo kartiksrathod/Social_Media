@@ -130,28 +130,36 @@ class SocialVibeBackendTester:
     # ==================== COLLABORATIVE POSTS CREATION TESTS ====================
     
     def test_create_collaborative_post_success(self):
-        """Test POST /api/users/close-friends/add - Success case"""
+        """Test POST /api/collaborations/invite - Create collaborative post with invite"""
         try:
-            alice_headers = self.get_auth_headers("alice_cf")
-            bob_user_id = self.test_users["bob_cf"]["user_id"]
+            alice_headers = self.get_auth_headers("alice_collab")
+            bob_username = self.test_users["bob_collab"]["username"]
             
-            # First, ensure Bob is not in close friends (remove if exists)
-            requests.delete(f"{self.base_url}/users/close-friends/remove", 
-                          json={"user_id": bob_user_id}, headers=alice_headers)
+            post_data = {
+                "text": "Let's collaborate on this amazing post! 🤝 #collaboration #socialvibe",
+                "collaborator_username": bob_username,
+                "visibility": "public"
+            }
             
-            response = requests.post(f"{self.base_url}/users/close-friends/add", 
-                                   json={"user_id": bob_user_id}, headers=alice_headers)
+            response = requests.post(f"{self.base_url}/collaborations/invite", 
+                                   json=post_data, headers=alice_headers)
             
-            if response.status_code == 200:
-                data = response.json()
-                if 'message' in data and 'successfully' in data['message'].lower():
-                    self.log_test("Add close friend - Success", "PASS", f"Bob added to Alice's close friends")
+            if response.status_code == 201:
+                post = response.json()
+                if (post.get('is_collaborative') == True and 
+                    post.get('collaboration_status') == 'pending' and
+                    post.get('collaborator_username') == bob_username):
+                    self.collaborative_posts.append(post['id'])
+                    self.log_test("Create collaborative post - Success", "PASS", 
+                                f"Collaborative post created with pending status: {post['id']}")
                 else:
-                    self.log_test("Add close friend - Success", "FAIL", f"Unexpected response: {data}")
+                    self.log_test("Create collaborative post - Success", "FAIL", 
+                                f"Post missing collaborative fields: {post}")
             else:
-                self.log_test("Add close friend - Success", "FAIL", f"Status: {response.status_code}, Response: {response.text}")
+                self.log_test("Create collaborative post - Success", "FAIL", 
+                            f"Status: {response.status_code}, Response: {response.text}")
         except Exception as e:
-            self.log_test("Add close friend - Success", "FAIL", str(e))
+            self.log_test("Create collaborative post - Success", "FAIL", str(e))
     
     def test_add_close_friend_missing_user_id(self):
         """Test POST /api/users/close-friends/add - Missing user_id"""
