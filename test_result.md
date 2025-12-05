@@ -543,7 +543,9 @@ agent_communication:
       - GET /api/posts/feed (filtered by visibility)
       - Notification creation for close_friend type
 
-user_problem_statement: "Phase 3: Implement Comments + Replies System with likes, edit, delete, notifications, and real-time updates"
+user_problem_statement: "Phase 4: Implement Track A - Comments Upgrade Pack: (1) Emoji reactions on comments (6 reactions), (2) Sort & filter comments (newest/most_liked/most_replied), (3) Real-time comment updates via WebSocket, (4) @Mentions in comments with autocomplete"
+
+previous_implementations: "Phase 3: Comments + Replies System with likes, edit, delete, notifications, and real-time updates - COMPLETED ✅"
 
 backend:
   - task: "Comment Model & Schema"
