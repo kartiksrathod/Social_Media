@@ -315,10 +315,37 @@ router.put('/:commentId', authenticateToken, async (req, res) => {
     comment.updated_at = new Date();
     await comment.save();
 
+    // Emit WebSocket event for real-time edit
+    if (req.app.get('io')) {
+      const reactionSummary = {};
+      comment.reactions.forEach(r => {
+        reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+      });
+      const userReaction = comment.reactions.find(r => r.user_id === user_id);
+
+      req.app.get('io').to(`post_${comment.post_id}`).emit('edit_comment', {
+        comment: {
+          ...comment.toObject(),
+          id: comment.id,
+          has_liked: comment.likes.includes(user_id),
+          user_reaction: userReaction ? userReaction.type : null,
+          reaction_summary: reactionSummary
+        }
+      });
+    }
+
+    const reactionSummary = {};
+    comment.reactions.forEach(r => {
+      reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+    });
+    const userReaction = comment.reactions.find(r => r.user_id === user_id);
+
     res.json({
       ...comment.toObject(),
       id: comment.id,
-      has_liked: comment.likes.includes(user_id)
+      has_liked: comment.likes.includes(user_id),
+      user_reaction: userReaction ? userReaction.type : null,
+      reaction_summary: reactionSummary
     });
   } catch (error) {
     console.error('Error editing comment:', error);
