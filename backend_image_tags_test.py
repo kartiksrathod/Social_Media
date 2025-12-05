@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://social-tag-collab.preview.emergentagent.com/api"
+BASE_URL = "https://next-features-1.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ImageTagsBackendTester:
