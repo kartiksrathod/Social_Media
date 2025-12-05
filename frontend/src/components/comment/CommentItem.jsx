@@ -1,21 +1,62 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { MessageCircle, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { commentsAPI } from '../../lib/api';
 import CommentInput from './CommentInput';
 import CommentReplies from './CommentReplies';
+import ReactionButton from '../post/ReactionButton';
+import { useNavigate } from 'react-router-dom';
 
 const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [localLikeCount, setLocalLikeCount] = useState(comment.like_count);
-  const [hasLiked, setHasLiked] = useState(comment.has_liked);
-  const [isLiking, setIsLiking] = useState(false);
+  const [userReaction, setUserReaction] = useState(comment.user_reaction || null);
+  const [reactionCounts, setReactionCounts] = useState(comment.reaction_summary || {});
 
   const isOwnComment = currentUser?.id === comment.user_id;
   const isDeleted = comment.text === '[deleted]';
+
+  // Render text with mentions as clickable links
+  const renderTextWithMentions = (text) => {
+    const mentionRegex = /@(\w+)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Add text before mention
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      // Add mention as clickable link
+      const username = match[1];
+      parts.push(
+        <span
+          key={match.index}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/profile/${username}`);
+          }}
+          className="text-purple-600 dark:text-purple-400 hover:underline cursor-pointer font-medium"
+        >
+          @{username}
+        </span>
+      );
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : text;
+  };
 
   const handleLike = async () => {
     if (isLiking) return;
