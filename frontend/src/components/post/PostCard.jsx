@@ -505,6 +505,15 @@ export default function PostCard({ post, onUpdate }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Comments Section */}
+      {commentsOpen && (
+        <CommentSection
+          postId={post.id}
+          onClose={() => setCommentsOpen(false)}
+          initialCommentCount={commentCount}
+        />
+      )}
     </Card>
   );
 }
