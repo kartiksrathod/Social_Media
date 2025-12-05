@@ -181,19 +181,40 @@ router.get('/:postId', authenticateToken, async (req, res) => {
 router.get('/:commentId/replies', authenticateToken, async (req, res) => {
   try {
     const { commentId } = req.params;
+    const { sort = 'newest' } = req.query;
     const { user_id } = req.user;
+
+    // Determine sort criteria
+    let sortCriteria = { created_at: 1 }; // Default: oldest first for replies (conversation flow)
+    if (sort === 'newest') {
+      sortCriteria = { created_at: -1 };
+    } else if (sort === 'most_liked') {
+      sortCriteria = { like_count: -1, created_at: 1 };
+    } else if (sort === 'most_replied') {
+      sortCriteria = { reply_count: -1, created_at: 1 };
+    }
 
     // Get all replies for this comment
     const replies = await Comment.find({ 
       parent_comment_id: commentId 
-    }).sort({ created_at: 1 });  // Ascending order for replies
+    }).sort(sortCriteria);
 
-    // Format replies with user like status
-    const formattedReplies = replies.map(reply => ({
-      ...reply.toObject(),
-      id: reply.id,
-      has_liked: reply.likes.includes(user_id)
-    }));
+    // Format replies with user like status and reaction data
+    const formattedReplies = replies.map(reply => {
+      const reactionSummary = {};
+      reply.reactions.forEach(r => {
+        reactionSummary[r.type] = (reactionSummary[r.type] || 0) + 1;
+      });
+      const userReaction = reply.reactions.find(r => r.user_id === user_id);
+
+      return {
+        ...reply.toObject(),
+        id: reply.id,
+        has_liked: reply.likes.includes(user_id),
+        user_reaction: userReaction ? userReaction.type : null,
+        reaction_summary: reactionSummary
+      };
+    });
 
     res.json({
       replies: formattedReplies
