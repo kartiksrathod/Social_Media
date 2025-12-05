@@ -57,6 +57,18 @@ io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} left conversation ${conversationId}`);
   });
 
+  // Join post room for comment updates
+  socket.on('join_post_room', (postId) => {
+    socket.join(`post_${postId}`);
+    console.log(`Socket ${socket.id} joined post room post_${postId}`);
+  });
+
+  // Leave post room
+  socket.on('leave_post_room', (postId) => {
+    socket.leave(`post_${postId}`);
+    console.log(`Socket ${socket.id} left post room post_${postId}`);
+  });
+
   // Typing indicator
   socket.on('typing', ({ conversationId, userId, username }) => {
     socket.to(conversationId).emit('user_typing', { userId, username });
