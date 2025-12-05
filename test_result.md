@@ -458,8 +458,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Phase 3: Collaborative Posts - Backend testing (4 tasks)"
-    - "Phase 3: Collaborative Posts - Frontend testing (5 tasks)"
+    - "Collaborative Posts - Backend testing (4 tasks)"
+    - "Enhanced Mentions & Image Tagging - Frontend testing (4 tasks)"
+    - "Close Friends - Frontend testing (3 tasks)"
+    - "Collaborative Posts - Frontend testing (5 tasks)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
