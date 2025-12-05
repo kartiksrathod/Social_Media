@@ -132,6 +132,8 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
 
   const handleSortChange = (value) => {
     setSortBy(value);
+    // Save sort preference to localStorage
+    localStorage.setItem('commentSortPreference', value);
     setOffset(0);
     setComments([]);
   };
