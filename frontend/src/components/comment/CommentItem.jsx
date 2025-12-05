@@ -203,7 +203,7 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
                     )}
                   </div>
                   <p className="text-sm text-gray-900 dark:text-gray-100 break-words">
-                    {comment.text}
+                    {renderTextWithMentions(comment.text)}
                   </p>
                 </div>
                 
