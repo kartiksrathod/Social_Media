@@ -247,26 +247,20 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
           )}
           
           {!isEditing && (
-            <div className="flex items-center gap-4 mt-1 ml-2">
-              <button
-                onClick={handleLike}
-                disabled={isLiking}
-                className={`flex items-center gap-1 text-xs font-medium transition-colors ${
-                  hasLiked 
-                    ? 'text-red-500' 
-                    : 'text-gray-500 dark:text-gray-400 hover:text-red-500'
-                }`}
-              >
-                <Heart className={`w-3 h-3 ${hasLiked ? 'fill-current' : ''}`} />
-                {localLikeCount > 0 && <span>{localLikeCount}</span>}
-              </button>
+            <div className="flex items-center gap-3 mt-1 ml-2">
+              <ReactionButton
+                userReaction={userReaction}
+                reactionCounts={reactionCounts}
+                onReact={handleReact}
+                onRemoveReaction={handleRemoveReaction}
+              />
               
               <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-purple-500 transition-colors"
+                className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-purple-500 transition-colors px-2 h-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <MessageCircle className="w-3 h-3" />
-                Reply
+                <MessageCircle className="w-4 h-4" />
+                <span>Reply</span>
               </button>
               
               {comment.reply_count > 0 && (
