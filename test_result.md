@@ -156,15 +156,18 @@ backend:
 
   - task: "Collaborative Posts - Feed and profile filtering"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend_express/routes/posts.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated GET /api/posts/feed to show posts where user is author OR accepted collaborator. Updated GET /api/posts/user/:username to show posts where user is author OR accepted collaborator. Collaborative posts appear in both authors' profiles and feeds."
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Feed and profile filtering working flawlessly. GET /api/posts/feed correctly shows accepted collaborative posts in both collaborators' feeds. GET /api/posts/user/:username shows collaborative posts in both authors' profiles. Pending collaborative posts are correctly hidden from collaborator's profile until accepted. All filtering logic working as expected with proper authorization."
 
 backend:
   - task: "Add image_tags field to Post model"
