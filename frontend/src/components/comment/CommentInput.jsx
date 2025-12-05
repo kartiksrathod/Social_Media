@@ -114,7 +114,7 @@ const CommentInput = ({
           <textarea
             ref={textareaRef}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleTextChange}
             placeholder={placeholder}
             maxLength={maxLength}
             rows={2}
@@ -123,6 +123,14 @@ const CommentInput = ({
           <div className="absolute bottom-2 right-2 text-xs text-gray-400">
             {text.length}/{maxLength}
           </div>
+          
+          {showMentions && (
+            <MentionAutocomplete
+              searchQuery={mentionSearch}
+              onSelect={handleMentionSelect}
+              onClose={() => setShowMentions(false)}
+            />
+          )}
         </div>
         
         <div className="flex gap-2 items-start">
