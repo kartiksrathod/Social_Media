@@ -756,26 +756,6 @@ class SocialVibeDeploymentTester:
 if __name__ == "__main__":
     tester = SocialVibeDeploymentTester()
     results = tester.run_all_tests()
-        try:
-            headers = self.get_auth_headers(author_username)
-            comment_data = {
-                "post_id": post_id,
-                "text": text
-            }
-            
-            response = requests.post(f"{self.base_url}/comments", json=comment_data, headers=headers)
-            
-            if response.status_code == 201:
-                comment = response.json()
-                self.test_comments.append(comment['id'])
-                self.log_test(f"Create test comment by {author_username}", "PASS", f"Comment created: {comment['id']}")
-                return comment['id']
-            else:
-                self.log_test(f"Create test comment by {author_username}", "FAIL", f"Status: {response.status_code}")
-                return None
-        except Exception as e:
-            self.log_test(f"Create test comment by {author_username}", "FAIL", str(e))
-            return None
     
     # ==================== FEATURE 1: COMMENT EMOJI REACTIONS ====================
     
