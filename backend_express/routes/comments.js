@@ -149,9 +149,26 @@ router.post('/', authenticateToken, async (req, res) => {
       }
     }
 
+    // Emit WebSocket event for real-time comment update
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post_${post_id}`).emit('new_comment', {
+        comment: {
+          ...comment.toObject(),
+          id: comment.id,
+          has_liked: false,
+          user_reaction: null,
+          reaction_summary: {}
+        },
+        parent_comment_id: parent_comment_id || null
+      });
+    }
+
     res.status(201).json({
       ...comment.toObject(),
-      id: comment.id
+      id: comment.id,
+      has_liked: false,
+      user_reaction: null,
+      reaction_summary: {}
     });
   } catch (error) {
     console.error('Error creating comment:', error);
