@@ -43,6 +43,24 @@ const commentSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  reactions: [{
+    user_id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      enum: ['like', 'love', 'laugh', 'wow', 'sad', 'angry'],
+      required: true
+    },
+    created_at: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  mentioned_user_ids: [{
+    type: String
+  }],
   reply_count: {
     type: Number,
     default: 0
