@@ -499,6 +499,7 @@ class CollaborativePostsTester:
                 
                 if reject_response.status_code == 200:
                     # Verify post is converted to regular post
+                    alice_username = self.test_users["alice_collab"]["username"]
                     post_response = requests.get(f"{self.base_url}/posts/user/{alice_username}", 
                                                headers=alice_headers)
                     
