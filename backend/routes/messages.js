@@ -120,7 +120,7 @@ router.get('/conversations', authenticateToken, async (req, res) => {
 });
 
 // POST /api/messages - Send message
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, messageLimiter, async (req, res) => {
   try {
     const { conversation_id, text, media_url } = req.body;
 
