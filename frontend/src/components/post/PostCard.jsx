@@ -428,11 +428,11 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="group px-3 sm:px-2 h-11 sm:h-9 touch-target hover-accent touch-manipulation tap-feedback no-select"
+              className="group px-3 sm:px-2 h-11 sm:h-9 touch-target hover-accent touch-manipulation tap-feedback no-select button-press"
               onClick={() => setCommentsOpen(true)}
             >
-              <MessageCircle className="w-5 h-5 mr-2 sm:mr-1.5 icon-hover-pulse transition-all" />
-              <span className="text-sm font-medium">{commentCount}</span>
+              <MessageCircle className="w-5 h-5 mr-2 sm:mr-1.5 icon-hover-bounce transition-all" />
+              <span className="text-sm font-medium number-count-up">{commentCount}</span>
             </Button>
           </div>
 
