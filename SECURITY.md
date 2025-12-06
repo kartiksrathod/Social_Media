@@ -256,12 +256,81 @@ NODE_ENV=production
 PORT=8001
 ```
 
+## Testing Security Features
+
+### Rate Limiting Tests
+```bash
+# Test general API rate limiting (should block after 100 requests in 15 min)
+for i in {1..105}; do curl http://localhost:8001/api/health; done
+
+# Test auth rate limiting (should block after 5 attempts)
+for i in {1..6}; do 
+  curl -X POST http://localhost:8001/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"test","password":"wrong"}'; 
+done
+
+# Test post creation limiting (should block after 10 posts in 1 hour)
+# Requires valid JWT token
+for i in {1..12}; do 
+  curl -X POST http://localhost:8001/api/posts \
+    -H "Authorization: Bearer <token>" \
+    -H "Content-Type: application/json" \
+    -d '{"text":"Test post"}'; 
+done
+```
+
+### CSRF Protection Tests
+```bash
+# Should fail without CSRF token
+curl -X POST http://localhost:8001/api/posts \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Test"}'
+
+# Should succeed with CSRF token
+TOKEN=$(curl http://localhost:8001/api/csrf-token | jq -r '.csrfToken')
+curl -X POST http://localhost:8001/api/posts \
+  -H "Authorization: Bearer <token>" \
+  -H "X-CSRF-Token: $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Test"}'
+```
+
+### Input Sanitization Tests
+```bash
+# XSS attempt - should be escaped
+curl -X POST http://localhost:8001/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"username":"<script>alert(1)</script>","email":"test@test.com","password":"Test1234"}'
+
+# MongoDB injection attempt - should be sanitized
+curl -X POST http://localhost:8001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":{"$gt":""},"password":"test"}'
+```
+
+### Security Headers Tests
+```bash
+# Check security headers
+curl -I http://localhost:8001/api/health
+
+# Should include:
+# X-Frame-Options: DENY
+# X-Content-Type-Options: nosniff
+# X-XSS-Protection: 1; mode=block
+# Content-Security-Policy: ...
+# Referrer-Policy: strict-origin-when-cross-origin
+```
+
 ## Resources
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
 - [Express.js Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
 - [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/)
+- [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
+- [Helmet.js Documentation](https://helmetjs.github.io/)
 
 ## Contact
 
