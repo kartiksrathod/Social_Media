@@ -46,6 +46,119 @@ const SidebarContent = ({ isMobile = false }) => {
     { label: "Profile", href: "/profile", icon: User },
   ];
 
+  // Desktop: Icon-only sidebar
+  if (!isMobile) {
+    return (
+      <div className="flex flex-col h-full py-6 px-3 items-center">
+        {/* Brand Icon Only */}
+        <Link to="/home" className="mb-10 group relative">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-110 group-hover:rotate-12">
+            <Sparkles className="w-7 h-7 text-primary-foreground" />
+          </div>
+          {/* Tooltip */}
+          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+            SocialVibe
+            <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+          </div>
+        </Link>
+
+        {/* Navigation - Icon Only */}
+        <nav className="flex-1 flex flex-col gap-2 w-full">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className="group relative"
+            >
+              <div
+                className={`
+                  w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300
+                  ${isActive(link.href) 
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30' 
+                    : 'text-muted-foreground hover:bg-surface-700 hover:text-foreground hover:scale-110'
+                  }
+                `}
+              >
+                <link.icon className={`w-6 h-6 transition-all duration-300 ${isActive(link.href) ? 'scale-110' : 'group-hover:scale-110'}`} />
+              </div>
+              {/* Tooltip on hover */}
+              <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                {link.label}
+                <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+              </div>
+            </Link>
+          ))}
+          
+          {/* Post Button - Icon Only */}
+          <button className="group relative mt-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-110 hover:rotate-12">
+              <PlusCircle className="w-6 h-6 text-primary-foreground" />
+            </div>
+            {/* Tooltip */}
+            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+              Create Post
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+            </div>
+          </button>
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="mt-auto flex flex-col gap-2 pt-6 border-t border-border w-full">
+          {/* User Avatar */}
+          {user && (
+            <Link to="/profile" className="group relative">
+              <Avatar className="w-12 h-12 ring-2 ring-border hover:ring-primary transition-all duration-300 hover:scale-110 cursor-pointer">
+                <AvatarImage src={user.avatar_url} />
+                <AvatarFallback>{user.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+              </Avatar>
+              {/* Tooltip */}
+              <div className="absolute left-full ml-4 bottom-0 px-3 py-2 bg-surface-700 text-foreground rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 min-w-[150px]">
+                <p className="text-sm font-semibold">{user.name || user.username}</p>
+                <p className="text-xs text-muted-foreground">@{user.username}</p>
+                <div className="absolute right-full bottom-4 border-8 border-transparent border-r-surface-700"></div>
+              </div>
+            </Link>
+          )}
+          
+          {/* Theme Toggle */}
+          <button onClick={toggleTheme} className="group relative">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-surface-700 hover:text-foreground transition-all duration-300 hover:scale-110">
+              {theme === 'dark' ? (
+                <Sun className="w-6 h-6" />
+              ) : (
+                <Moon className="w-6 h-6" />
+              )}
+            </div>
+            {/* Tooltip */}
+            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+            </div>
+          </button>
+          
+          {/* Logout */}
+          <button 
+            onClick={() => {
+              logout();
+              navigate('/');
+            }}
+            className="group relative"
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-surface-700 hover:text-destructive transition-all duration-300 hover:scale-110">
+              <LogOut className="w-6 h-6" />
+            </div>
+            {/* Tooltip */}
+            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+              Logout
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile: Full sidebar with labels
   return (
     <div className="flex flex-col h-full py-6 px-4">
       {/* Brand - Strong accent identity */}
