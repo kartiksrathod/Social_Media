@@ -102,8 +102,8 @@ def test_user_signup():
 def test_user_login():
     """Test user login endpoint"""
     login_data = {
-        "username": "sarah_johnson",
-        "password": "SecurePass123!"
+        "username": "testuser",
+        "password": "Test123!"
     }
     
     try:
