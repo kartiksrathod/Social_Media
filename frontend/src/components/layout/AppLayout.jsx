@@ -207,9 +207,11 @@ const SidebarContent = ({ isMobile = false }) => {
         ))}
         
         {/* Primary Button - Accent with glow */}
-        <Button className="w-full mt-6 rounded-full h-12 text-lg font-semibold button-primary">
-           <PlusCircle className="mr-2 w-5 h-5" /> Post
-        </Button>
+        <Link to="/profile" className="block w-full mt-6">
+          <Button className="w-full rounded-full h-12 text-lg font-semibold button-primary">
+             <PlusCircle className="mr-2 w-5 h-5" /> Post
+          </Button>
+        </Link>
       </nav>
 
       {/* User Section */}
