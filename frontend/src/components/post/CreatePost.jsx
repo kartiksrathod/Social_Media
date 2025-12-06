@@ -45,6 +45,11 @@ export default function CreatePost({ onPostCreated }) {
   // Image tagging state
   const [tagImageIndex, setTagImageIndex] = useState(null);
   
+  // Image cropping state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [currentCropImage, setCurrentCropImage] = useState(null);
+  const [currentCropIndex, setCurrentCropIndex] = useState(null);
+  
   const textareaRef = useRef(null);
   const searchTimeout = useRef(null);
 
