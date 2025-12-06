@@ -129,7 +129,7 @@ export default function Feed() {
 
       <div 
         ref={containerRef}
-        className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-4 sm:px-5 space-y-5 sm:space-y-6"
+        className="w-full max-w-2xl mx-auto py-6 px-4 space-y-6"
       >
          <h2 className="text-xl sm:text-2xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-4 -mx-4 sm:-mx-5 px-4 sm:px-5 border-b border-border/50 md:hidden">
             Home
