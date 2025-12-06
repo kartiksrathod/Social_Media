@@ -67,9 +67,9 @@ def test_server_health():
 def test_user_signup():
     """Test user registration endpoint"""
     test_user = {
-        "username": "sarah_johnson",
-        "email": "sarah.johnson@example.com", 
-        "password": "SecurePass123!"
+        "username": "testuser",
+        "email": "test@example.com", 
+        "password": "Test123!"
     }
     
     try:
