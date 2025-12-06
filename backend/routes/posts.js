@@ -282,6 +282,71 @@ router.delete('/:postId', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/posts/:postId/vote - Vote on a poll
+router.post('/:postId/vote', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { option_ids } = req.body; // Array of option IDs for multi-select
+
+    if (!option_ids || !Array.isArray(option_ids) || option_ids.length === 0) {
+      return res.status(400).json({ detail: 'At least one option_id is required' });
+    }
+
+    const post = await Post.findOne({ id: postId });
+    if (!post) {
+      return res.status(404).json({ detail: 'Post not found' });
+    }
+
+    if (!post.is_poll) {
+      return res.status(400).json({ detail: 'This post is not a poll' });
+    }
+
+    // Check if poll has expired
+    if (post.poll.settings.expires_at && new Date() > new Date(post.poll.settings.expires_at)) {
+      return res.status(400).json({ detail: 'This poll has expired' });
+    }
+
+    // Check if multiple votes allowed
+    if (!post.poll.settings.allow_multiple && option_ids.length > 1) {
+      return res.status(400).json({ detail: 'Multiple votes not allowed for this poll' });
+    }
+
+    // Remove user's previous votes from all options
+    let removedVotes = 0;
+    post.poll.options.forEach(option => {
+      const initialLength = option.votes.length;
+      option.votes = option.votes.filter(vote => vote.user_id !== req.userId);
+      removedVotes += initialLength - option.votes.length;
+    });
+
+    // Add new votes
+    let addedVotes = 0;
+    for (const optionId of option_ids) {
+      const option = post.poll.options.find(opt => opt.id === optionId);
+      if (!option) {
+        return res.status(400).json({ detail: `Invalid option_id: ${optionId}` });
+      }
+
+      option.votes.push({
+        user_id: req.userId,
+        voted_at: new Date()
+      });
+      addedVotes++;
+    }
+
+    // Update total votes
+    post.poll.total_votes = post.poll.total_votes - removedVotes + addedVotes;
+
+    await post.save();
+
+    const user = await User.findOne({ id: req.userId });
+    res.json(postToPublic(post, req.userId, user.saved_posts));
+  } catch (error) {
+    console.error('Vote on poll error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
 // GET /api/posts/feed - Get personalized feed
 router.get('/feed', authenticateToken, async (req, res) => {
   try {
