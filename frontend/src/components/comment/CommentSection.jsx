@@ -245,10 +245,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
         {/* Comments List */}
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 overscroll-contain">
           {loading && comments.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto" />
-              <p className="text-sm text-gray-500 mt-4">Loading comments...</p>
-            </div>
+            <CommentSkeleton />
           ) : comments.length === 0 ? (
             <div className="text-center py-12">
               <MessageCircle className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
