@@ -77,7 +77,11 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
       } else {
         // Hard delete - remove from list
         setComments(prev => prev.filter(c => c.id !== data.comment_id));
-        setTotal(prev => Math.max(0, prev - 1));
+        setTotal(prev => {
+          const newTotal = Math.max(0, prev - 1);
+          if (onCommentCountChange) onCommentCountChange(newTotal);
+          return newTotal;
+        });
       }
     });
 
