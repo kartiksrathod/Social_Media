@@ -85,6 +85,9 @@ export default function ImageCropModal({ open, onClose, imageSrc, onCropComplete
   const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [aspect, setAspect] = useState(1); // 1:1 square by default
+  const [customWidth, setCustomWidth] = useState('');
+  const [customHeight, setCustomHeight] = useState('');
+  const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
 
   const onCropChange = (crop) => {
     setCrop(crop);
