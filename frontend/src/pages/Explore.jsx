@@ -202,12 +202,12 @@ export default function Explore() {
                ))}
              </div>
            ) : posts.length === 0 ? (
-             <div className="text-center py-12">
+             <div className="text-center card-padding-lg">
                <p className="text-muted-foreground">No posts to explore yet</p>
              </div>
            ) : (
              <>
-               <div className="space-y-4">
+               <div className="list-spacing flex flex-col">
                  {posts.map(post => (
                    <SwipeablePostCard 
                      key={post.id} 
