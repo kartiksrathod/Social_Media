@@ -95,18 +95,19 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] border-t border-border">
+    <div className="flex h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] border-t border-border">
       {/* Conversations List */}
       <div className={`${selectedConversation ? 'hidden md:block' : 'block'} w-full md:w-96 border-r border-border flex flex-col`}>
         {/* Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <h1 className="text-xl font-bold">Messages</h1>
+        <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
+          <h1 className="text-xl sm:text-2xl font-bold">Messages</h1>
           <Button
             size="icon"
             variant="ghost"
+            className="h-11 w-11 sm:h-10 sm:w-10 touch-target touch-manipulation tap-feedback"
             onClick={() => setNewChatOpen(true)}
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-6 h-6 sm:w-5 sm:h-5" />
           </Button>
         </div>
 
