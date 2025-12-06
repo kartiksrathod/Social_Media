@@ -264,7 +264,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Image upload and post creation endpoints tested and working"
+    - "Infinite Scroll - Feed Page"
+    - "Infinite Scroll - Explore Page"
+    - "Infinite Scroll - Profile Page"
+    - "Infinite Scroll - Comments"
+    - "Infinite Scroll - Search Results"
+    - "Mobile Navigation - Bottom Nav Bar"
+    - "Mobile Touch Targets - Button Sizes"
+    - "Mobile Touch Targets - Image Carousel"
+    - "Responsive Layout - Mobile/Tablet/Desktop"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
