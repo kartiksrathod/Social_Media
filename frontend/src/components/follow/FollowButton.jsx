@@ -42,8 +42,8 @@ const FollowButton = ({ userId, initialIsFollowing, onFollowChange, size = 'md' 
       className={`
         ${sizeClasses[size]}
         ${isFollowing 
-          ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600' 
-          : 'bg-purple-600 text-white hover:bg-purple-700'
+          ? 'surface-700 border border-border text-foreground hover:surface-600' 
+          : 'bg-primary text-primary-foreground hover:bg-primary/90 glow-subtle hover:glow-primary'
         }
         rounded-full font-semibold transition-all duration-200
         disabled:opacity-50 disabled:cursor-not-allowed
