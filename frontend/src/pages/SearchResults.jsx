@@ -158,28 +158,28 @@ const SearchResults = () => {
                 <>
                   <div className="divide-y dark:divide-gray-800">
                     {users.length === 0 ? (
-                      <div className="p-8 text-center text-gray-500">
-                        <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <div className="card-padding-lg text-center text-gray-500">
+                        <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No users found</p>
                       </div>
                     ) : (
                       users.map((user) => (
-                        <div key={user.id} className="p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <div key={user.id} className="card-padding-sm flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <Link
                             to={`/profile/${user.username}`}
-                            className="flex items-center gap-3 flex-1 min-w-0"
+                            className="flex items-center gap-4 flex-1 min-w-0"
                           >
                             <img
                               src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
                               alt={user.username}
                               className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                             />
-                            <div className="flex-1 min-w-0">
+                            <div className="flex-1 min-w-0 space-y-1">
                               <p className="font-semibold truncate">{user.username}</p>
                               {user.bio && (
                                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
                               )}
-                              <p className="text-xs text-gray-400 mt-1">
+                              <p className="text-xs text-gray-400">
                                 {user.followers_count} followers · {user.following_count} following
                               </p>
                             </div>
