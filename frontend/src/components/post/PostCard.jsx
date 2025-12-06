@@ -431,7 +431,7 @@ export default function PostCard({ post, onUpdate }) {
               className="group px-3 sm:px-2 h-11 sm:h-9 touch-target hover-accent touch-manipulation tap-feedback no-select"
               onClick={() => setCommentsOpen(true)}
             >
-              <MessageCircle className="w-5 h-5 mr-2 sm:mr-1.5 group-hover:scale-110 transition-transform" />
+              <MessageCircle className="w-5 h-5 mr-2 sm:mr-1.5 icon-hover-pulse transition-all" />
               <span className="text-sm font-medium">{commentCount}</span>
             </Button>
           </div>
@@ -443,7 +443,7 @@ export default function PostCard({ post, onUpdate }) {
               className={`group px-3 sm:px-2 h-11 sm:h-9 touch-target transition-colors touch-manipulation tap-feedback no-select ${saved ? 'text-primary' : 'hover-accent'}`}
               onClick={handleSave}
             >
-              <Bookmark className={`w-5 h-5 transition-transform group-active:scale-75 ${saved ? 'fill-current' : ''}`} />
+              <Bookmark className={`w-5 h-5 transition-all ${saved ? 'fill-current bookmark-save-animation' : ''} group-hover:scale-110`} />
             </Button>
 
             <Button 
@@ -453,9 +453,9 @@ export default function PostCard({ post, onUpdate }) {
               onClick={handleShare}
             >
               {copied ? (
-                <Check className="w-5 h-5 text-green-500" />
+                <Check className="w-5 h-5 text-green-500 success-checkmark" />
               ) : (
-                <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Share2 className="w-5 h-5 icon-hover-rotate transition-all" />
               )}
             </Button>
           </div>
