@@ -336,7 +336,7 @@ export default function PostCard({ post, onUpdate }) {
         </div>
       </CardHeader>
       
-      <CardContent className={`p-4 sm:p-5 pt-2 space-y-4 ${isRepost && post.repost_text ? 'border-l-2 border-primary/30 ml-4 sm:ml-5 bg-primary/5' : ''}`}>
+      <CardContent className={`card-padding pt-0 content-spacing ${isRepost && post.repost_text ? 'border-l-2 border-primary/30 ml-4 sm:ml-6 bg-primary/5' : ''}`}>
         <p className="text-base leading-relaxed whitespace-pre-wrap text-foreground text-overflow-safe">
           {renderTextWithHashtagsAndMentions(post.text)}
           {post.edited_at && !isRepost && (
