@@ -87,11 +87,43 @@ router.post('/upload-avatar', authenticateToken, upload.single('file'), async (r
 // PUT /api/users/me - Update profile (must come before /:username)
 router.put('/me', authenticateToken, async (req, res) => {
   try {
-    const { bio, avatar } = req.body;
+    const { bio, avatar, username, name } = req.body;
     const updateData = {};
 
     if (bio !== undefined) updateData.bio = bio;
     if (avatar !== undefined) updateData.avatar = avatar;
+    if (name !== undefined) updateData.name = name;
+    
+    // Handle username change with validation
+    if (username !== undefined) {
+      const trimmedUsername = username.trim();
+      
+      // Validate username
+      if (!trimmedUsername) {
+        return res.status(400).json({ detail: 'Username cannot be empty' });
+      }
+      
+      if (trimmedUsername.length < 3) {
+        return res.status(400).json({ detail: 'Username must be at least 3 characters' });
+      }
+      
+      if (trimmedUsername.length > 30) {
+        return res.status(400).json({ detail: 'Username must be less than 30 characters' });
+      }
+      
+      // Check if username contains only valid characters
+      if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) {
+        return res.status(400).json({ detail: 'Username can only contain letters, numbers, and underscores' });
+      }
+      
+      // Check if username is already taken by another user
+      const existingUser = await User.findOne({ username: trimmedUsername });
+      if (existingUser && existingUser.id !== req.userId) {
+        return res.status(400).json({ detail: 'Username already taken' });
+      }
+      
+      updateData.username = trimmedUsername;
+    }
 
     const user = await User.findOneAndUpdate(
       { id: req.userId },
