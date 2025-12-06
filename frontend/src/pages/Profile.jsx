@@ -158,7 +158,7 @@ export default function Profile() {
           
           <div className="space-y-4">
              <div>
-                <h1 className="text-2xl font-heading font-bold">{profileUser.username}</h1>
+                <h1 className="text-2xl font-heading font-bold">{profileUser.name || profileUser.username}</h1>
                 <p className="text-muted-foreground">@{profileUser.username}</p>
              </div>
              
