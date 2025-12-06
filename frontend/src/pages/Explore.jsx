@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import PostCard from '@/components/post/PostCard';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -8,23 +8,53 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { postsAPI, usersAPI } from '../lib/api';
 import { toast } from 'sonner';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export default function Explore() {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [skip, setSkip] = useState(0);
+  const LIMIT = 10;
 
-  const loadExploreFeed = async () => {
+  const loadExploreFeed = async (isLoadMore = false) => {
     try {
-      const response = await postsAPI.getExplore();
-      setPosts(response.data);
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const currentSkip = isLoadMore ? skip : 0;
+      const response = await postsAPI.getExplore(LIMIT, currentSkip);
+      const newPosts = response.data;
+
+      if (isLoadMore) {
+        setPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setPosts(newPosts);
+      }
+
+      setSkip(currentSkip + newPosts.length);
+      setHasMore(newPosts.length === LIMIT);
     } catch (error) {
       toast.error('Failed to load explore feed');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      loadExploreFeed(true);
+    }
+  }, [loadingMore, hasMore, skip]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
 
   const handleSearch = async (query) => {
     if (!query.trim()) {
@@ -50,6 +80,13 @@ export default function Explore() {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  const handlePostUpdate = () => {
+    // Reset and reload from start
+    setSkip(0);
+    setHasMore(true);
+    loadExploreFeed(false);
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto py-6 px-4 space-y-6">
