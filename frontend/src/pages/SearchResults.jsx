@@ -218,8 +218,8 @@ const SearchResults = () => {
                 <>
                   <div className="divide-y dark:divide-gray-800">
                     {hashtags.length === 0 ? (
-                      <div className="p-8 text-center text-gray-500">
-                        <Hash className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <div className="card-padding-lg text-center text-gray-500">
+                        <Hash className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No hashtags found</p>
                       </div>
                     ) : (
@@ -227,9 +227,9 @@ const SearchResults = () => {
                         <Link
                           key={hashtag.tag}
                           to={`/hashtag/${hashtag.tag}`}
-                          className="p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-h-[60px] touch-manipulation"
+                          className="card-padding-sm flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-h-[60px] touch-manipulation"
                         >
-                          <div>
+                          <div className="space-y-1">
                             <p className="font-bold text-base sm:text-lg">#{hashtag.tag}</p>
                             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                               {hashtag.count} {hashtag.count === 1 ? 'post' : 'posts'}
