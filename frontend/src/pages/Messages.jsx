@@ -112,27 +112,27 @@ export default function Messages() {
         </div>
 
         {/* Conversations */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scroll-smooth-mobile">
           {loading ? (
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-5">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-muted animate-pulse" />
+                  <div className="w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-muted animate-pulse" />
                   <div className="flex-1">
-                    <div className="h-4 bg-muted rounded animate-pulse mb-2" />
-                    <div className="h-3 bg-muted rounded animate-pulse w-2/3" />
+                    <div className="h-5 sm:h-4 bg-muted rounded animate-pulse mb-2" />
+                    <div className="h-4 sm:h-3 bg-muted rounded animate-pulse w-2/3" />
                   </div>
                 </div>
               ))}
             </div>
           ) : conversations.length === 0 ? (
-            <div className="p-8 text-center">
-              <MessageCircle className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No messages yet</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+            <div className="p-8 sm:p-10 text-center">
+              <MessageCircle className="w-20 h-20 sm:w-16 sm:h-16 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-xl sm:text-lg font-semibold mb-2">No messages yet</h3>
+              <p className="text-base sm:text-sm text-muted-foreground mb-5 sm:mb-4">
                 Start a conversation with someone!
               </p>
-              <Button onClick={() => setNewChatOpen(true)}>
+              <Button onClick={() => setNewChatOpen(true)} className="h-12 sm:h-10 px-6 text-base sm:text-sm touch-manipulation tap-feedback-lg">
                 New Message
               </Button>
             </div>
