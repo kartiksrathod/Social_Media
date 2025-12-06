@@ -158,7 +158,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend authentication and profile endpoints tested and working"
+    - "Image upload and post creation endpoints tested and working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -166,3 +166,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Comprehensive backend testing completed successfully. All core authentication and user profile APIs are working correctly. MongoDB connection verified. Server running properly on port 8001. No critical issues found. Minor warnings about duplicate schema indexes in logs but functionality not affected."
+  - agent: "testing"
+    message: "Image upload and post creation testing completed successfully. POST /api/posts/upload-image accepts image files and returns URLs (Cloudinary **mocked** for testing). POST /api/posts creates posts with images array correctly, validates text requirements, handles hashtags/mentions. All endpoints require proper JWT authentication. Image cropping flow from frontend can now be properly tested with working backend endpoints."
