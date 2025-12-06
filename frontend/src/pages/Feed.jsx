@@ -138,20 +138,20 @@ export default function Feed() {
          <StoriesBar />
          
          {loading ? (
-           <div className="list-spacing flex flex-col">
+           <div className="post-list-spacing flex flex-col">
              {[1, 2, 3].map((i) => (
                <PostCardSkeleton key={i} />
              ))}
            </div>
          ) : posts.length === 0 ? (
-           <div className="text-center card-padding-lg">
+           <div className="text-center empty-state-spacing">
              <p className="text-base text-muted-foreground">
                No posts yet. Follow some users or create your first post!
              </p>
            </div>
          ) : (
            <>
-             <div className="list-spacing flex flex-col">
+             <div className="post-list-spacing flex flex-col">
                {posts.map(post => (
                  <SwipeablePostCard 
                    key={post.id} 
@@ -164,7 +164,7 @@ export default function Feed() {
              </div>
 
              {/* Infinite scroll trigger */}
-             <div ref={scrollRef} className="flex justify-center py-8">
+             <div ref={scrollRef} className="flex justify-center infinite-scroll-spacing">
                {loadingMore && (
                  <div className="flex items-center gap-3 text-muted-foreground">
                    <Loader2 className="w-6 h-6 animate-spin" />
