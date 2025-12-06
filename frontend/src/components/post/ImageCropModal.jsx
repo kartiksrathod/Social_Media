@@ -20,7 +20,7 @@ function getRadianAngle(degreeValue) {
   return (degreeValue * Math.PI) / 180;
 }
 
-async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
+async function getCroppedImg(imageSrc, pixelCrop, rotation = 0, targetWidth = null, targetHeight = null) {
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -43,14 +43,34 @@ async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
 
   const data = ctx.getImageData(0, 0, safeArea, safeArea);
 
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  // Use custom dimensions if provided, otherwise use crop dimensions
+  const finalWidth = targetWidth || pixelCrop.width;
+  const finalHeight = targetHeight || pixelCrop.height;
 
-  ctx.putImageData(
-    data,
-    Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
-    Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
-  );
+  canvas.width = finalWidth;
+  canvas.height = finalHeight;
+
+  // If custom dimensions are different, scale the image
+  if (targetWidth || targetHeight) {
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCanvas.width = pixelCrop.width;
+    tempCanvas.height = pixelCrop.height;
+    
+    tempCtx.putImageData(
+      data,
+      Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
+      Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+    );
+    
+    ctx.drawImage(tempCanvas, 0, 0, finalWidth, finalHeight);
+  } else {
+    ctx.putImageData(
+      data,
+      Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
+      Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+    );
+  }
 
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
