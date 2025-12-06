@@ -1,30 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { postsAPI } from '../lib/api';
 import PostCard from '../components/post/PostCard';
-import { Hash } from 'lucide-react';
+import { Hash, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export default function HashtagPage() {
   const { tag } = useParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [skip, setSkip] = useState(0);
+  const LIMIT = 10;
 
-  const loadPosts = async () => {
-    setLoading(true);
+  const loadPosts = async (isLoadMore = false) => {
     try {
-      const response = await postsAPI.getByHashtag(tag);
-      setPosts(response.data);
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const currentSkip = isLoadMore ? skip : 0;
+      const response = await postsAPI.getByHashtag(tag, LIMIT, currentSkip);
+      const newPosts = response.data;
+
+      if (isLoadMore) {
+        setPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setPosts(newPosts);
+      }
+
+      setSkip(currentSkip + newPosts.length);
+      setHasMore(newPosts.length === LIMIT);
     } catch (error) {
       toast.error('Failed to load posts');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      loadPosts(true);
+    }
+  }, [loadingMore, hasMore, skip, tag]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
+
   useEffect(() => {
+    // Reset state when tag changes
+    setPosts([]);
+    setSkip(0);
+    setHasMore(true);
     loadPosts();
   }, [tag]);
+
+  const handlePostUpdate = () => {
+    // Reset and reload from start
+    setSkip(0);
+    setHasMore(true);
+    loadPosts(false);
+  };
 
   if (loading) {
     return (
