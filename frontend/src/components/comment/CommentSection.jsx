@@ -116,18 +116,22 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
     };
   }, [socket, postId, currentUser.id]);
 
-  const loadComments = async (loadMore = false) => {
+  const loadComments = async (isLoadMore = false) => {
     try {
-      setLoading(true);
-      const currentOffset = loadMore ? offset : 0;
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+      
+      const currentOffset = isLoadMore ? offset : 0;
       const response = await commentsAPI.getPostComments(postId, limit, currentOffset, sortBy);
       const newComments = response.data.comments || [];
       
-      if (loadMore) {
-        setComments([...comments, ...newComments]);
+      if (isLoadMore) {
+        setComments(prev => [...prev, ...newComments]);
       } else {
         setComments(newComments);
-        setOffset(0);
       }
       
       setTotal(response.data.total || 0);
@@ -137,6 +141,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
       console.error('Failed to load comments:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
