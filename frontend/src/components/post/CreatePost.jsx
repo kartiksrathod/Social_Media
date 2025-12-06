@@ -479,7 +479,7 @@ export default function CreatePost({ onPostCreated }) {
                   onOpenChange={setCollaboratorDialogOpen}
                 />
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 border-t border-border gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-3 border-t border-border gap-4">
                   <div className="flex gap-2 flex-wrap">
                     <input
                       type="file"
@@ -494,13 +494,13 @@ export default function CreatePost({ onPostCreated }) {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer hover-accent min-h-[44px] touch-manipulation"
+                        className="cursor-pointer hover-accent h-11 sm:h-9 px-3 sm:px-2 touch-target touch-manipulation tap-feedback no-select"
                         asChild
                         disabled={imageFiles.length >= 5 || videoFile}
                       >
-                        <span className="flex items-center">
-                          <Image className="h-4 w-4 sm:mr-2" />
-                          <span className="hidden sm:inline">Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}</span>
+                        <span className="flex items-center gap-2 sm:gap-1.5">
+                          <Image className="h-5 w-5 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline text-sm">Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}</span>
                         </span>
                       </Button>
                     </label>
@@ -517,13 +517,13 @@ export default function CreatePost({ onPostCreated }) {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer hover-accent min-h-[44px] touch-manipulation"
+                        className="cursor-pointer hover-accent h-11 sm:h-9 px-3 sm:px-2 touch-target touch-manipulation tap-feedback no-select"
                         asChild
                         disabled={videoFile || imageFiles.length > 0}
                       >
-                        <span className="flex items-center">
-                          <Video className="h-4 w-4 sm:mr-2" />
-                          <span className="hidden sm:inline">Add Video</span>
+                        <span className="flex items-center gap-2 sm:gap-1.5">
+                          <Video className="h-5 w-5 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline text-sm">Add Video</span>
                         </span>
                       </Button>
                     </label>
@@ -534,34 +534,34 @@ export default function CreatePost({ onPostCreated }) {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="hover-accent min-h-[44px] touch-manipulation"
+                          className="hover-accent h-11 sm:h-9 px-3 sm:px-2 touch-target touch-manipulation tap-feedback no-select"
                         >
                           {visibility === 'public' ? (
-                            <>
-                              <Globe className="h-4 w-4 sm:mr-2" />
-                              <span className="hidden sm:inline">Everyone</span>
-                            </>
+                            <span className="flex items-center gap-2 sm:gap-1.5">
+                              <Globe className="h-5 w-5 sm:h-4 sm:w-4" />
+                              <span className="hidden sm:inline text-sm">Everyone</span>
+                            </span>
                           ) : (
-                            <>
-                              <Users className="h-4 w-4 sm:mr-2" />
-                              <span className="hidden sm:inline">Close Friends</span>
-                            </>
+                            <span className="flex items-center gap-2 sm:gap-1.5">
+                              <Users className="h-5 w-5 sm:h-4 sm:w-4" />
+                              <span className="hidden sm:inline text-sm">Close Friends</span>
+                            </span>
                           )}
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start">
-                        <DropdownMenuItem onClick={() => setVisibility('public')}>
-                          <Globe className="h-4 w-4 mr-2" />
+                      <DropdownMenuContent align="start" className="min-w-[180px]">
+                        <DropdownMenuItem onClick={() => setVisibility('public')} className="h-12 sm:h-10 text-base sm:text-sm">
+                          <Globe className="h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" />
                           Everyone
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setVisibility('close_friends')}>
-                          <Users className="h-4 w-4 mr-2" />
+                        <DropdownMenuItem onClick={() => setVisibility('close_friends')} className="h-12 sm:h-10 text-base sm:text-sm">
+                          <Users className="h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" />
                           Close Friends
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <Button type="submit" disabled={loading} className="button-primary min-h-[44px] w-full sm:w-auto touch-manipulation">
+                  <Button type="submit" disabled={loading} className="button-primary h-12 sm:h-10 w-full sm:w-auto px-8 text-base font-semibold touch-manipulation tap-feedback-lg no-select">
                     {loading ? 'Posting...' : 'Post'}
                   </Button>
                 </div>
