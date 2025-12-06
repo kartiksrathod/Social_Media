@@ -63,43 +63,43 @@ export default function Feed() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-3 sm:px-4 space-y-4 sm:space-y-6">
-       <h2 className="text-xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-3 -mx-3 sm:-mx-4 px-3 sm:px-4 border-b border-border/50 md:hidden">
+    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-4 sm:px-5 space-y-5 sm:space-y-6">
+       <h2 className="text-xl sm:text-2xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-4 -mx-4 sm:-mx-5 px-4 sm:px-5 border-b border-border/50 md:hidden">
           Home
        </h2>
        
        <StoriesBar />
        
        {loading ? (
-         <div className="space-y-4 sm:space-y-5">
+         <div className="space-y-5">
            {[1, 2, 3].map((i) => (
              <PostCardSkeleton key={i} />
            ))}
          </div>
        ) : posts.length === 0 ? (
-         <div className="text-center py-12 px-4">
-           <p className="text-sm sm:text-base text-muted-foreground">
+         <div className="text-center py-16 px-4">
+           <p className="text-base text-muted-foreground">
              No posts yet. Follow some users or create your first post!
            </p>
          </div>
        ) : (
          <>
-           <div className="space-y-4 sm:space-y-5">
+           <div className="space-y-5">
              {posts.map(post => (
                <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
              ))}
            </div>
 
            {/* Infinite scroll trigger */}
-           <div ref={scrollRef} className="flex justify-center py-6 sm:py-8">
+           <div ref={scrollRef} className="flex justify-center py-8">
              {loadingMore && (
-               <div className="flex items-center gap-2 text-muted-foreground">
-                 <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
-                 <span className="text-xs sm:text-sm">Loading more posts...</span>
+               <div className="flex items-center gap-3 text-muted-foreground">
+                 <Loader2 className="w-6 h-6 animate-spin" />
+                 <span className="text-sm">Loading more posts...</span>
                </div>
              )}
              {!hasMore && posts.length > 0 && (
-               <p className="text-xs sm:text-sm text-muted-foreground">No more posts to load</p>
+               <p className="text-sm text-muted-foreground">No more posts to load</p>
              )}
            </div>
          </>
