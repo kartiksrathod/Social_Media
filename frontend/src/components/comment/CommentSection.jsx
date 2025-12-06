@@ -170,7 +170,9 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
 
   const handleDeleteComment = (commentId) => {
     setComments(comments.filter(c => c.id !== commentId));
-    setTotal(Math.max(0, total - 1));
+    const newTotal = Math.max(0, total - 1);
+    setTotal(newTotal);
+    if (onCommentCountChange) onCommentCountChange(newTotal);
   };
 
   return (
