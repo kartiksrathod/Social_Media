@@ -1,28 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { postsAPI } from '../lib/api';
 import PostCard from '../components/post/PostCard';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export default function SavedPosts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [skip, setSkip] = useState(0);
+  const LIMIT = 10;
 
-  const loadSavedPosts = async () => {
-    setLoading(true);
+  const loadSavedPosts = async (isLoadMore = false) => {
     try {
-      const response = await postsAPI.getSaved();
-      setPosts(response.data);
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const currentSkip = isLoadMore ? skip : 0;
+      const response = await postsAPI.getSaved(LIMIT, currentSkip);
+      const newPosts = response.data;
+
+      if (isLoadMore) {
+        setPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setPosts(newPosts);
+      }
+
+      setSkip(currentSkip + newPosts.length);
+      setHasMore(newPosts.length === LIMIT);
     } catch (error) {
       toast.error('Failed to load saved posts');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      loadSavedPosts(true);
+    }
+  }, [loadingMore, hasMore, skip]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
 
   useEffect(() => {
     loadSavedPosts();
   }, []);
+
+  const handlePostUpdate = () => {
+    // Reset and reload from start
+    setSkip(0);
+    setHasMore(true);
+    loadSavedPosts(false);
+  };
 
   if (loading) {
     return (
