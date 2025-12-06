@@ -189,16 +189,27 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/collaborations', collaborationRoutes);
 app.use('/api/comments', commentRoutes);
 
+// CSRF token endpoint
+app.get('/api/csrf-token', getCsrfToken);
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
+// CSRF error handler (must come before general error handler)
+app.use(csrfErrorHandler);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
+  
+  // Don't leak error details in production
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   res.status(err.statusCode || 500).json({
-    error: err.message || 'Internal server error'
+    error: isDevelopment ? err.message : 'Internal server error',
+    ...(isDevelopment && { stack: err.stack })
   });
 });
 
