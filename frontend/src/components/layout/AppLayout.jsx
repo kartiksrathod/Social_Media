@@ -262,6 +262,12 @@ const SidebarContent = ({ isMobile = false }) => {
 };
 
 export default function AppLayout() {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <div className="min-h-screen bg-background flex justify-center">
       {/* Desktop Sidebar - Icon-Only Sleek Design */}
