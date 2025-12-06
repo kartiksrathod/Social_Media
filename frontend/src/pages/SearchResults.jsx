@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Search, User, Hash, Loader2 } from 'lucide-react';
 import { usersAPI, hashtagsAPI } from '../lib/api';
 import FollowButton from '../components/follow/FollowButton';
+import UserCardSkeleton from '../components/skeletons/UserCardSkeleton';
 import AppLayout from '../components/layout/AppLayout';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
