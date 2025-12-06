@@ -479,8 +479,8 @@ export default function CreatePost({ onPostCreated }) {
                   onOpenChange={setCollaboratorDialogOpen}
                 />
 
-                <div className="flex items-center justify-between pt-2 border-t border-border">
-                  <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 border-t border-border gap-3">
+                  <div className="flex gap-2 flex-wrap">
                     <input
                       type="file"
                       id="post-image"
@@ -494,13 +494,13 @@ export default function CreatePost({ onPostCreated }) {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer hover-accent"
+                        className="cursor-pointer hover-accent min-h-[44px] touch-manipulation"
                         asChild
                         disabled={imageFiles.length >= 5 || videoFile}
                       >
-                        <span>
-                          <Image className="h-4 w-4 mr-2" />
-                          Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}
+                        <span className="flex items-center">
+                          <Image className="h-4 w-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Add Images {imageFiles.length > 0 && `(${imageFiles.length}/5)`}</span>
                         </span>
                       </Button>
                     </label>
@@ -517,13 +517,13 @@ export default function CreatePost({ onPostCreated }) {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer hover-accent"
+                        className="cursor-pointer hover-accent min-h-[44px] touch-manipulation"
                         asChild
                         disabled={videoFile || imageFiles.length > 0}
                       >
-                        <span>
-                          <Video className="h-4 w-4 mr-2" />
-                          Add Video
+                        <span className="flex items-center">
+                          <Video className="h-4 w-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Add Video</span>
                         </span>
                       </Button>
                     </label>
@@ -534,17 +534,17 @@ export default function CreatePost({ onPostCreated }) {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="hover-accent"
+                          className="hover-accent min-h-[44px] touch-manipulation"
                         >
                           {visibility === 'public' ? (
                             <>
-                              <Globe className="h-4 w-4 mr-2" />
-                              Everyone
+                              <Globe className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Everyone</span>
                             </>
                           ) : (
                             <>
-                              <Users className="h-4 w-4 mr-2" />
-                              Close Friends
+                              <Users className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Close Friends</span>
                             </>
                           )}
                         </Button>
@@ -561,7 +561,7 @@ export default function CreatePost({ onPostCreated }) {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <Button type="submit" disabled={loading} className="button-primary">
+                  <Button type="submit" disabled={loading} className="button-primary min-h-[44px] w-full sm:w-auto touch-manipulation">
                     {loading ? 'Posting...' : 'Post'}
                   </Button>
                 </div>
