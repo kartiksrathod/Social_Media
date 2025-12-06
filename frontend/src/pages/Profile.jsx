@@ -231,8 +231,8 @@ export default function Profile() {
         {/* Banner */}
         <div className="h-48 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 w-full"></div>
        
-       <div className="px-4 pb-4">
-          <div className="relative flex justify-between items-end -mt-16 mb-4">
+       <div className="container-padding pb-4">
+          <div className="relative flex justify-between items-end -mt-16 mb-6">
              <Avatar className="w-32 h-32 border-4 border-background shadow-xl">
                 <AvatarImage src={profileUser.avatar} className="object-cover" />
                 <AvatarFallback>{profileUser.username?.charAt(0).toUpperCase()}</AvatarFallback>
@@ -270,8 +270,8 @@ export default function Profile() {
              )}
           </div>
           
-          <div className="space-y-4">
-             <div>
+          <div className="profile-section-spacing">
+             <div className="space-y-1">
                 <h1 className="text-2xl font-heading font-bold">{profileUser.name || profileUser.username}</h1>
                 <p className="text-muted-foreground">@{profileUser.username}</p>
              </div>
