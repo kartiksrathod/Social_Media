@@ -377,24 +377,24 @@ export default function PostCard({ post, onUpdate }) {
             
             {postImages.length > 1 && (
               <>
-                <div className="absolute top-2 right-2 bg-black/70 text-white px-2.5 py-1.5 rounded-full text-xs sm:text-xs backdrop-blur-sm font-medium shadow-lg">
+                <div className="absolute top-3 right-3 bg-black/80 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm font-medium shadow-lg">
                   {currentImageIndex + 1} / {postImages.length}
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/80 text-white h-10 w-10 sm:h-8 sm:w-8 backdrop-blur-sm touch-manipulation shadow-lg"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/80 active:bg-black/90 text-white h-12 w-12 sm:h-10 sm:w-10 backdrop-blur-sm touch-manipulation tap-feedback shadow-lg"
                   onClick={prevImage}
                 >
-                  <ChevronLeft className="w-6 h-6 sm:w-5 sm:h-5" />
+                  <ChevronLeft className="w-7 h-7 sm:w-6 sm:h-6" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/80 text-white h-10 w-10 sm:h-8 sm:w-8 backdrop-blur-sm touch-manipulation shadow-lg"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/80 active:bg-black/90 text-white h-12 w-12 sm:h-10 sm:w-10 backdrop-blur-sm touch-manipulation tap-feedback shadow-lg"
                   onClick={nextImage}
                 >
-                  <ChevronRight className="w-6 h-6 sm:w-5 sm:h-5" />
+                  <ChevronRight className="w-7 h-7 sm:w-6 sm:h-6" />
                 </Button>
               </>
             )}
