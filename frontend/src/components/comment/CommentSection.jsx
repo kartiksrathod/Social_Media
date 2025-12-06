@@ -267,17 +267,18 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
                 />
               ))}
               
-              {hasMore && (
-                <div className="text-center py-4">
-                  <button
-                    onClick={() => loadComments(true)}
-                    disabled={loading}
-                    className="px-6 py-2 text-sm font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {loading ? 'Loading...' : 'Load more comments'}
-                  </button>
-                </div>
-              )}
+              {/* Infinite scroll trigger */}
+              <div ref={scrollRef} className="flex justify-center py-4 sm:py-6">
+                {loadingMore && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="text-xs sm:text-sm">Loading more comments...</span>
+                  </div>
+                )}
+                {!hasMore && comments.length > 0 && (
+                  <p className="text-xs sm:text-sm text-muted-foreground">No more comments</p>
+                )}
+              </div>
             </>
           )}
         </div>
