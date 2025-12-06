@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { X, MessageCircle, ArrowUpDown } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { X, MessageCircle, ArrowUpDown, Loader2 } from 'lucide-react';
 import { commentsAPI } from '../../lib/api';
 import CommentInput from './CommentInput';
 import CommentItem from './CommentItem';
 import { useSocket } from '../../contexts/SocketContext';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import {
   DropdownMenu,
   DropdownMenuContent,
