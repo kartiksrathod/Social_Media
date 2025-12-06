@@ -109,6 +109,7 @@ export const storiesAPI = {
   getUserStories: (userId) => api.get(`/stories/user/${userId}`),
   viewStory: (storyId) => api.post(`/stories/${storyId}/view`),
   deleteStory: (storyId) => api.delete(`/stories/${storyId}`),
+  getViewers: (storyId) => api.get(`/stories/${storyId}/viewers`),
   replyToStory: (storyId, text) => api.post(`/stories/${storyId}/reply`, { text }),
   uploadMedia: (file) => {
     const formData = new FormData();
