@@ -85,16 +85,21 @@ const SidebarContent = ({ isMobile = false }) => {
 
       {/* User Section */}
       <div className="mt-auto border-t border-border pt-6">
-         <div className="flex items-center gap-3 px-2 mb-4 cursor-pointer hover:bg-surface-700 p-2 rounded-lg transition-colors">
-            <Avatar className="ring-2 ring-border">
-              <AvatarImage src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-               <p className="text-sm font-semibold truncate">John Doe</p>
-               <p className="text-xs text-text-muted truncate">@johndoe</p>
-            </div>
-         </div>
+         {user && (
+           <Link 
+             to="/profile"
+             className="flex items-center gap-3 px-2 mb-4 cursor-pointer hover:bg-surface-700 p-2 rounded-lg transition-colors"
+           >
+              <Avatar className="ring-2 ring-border">
+                <AvatarImage src={user.avatar_url} />
+                <AvatarFallback>{user.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                 <p className="text-sm font-semibold truncate">{user.name || user.username}</p>
+                 <p className="text-xs text-text-muted truncate">@{user.username}</p>
+              </div>
+           </Link>
+         )}
          
          {/* Settings - Hover accent only */}
          <div className="space-y-2">
@@ -109,7 +114,14 @@ const SidebarContent = ({ isMobile = false }) => {
                   <><Moon className="mr-2 w-5 h-5" /> Dark Mode</>
                )}
             </Button>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-surface-700">
+            <Button 
+               variant="ghost" 
+               className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-surface-700"
+               onClick={() => {
+                 logout();
+                 navigate('/');
+               }}
+            >
                <LogOut className="mr-2 w-5 h-5" /> Logout
             </Button>
          </div>
