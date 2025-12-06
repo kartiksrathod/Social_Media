@@ -174,15 +174,76 @@
     box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3), 0 0 12px hsl(var(--ring) / 0.2);
   }
   
+  /* ===== SHADOW SYSTEM - 3-Tier Elevation ===== */
+  
+  /* Level 1: Subtle Lift - Small elements, inputs */
+  .shadow-sm-premium {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+  
+  .dark .shadow-sm-premium {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Level 2: Medium Elevation - Cards, buttons */
+  .shadow-md-premium {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .shadow-md-premium {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Level 3: Strong Elevation - Modals, popovers */
+  .shadow-lg-premium {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+  
+  .dark .shadow-lg-premium {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 6px 12px rgba(0, 0, 0, 0.6);
+  }
+  
   /* Card Premium - Natural depth with subtle shadows */
   .card-premium {
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .dark .card-premium {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Card Hover - Subtle lift effect */
+  .card-premium-hover {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-premium-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .card-premium-hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dark .card-premium-hover:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Elevated Dropdown - For menus and popovers */
+  .elevated-dropdown {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid hsl(var(--border));
+  }
+  
+  .dark .elevated-dropdown {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5);
   }
   
   /* Button - Primary with refined glow */
