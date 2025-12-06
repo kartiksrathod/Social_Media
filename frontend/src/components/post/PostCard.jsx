@@ -511,6 +511,7 @@ export default function PostCard({ post, onUpdate }) {
           postId={post.id}
           onClose={() => setCommentsOpen(false)}
           initialCommentCount={commentCount}
+          onCommentCountChange={(newCount) => setCommentCount(newCount)}
         />
       )}
     </Card>
