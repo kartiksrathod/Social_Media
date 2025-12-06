@@ -92,11 +92,30 @@ We take the security of SocialVibe seriously. If you believe you have found a se
 - **Production MUST** specify exact allowed origins
 - Example: `CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com`
 
-### Rate Limiting
-Consider implementing rate limiting for:
-- Login attempts (prevent brute force)
-- File uploads (prevent abuse)
-- API requests (prevent DoS)
+### Rate Limiting ✅ IMPLEMENTED
+The application includes comprehensive rate limiting:
+
+**General API Rate Limiting:**
+- 100 requests per 15 minutes per IP
+- Applies to all `/api` routes
+- Returns `429 Too Many Requests` when exceeded
+
+**Authentication Rate Limiting:**
+- 5 login/signup attempts per 15 minutes per IP
+- Progressive speed limiting after 2 failed login attempts
+- Account lockout after 5 failed attempts (15-minute lockout)
+- Automatic cleanup of old login attempts
+
+**Content Creation Rate Limiting:**
+- Post creation: 10 posts per hour per IP
+- Message sending: 50 messages per minute per IP
+- File uploads: 20 uploads per hour per IP
+
+**Rate Limit Headers:**
+All rate-limited responses include standard rate limit headers:
+- `RateLimit-Limit`: Maximum requests allowed
+- `RateLimit-Remaining`: Requests remaining in window
+- `RateLimit-Reset`: Time when limit resets
 
 ### HTTPS
 - **Always use HTTPS in production**
