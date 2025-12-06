@@ -402,44 +402,44 @@ export default function CreatePost({ onPostCreated }) {
                 )}
                 
                 {imagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
                         <img
                           src={preview}
                           alt={`Preview ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 sm:h-40 object-cover rounded-lg"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors rounded-lg flex items-center justify-center gap-2">
                           <Button
                             type="button"
                             variant="secondary"
                             size="sm"
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="opacity-0 sm:group-hover:opacity-100 md:opacity-100 transition-opacity touch-manipulation"
                             onClick={() => openCropModal(index)}
                           >
-                            <Crop className="h-3 w-3 mr-1" />
-                            Edit
+                            <Crop className="h-3 w-3 sm:mr-1" />
+                            <span className="hidden sm:inline">Edit</span>
                           </Button>
                           <Button
                             type="button"
                             variant="secondary"
                             size="sm"
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="opacity-0 sm:group-hover:opacity-100 md:opacity-100 transition-opacity touch-manipulation"
                             onClick={() => openTagImage(index)}
                           >
-                            <TagIcon className="h-3 w-3 mr-1" />
-                            Tag
+                            <TagIcon className="h-3 w-3 sm:mr-1" />
+                            <span className="hidden sm:inline">Tag</span>
                           </Button>
                         </div>
                         <Button
                           type="button"
                           variant="destructive"
                           size="icon"
-                          className="absolute top-2 right-2 h-6 w-6"
+                          className="absolute top-2 right-2 h-8 w-8 sm:h-6 sm:w-6 touch-manipulation"
                           onClick={() => removeImage(index)}
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-4 w-4 sm:h-3 sm:w-3" />
                         </Button>
                         {getImageTagsForIndex(index).length > 0 && (
                           <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
