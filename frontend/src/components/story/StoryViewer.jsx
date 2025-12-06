@@ -240,11 +240,22 @@ export default function StoryViewer({ open, onClose, storiesData, initialUserId 
       {/* Bottom info */}
       {isOwnStory && (
         <div className="absolute bottom-4 left-0 right-0 px-4">
-          <div className="max-w-lg mx-auto bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-sm">
-            👁️ {currentStory.views_count} {currentStory.views_count === 1 ? 'view' : 'views'}
-          </div>
+          <button
+            onClick={() => setViewersModalOpen(true)}
+            className="max-w-lg mx-auto bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-sm hover:bg-white/20 transition-colors flex items-center gap-2 justify-center w-full cursor-pointer"
+          >
+            <Eye className="w-4 h-4" />
+            <span>{currentStory.views_count} {currentStory.views_count === 1 ? 'view' : 'views'}</span>
+          </button>
         </div>
       )}
+
+      {/* Viewers Modal */}
+      <StoryViewersModal
+        open={viewersModalOpen}
+        onClose={() => setViewersModalOpen(false)}
+        storyId={currentStory?.id}
+      />
     </div>
   );
 }
