@@ -138,7 +138,7 @@ export default function Feed() {
          <StoriesBar />
          
          {loading ? (
-           <div className="space-y-5">
+           <div className="space-y-6">
              {[1, 2, 3].map((i) => (
                <PostCardSkeleton key={i} />
              ))}
