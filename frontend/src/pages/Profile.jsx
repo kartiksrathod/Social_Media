@@ -256,7 +256,7 @@ export default function Profile() {
              {/* Show CreatePost component only on own profile */}
              {isOwnProfile && (
                <div className="mb-6">
-                 <CreatePost onPostCreated={loadProfile} />
+                 <CreatePost onPostCreated={handlePostUpdate} />
                </div>
              )}
              
@@ -265,9 +265,24 @@ export default function Profile() {
                  {isOwnProfile ? "Create your first post above!" : "No posts yet"}
                </div>
              ) : (
-               posts.map(post => (
-                 <PostCard key={post.id} post={post} onUpdate={loadProfile} />
-               ))
+               <>
+                 {posts.map(post => (
+                   <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
+                 ))}
+
+                 {/* Infinite scroll trigger */}
+                 <div ref={scrollRef} className="flex justify-center py-8">
+                   {loadingMore && (
+                     <div className="flex items-center gap-2 text-muted-foreground">
+                       <Loader2 className="w-6 h-6 animate-spin" />
+                       <span className="text-sm">Loading more posts...</span>
+                     </div>
+                   )}
+                   {!hasMore && posts.length > 0 && (
+                     <p className="text-sm text-muted-foreground">No more posts to load</p>
+                   )}
+                 </div>
+               </>
              )}
           </TabsContent>
        </Tabs>
