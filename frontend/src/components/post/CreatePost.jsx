@@ -262,6 +262,43 @@ export default function CreatePost({ onPostCreated }) {
     setTagImageIndex(index);
   };
 
+  const openCropModal = (index) => {
+    setCurrentCropIndex(index);
+    setCurrentCropImage(imagePreviews[index]);
+    setCropModalOpen(true);
+  };
+
+  const handleCropComplete = async (croppedFile) => {
+    if (currentCropIndex === null) return;
+
+    try {
+      // Update the file
+      const newFiles = [...imageFiles];
+      newFiles[currentCropIndex] = croppedFile;
+      setImageFiles(newFiles);
+
+      // Update preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newPreviews = [...imagePreviews];
+        newPreviews[currentCropIndex] = reader.result;
+        setImagePreviews(newPreviews);
+      };
+      reader.readAsDataURL(croppedFile);
+
+      // Re-upload the cropped image
+      const uploadResponse = await postsAPI.uploadImage(croppedFile);
+      const newUrls = [...uploadedImageUrls];
+      newUrls[currentCropIndex] = uploadResponse.data.url;
+      setUploadedImageUrls(newUrls);
+
+      toast.success('Image edited successfully');
+    } catch (error) {
+      toast.error('Failed to upload edited image');
+      console.error('Upload error:', error);
+    }
+  };
+
   const handleImageTagsChange = (index, tags) => {
     // Remove old tags for this image and add new ones
     const otherTags = imageTags.filter(tag => tag.image_index !== index);
