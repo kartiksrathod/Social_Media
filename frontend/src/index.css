@@ -237,7 +237,20 @@
     min-width: 44px;
   }
   
-  /* Spacing Scale - Consistent system */
+  .touch-target-lg {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  /* Spacing Scale - Consistent 8px grid system */
+  .space-4 { gap: 0.25rem; }  /* 4px */
+  .space-8 { gap: 0.5rem; }   /* 8px */
+  .space-12 { gap: 0.75rem; } /* 12px */
+  .space-16 { gap: 1rem; }    /* 16px */
+  .space-24 { gap: 1.5rem; }  /* 24px */
+  .space-32 { gap: 2rem; }    /* 32px */
+  
+  /* Legacy support - mapped to new system */
   .space-xs { gap: 0.25rem; } /* 4px */
   .space-sm { gap: 0.5rem; }  /* 8px */
   .space-md { gap: 0.75rem; } /* 12px */
@@ -247,11 +260,28 @@
   
   /* Mobile-optimized containers */
   .mobile-container {
-    @apply px-3 sm:px-4 py-4 sm:py-6;
+    @apply px-4 sm:px-6 py-4 sm:py-6;
   }
   
   .mobile-card-spacing {
-    @apply space-y-3 sm:space-y-4;
+    @apply space-y-4 sm:space-y-5;
+  }
+  
+  /* Safe area support for notched devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
   
   /* Improved focus states for mobile */
@@ -264,11 +294,47 @@
     @apply active:scale-95 transition-transform duration-100;
   }
   
+  .tap-feedback-lg {
+    @apply active:scale-[0.97] transition-transform duration-150;
+  }
+  
   /* Prevent text selection on buttons (better mobile UX) */
   .no-select {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+  }
+  
+  /* Better text overflow handling */
+  .text-overflow-safe {
+    @apply break-words overflow-wrap-anywhere;
+  }
+  
+  /* Mobile input improvements */
+  .input-mobile {
+    @apply min-h-[48px] text-base;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .textarea-mobile {
+    @apply min-h-[120px] text-base;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Smooth scrolling for mobile */
+  .scroll-smooth-mobile {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
