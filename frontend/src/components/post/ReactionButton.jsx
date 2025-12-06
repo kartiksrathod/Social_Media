@@ -92,16 +92,17 @@ export default function ReactionButton({
           {currentReaction ? (
             <motion.span
               key={currentReaction.type}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15 }}
               className="text-lg mr-1 icon-hover-bounce"
             >
               {currentReaction.emoji}
             </motion.span>
           ) : (
-            <Heart className={`w-5 h-5 mr-1.5 transition-all group-hover:scale-110 group-active:scale-75 ${userReaction ? 'heart-like-animation' : ''}`} />
+            <Heart className={`w-5 h-5 mr-1.5 transition-all icon-hover-pulse ${userReaction ? 'heart-favorite-pop' : ''}`} />
           )}
-          <span className="text-xs font-medium">{totalReactions || 0}</span>
+          <span className="text-xs font-medium number-count-up">{totalReactions || 0}</span>
         </Button>
 
         <ReactionPicker 
