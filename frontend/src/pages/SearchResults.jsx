@@ -158,13 +158,13 @@ const SearchResults = () => {
                 <>
                   <div className="divide-y dark:divide-gray-800">
                     {users.length === 0 ? (
-                      <div className="card-padding-lg text-center text-gray-500">
+                      <div className="text-center empty-state-spacing text-gray-500">
                         <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No users found</p>
                       </div>
                     ) : (
                       users.map((user) => (
-                        <div key={user.id} className="card-padding-sm flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <div key={user.id} className="search-result-item flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <Link
                             to={`/profile/${user.username}`}
                             className="flex items-center gap-4 flex-1 min-w-0"
