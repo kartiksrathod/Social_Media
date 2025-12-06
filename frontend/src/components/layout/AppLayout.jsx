@@ -276,18 +276,18 @@ export default function AppLayout() {
       </aside>
 
       {/* Mobile Header - Touch-optimized */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-b border-border z-50 px-3 flex items-center justify-between safe-area-inset-top">
-         <div className="flex items-center gap-2 min-h-[44px]">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center glow-subtle">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-b border-border z-50 px-4 flex items-center justify-between safe-area-inset-top">
+         <div className="flex items-center gap-2.5 touch-target">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center glow-subtle">
+                <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-lg sm:text-xl text-primary">SocialVibe</span>
+            <span className="font-heading font-bold text-xl text-primary">SocialVibe</span>
          </div>
          <div className="flex items-center gap-1">
             <NotificationBell />
             <Sheet>
                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover-accent touch-target">
+                  <Button variant="ghost" size="icon" className="hover-accent touch-target h-11 w-11 touch-manipulation tap-feedback">
                      <Menu className="w-6 h-6" />
                   </Button>
                </SheetTrigger>
