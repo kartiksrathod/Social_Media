@@ -316,17 +316,17 @@ export default function PostCard({ post, onUpdate }) {
             {isOwnPost && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                    <MoreHorizontal className="w-4 h-4" />
+                  <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground touch-target">
+                    <MoreHorizontal className="w-5 h-5 sm:w-4 sm:h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                    <Edit className="w-4 h-4 mr-2" />
+                <DropdownMenuContent align="end" className="min-w-[160px]">
+                  <DropdownMenuItem onClick={() => setEditOpen(true)} className="h-12 sm:h-10 text-base sm:text-sm">
+                    <Edit className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
                     Edit Post
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-red-600">
-                    <Trash2 className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-red-600 h-12 sm:h-10 text-base sm:text-sm">
+                    <Trash2 className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
                     Delete Post
                   </DropdownMenuItem>
                 </DropdownMenuContent>
