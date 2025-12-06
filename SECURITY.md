@@ -80,10 +80,82 @@ We take the security of SocialVibe seriously. If you believe you have found a se
    - Scan uploads for malware
    - Implement upload rate limits
 
+## Implemented Security Features ✅
+
+### 1. Input Sanitization & Validation
+- **XSS Prevention**: All user inputs are sanitized using `validator.escape()`
+- **HTML Entity Escaping**: Prevents script injection in body, query params, and URL params
+- **Email Validation**: RFC-compliant email format validation
+- **Username Validation**: Alphanumeric + underscore, 3-20 characters
+- **Password Strength**: Minimum 8 characters with uppercase, lowercase, and numbers
+- **URL Validation**: Strict HTTP/HTTPS protocol validation
+
+### 2. MongoDB Injection Prevention
+- **express-mongo-sanitize**: Automatically removes prohibited characters from user input
+- Replaces `$` and `.` operators that could be used for injection attacks
+- Logs all sanitization attempts for security monitoring
+
+### 3. CSRF Protection
+- **Double-Submit Cookie Pattern**: Uses `csrf-csrf` library
+- CSRF tokens required for all state-changing operations (POST, PUT, DELETE, PATCH)
+- Automatic token generation via `/api/csrf-token` endpoint
+- Exempt paths: health check, login, signup
+- 24-hour token expiration
+- Tokens transmitted via HTTP-only cookies and validated from headers
+
+**Frontend Integration:**
+```javascript
+// Get CSRF token before state-changing requests
+const response = await fetch('/api/csrf-token');
+const { csrfToken } = await response.json();
+
+// Include token in request headers
+headers: {
+  'X-CSRF-Token': csrfToken
+}
+```
+
+### 4. Security Headers (via Helmet)
+- **Content-Security-Policy (CSP)**: Restricts resource loading sources
+  - `default-src 'self'`
+  - `img-src 'self' data: https: blob:`
+  - `connect-src 'self' ws: wss:`
+  - Prevents inline script execution
+- **X-Frame-Options: DENY**: Prevents clickjacking attacks
+- **X-Content-Type-Options: nosniff**: Prevents MIME type sniffing
+- **X-XSS-Protection**: Enables browser XSS filtering
+- **Referrer-Policy**: Controls referrer information leakage
+- **Permissions-Policy**: Disables geolocation, microphone, camera by default
+
+### 5. HTTP Parameter Pollution (HPP) Prevention
+- Prevents parameter pollution attacks
+- Whitelisted parameters: `sort`, `fields`, `page`, `limit`
+- Blocks duplicate parameter manipulation attempts
+
+### 6. Brute Force Protection
+- **In-Memory Tracking**: Tracks failed login attempts per IP/username
+- **Lockout Mechanism**: 5 max attempts before 15-minute account lock
+- **Progressive Delays**: Adds 500ms delay per failed attempt (max 5 seconds)
+- **Auto Cleanup**: Old attempts cleaned up hourly
+- **Clear on Success**: Failed attempt counter resets on successful login
+
+### 7. Authentication & Authorization
+- **JWT Tokens**: HS256 algorithm with configurable expiration
+- **Bcrypt Password Hashing**: Cost factor of 12 for strong encryption
+- **Bearer Token Authentication**: Standard Authorization header format
+- **Token Validation**: Every protected route validates JWT signature and expiration
+- **User Context**: Token payload includes minimal user data to reduce token size
+
+### 8. Request Size Limiting
+- **JSON Payload Limit**: 10MB maximum
+- **URL-Encoded Data**: 10MB maximum
+- Prevents memory exhaustion attacks
+
 ## Known Security Considerations
 
 ### Environment Variables
-- **JWT_SECRET**: Must be a strong random string (32+ characters)
+- **JWT_SECRET**: Must be a strong random string (32+ characters) - CHANGE IN PRODUCTION
+- **CSRF_SECRET**: Must be a strong random string (32+ characters) - CHANGE IN PRODUCTION
 - **Cloudinary credentials**: Should be kept private and rotated periodically
 - **MongoDB URL**: Should use authentication in production
 
