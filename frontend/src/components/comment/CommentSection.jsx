@@ -176,22 +176,22 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl max-w-2xl w-full h-[95vh] sm:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <MessageCircle className="w-5 h-5 text-purple-600" />
-            <h2 className="text-lg font-semibold">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b dark:border-gray-700">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
+            <h2 className="text-base sm:text-lg font-semibold">
               Comments {total > 0 && `(${total})`}
             </h2>
             
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 gap-1.5">
+                <Button variant="ghost" size="sm" className="h-8 sm:h-10 gap-1.5 min-w-[44px] touch-manipulation">
                   <ArrowUpDown className="w-4 h-4" />
-                  <span className="text-xs">
+                  <span className="text-xs hidden sm:inline">
                     {sortOptions.find(opt => opt.value === sortBy)?.label}
                   </span>
                 </Button>
