@@ -117,9 +117,11 @@ router.get('/me', authenticateToken, async (req, res) => {
     res.json({
       id: user.id,
       username: user.username,
+      name: user.name || '',
       email: user.email,
       bio: user.bio,
       avatar: user.avatar,
+      avatar_url: user.avatar,
       followers: user.followers,
       following: user.following,
       followers_count: user.followers.length,
