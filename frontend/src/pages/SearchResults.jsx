@@ -153,73 +153,107 @@ const SearchResults = () => {
             <>
               {/* Users Tab */}
               {activeTab === 'users' && (
-                <div className="divide-y dark:divide-gray-800">
-                  {results.users.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>No users found</p>
-                    </div>
-                  ) : (
-                    results.users.map((user) => (
-                      <div key={user.id} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <Link
-                          to={`/profile/${user.username}`}
-                          className="flex items-center gap-3 flex-1 min-w-0"
-                        >
-                          <img
-                            src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
-                            alt={user.username}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold truncate">{user.username}</p>
-                            {user.bio && (
-                              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
-                            )}
-                            <p className="text-xs text-gray-400 mt-1">
-                              {user.followers_count} followers · {user.following_count} following
-                            </p>
-                          </div>
-                        </Link>
-                        {user.id !== currentUser.id && (
-                          <FollowButton
-                            userId={user.id}
-                            initialIsFollowing={user.is_following}
-                            size="sm"
-                          />
-                        )}
+                <>
+                  <div className="divide-y dark:divide-gray-800">
+                    {users.length === 0 ? (
+                      <div className="p-8 text-center text-gray-500">
+                        <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <p>No users found</p>
                       </div>
-                    ))
+                    ) : (
+                      users.map((user) => (
+                        <div key={user.id} className="p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <Link
+                            to={`/profile/${user.username}`}
+                            className="flex items-center gap-3 flex-1 min-w-0"
+                          >
+                            <img
+                              src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+                              alt={user.username}
+                              className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold truncate">{user.username}</p>
+                              {user.bio && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
+                              )}
+                              <p className="text-xs text-gray-400 mt-1">
+                                {user.followers_count} followers · {user.following_count} following
+                              </p>
+                            </div>
+                          </Link>
+                          {user.id !== currentUser.id && (
+                            <FollowButton
+                              userId={user.id}
+                              initialIsFollowing={user.is_following}
+                              size="sm"
+                            />
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  
+                  {/* Infinite scroll trigger for users */}
+                  {users.length > 0 && (
+                    <div ref={scrollRef} className="flex justify-center py-6 sm:py-8">
+                      {loadingMore && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
+                          <span className="text-xs sm:text-sm">Loading more users...</span>
+                        </div>
+                      )}
+                      {!hasMore && users.length > 0 && (
+                        <p className="text-xs sm:text-sm text-muted-foreground">No more users to load</p>
+                      )}
+                    </div>
                   )}
-                </div>
+                </>
               )}
 
               {/* Hashtags Tab */}
               {activeTab === 'hashtags' && (
-                <div className="divide-y dark:divide-gray-800">
-                  {results.hashtags.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      <Hash className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>No hashtags found</p>
-                    </div>
-                  ) : (
-                    results.hashtags.map((hashtag) => (
-                      <Link
-                        key={hashtag.tag}
-                        to={`/hashtag/${hashtag.tag}`}
-                        className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        <div>
-                          <p className="font-bold text-lg">#{hashtag.tag}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {hashtag.count} {hashtag.count === 1 ? 'post' : 'posts'}
-                          </p>
+                <>
+                  <div className="divide-y dark:divide-gray-800">
+                    {hashtags.length === 0 ? (
+                      <div className="p-8 text-center text-gray-500">
+                        <Hash className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <p>No hashtags found</p>
+                      </div>
+                    ) : (
+                      hashtags.map((hashtag) => (
+                        <Link
+                          key={hashtag.tag}
+                          to={`/hashtag/${hashtag.tag}`}
+                          className="p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-h-[60px] touch-manipulation"
+                        >
+                          <div>
+                            <p className="font-bold text-base sm:text-lg">#{hashtag.tag}</p>
+                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                              {hashtag.count} {hashtag.count === 1 ? 'post' : 'posts'}
+                            </p>
+                          </div>
+                          <Hash className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 flex-shrink-0" />
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                  
+                  {/* Infinite scroll trigger for hashtags */}
+                  {hashtags.length > 0 && (
+                    <div ref={scrollRef} className="flex justify-center py-6 sm:py-8">
+                      {loadingMore && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
+                          <span className="text-xs sm:text-sm">Loading more hashtags...</span>
                         </div>
-                        <Hash className="w-6 h-6 text-gray-400" />
-                      </Link>
-                    ))
+                      )}
+                      {!hasMore && hashtags.length > 0 && (
+                        <p className="text-xs sm:text-sm text-muted-foreground">No more hashtags to load</p>
+                      )}
+                    </div>
                   )}
-                </div>
+                </>
               )}
             </>
           )}
