@@ -246,21 +246,49 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5);
   }
   
-  /* Button - Primary with refined glow */
+  /* Button - Primary with refined glow and elevation */
   .button-primary {
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
-    box-shadow: 0 0 12px rgba(0, 255, 255, 0.35);
-    transition: all 0.2s ease;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .button-primary:hover {
-    box-shadow: 0 0 16px rgba(0, 255, 255, 0.45);
-    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
   }
   
   .button-primary:active {
     transform: translateY(0);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .button-primary {
+    box-shadow: 0 0 16px rgba(0, 255, 255, 0.4), 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dark .button-primary:hover {
+    box-shadow: 0 0 24px rgba(0, 255, 255, 0.55), 0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Floating Button - Extra elevation for FABs */
+  .button-floating {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .button-floating:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .dark .button-floating {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dark .button-floating:hover {
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 5px 16px rgba(0, 0, 0, 0.5);
   }
   
   /* Gradient Ring - Soft for stories */
