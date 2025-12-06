@@ -228,12 +228,12 @@ export default function PostCard({ post, onUpdate }) {
   };
 
   return (
-    <Card className="card-premium-hover overflow-hidden bg-card card-enter">
+    <Card className="card-hover-float overflow-hidden bg-card stagger-fade-in">
       {/* Repost indicator */}
       {isRepost && (
         <div className="card-padding pb-0">
           <div className="flex items-center gap-2 text-xs text-text-muted">
-            <Repeat2 className="w-3.5 h-3.5 text-green-500" />
+            <Repeat2 className="w-3.5 h-3.5 text-green-500 icon-hover-rotate" />
             <span className="font-medium">{post.author_username} reposted</span>
           </div>
         </div>
