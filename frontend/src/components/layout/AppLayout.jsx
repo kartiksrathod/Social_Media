@@ -299,7 +299,7 @@ export default function AppLayout() {
       </div>
 
       {/* Main Content Area - Natural background */}
-      <main className="flex-1 w-full max-w-2xl md:ml-24 min-h-screen border-x border-border pb-20 md:pb-0 pt-16 md:pt-0 bg-surface-900">
+      <main className="flex-1 w-full max-w-2xl md:ml-24 min-h-screen border-x border-border pb-20 md:pb-0 pt-16 md:pt-0 bg-surface-900 overflow-x-hidden">
          <Outlet />
       </main>
 
