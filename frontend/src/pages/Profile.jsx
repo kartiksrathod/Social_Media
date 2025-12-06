@@ -327,7 +327,13 @@ export default function Profile() {
              ) : (
                <>
                  {posts.map(post => (
-                   <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
+                   <SwipeablePostCard 
+                     key={post.id} 
+                     post={post} 
+                     onUpdate={handlePostUpdate}
+                     onLike={() => handleLike(post.id)}
+                     onSave={() => handleSave(post.id)}
+                   />
                  ))}
 
                  {/* Infinite scroll trigger */}
