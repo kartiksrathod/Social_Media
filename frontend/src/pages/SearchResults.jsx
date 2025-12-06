@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search, User, Hash } from 'lucide-react';
+import { Search, User, Hash, Loader2 } from 'lucide-react';
 import { usersAPI, hashtagsAPI } from '../lib/api';
 import FollowButton from '../components/follow/FollowButton';
 import AppLayout from '../components/layout/AppLayout';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
