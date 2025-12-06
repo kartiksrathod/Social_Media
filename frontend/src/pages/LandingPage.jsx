@@ -198,7 +198,9 @@ export default function LandingPage() {
                </div>
             </div>
             <div className="text-center pt-8 border-t border-border text-sm">
-               <p className="font-semibold text-foreground mb-4">MADE BY KARTIK S RATHOD</p>
+               <p className="font-semibold text-foreground mb-4 flex items-center justify-center gap-2">
+                  MADE WITH <span className="text-red-500 animate-pulse">❤️</span> BY KARTIK S RATHOD
+               </p>
                <div className="flex items-center justify-center gap-4">
                   <a 
                      href="https://www.linkedin.com/in/kartik-s-rathod" 
