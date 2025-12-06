@@ -415,9 +415,9 @@ export default function PostCard({ post, onUpdate }) {
         )}
       </CardContent>
 
-      <CardFooter className="card-padding pt-4 border-t border-border/50">
+      <CardFooter className="card-padding pt-3 border-t border-border/50">
         <div className="flex items-center justify-between w-full text-text-muted">
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-4">
             <ReactionButton
               userReaction={userReaction}
               reactionCounts={reactionCounts}
@@ -436,7 +436,7 @@ export default function PostCard({ post, onUpdate }) {
             </Button>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="sm" 
