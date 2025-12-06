@@ -111,6 +111,42 @@ backend:
         agent: "testing"
         comment: "Error handling working correctly. Validates required fields, handles duplicate data, validates username constraints, returns appropriate HTTP status codes and error messages."
 
+  - task: "Image Upload Endpoint"
+    implemented: true
+    working: true
+    file: "backend/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/posts/upload-image working correctly. Accepts image files via multipart/form-data, validates file presence, returns image URL. Cloudinary integration **mocked** for testing with test credentials."
+
+  - task: "Post Creation with Images"
+    implemented: true
+    working: true
+    file: "backend/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/posts working correctly. Creates posts with text and image arrays, validates required fields, saves image URLs properly, handles hashtags and mentions, returns complete post data with proper structure."
+
+  - task: "Text-only Post Creation"
+    implemented: true
+    working: true
+    file: "backend/routes/posts.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/posts working correctly for text-only posts. Validates required text field, extracts hashtags and mentions, creates posts with proper author information and timestamps."
+
 frontend:
   # Frontend testing not performed as per instructions
 
