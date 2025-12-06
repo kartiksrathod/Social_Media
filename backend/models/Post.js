@@ -168,6 +168,55 @@ const postSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'accepted', 'rejected'],
     default: null
+  },
+  // Poll fields
+  is_poll: {
+    type: Boolean,
+    default: false
+  },
+  poll: {
+    question: {
+      type: String,
+      default: null
+    },
+    options: [{
+      id: {
+        type: String,
+        required: true
+      },
+      text: {
+        type: String,
+        required: true
+      },
+      votes: [{
+        user_id: {
+          type: String,
+          required: true
+        },
+        voted_at: {
+          type: Date,
+          default: Date.now
+        }
+      }]
+    }],
+    settings: {
+      allow_multiple: {
+        type: Boolean,
+        default: false
+      },
+      is_anonymous: {
+        type: Boolean,
+        default: false
+      },
+      expires_at: {
+        type: Date,
+        default: null
+      }
+    },
+    total_votes: {
+      type: Number,
+      default: 0
+    }
   }
 }, {
   collection: 'posts',
