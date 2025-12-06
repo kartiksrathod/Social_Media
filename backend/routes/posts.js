@@ -265,6 +265,7 @@ router.delete('/:postId', authenticateToken, async (req, res) => {
 router.get('/feed', authenticateToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
+    const skip = parseInt(req.query.skip) || 0;
     const user = await User.findOne({ id: req.userId });
 
     if (!user) {
@@ -281,6 +282,7 @@ router.get('/feed', authenticateToken, async (req, res) => {
       ]
     })
       .sort({ created_at: -1 })
+      .skip(skip)
       .limit(limit);
 
     // Filter posts based on visibility
