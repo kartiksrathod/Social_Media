@@ -297,6 +297,34 @@ export default function AppLayout() {
          <Outlet />
       </main>
 
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-t border-border z-50">
+         <nav className="h-full flex items-center justify-around px-2">
+            {[
+              { label: "Home", href: "/home", icon: Home },
+              { label: "Explore", href: "/explore", icon: Search },
+              { label: "Messages", href: "/messages", icon: MessageSquare },
+              { label: "Profile", href: "/profile", icon: User },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`
+                  flex flex-col items-center justify-center gap-1 min-w-[64px] h-full
+                  transition-all duration-200 touch-manipulation
+                  ${isActive(link.href) 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground hover:text-foreground'
+                  }
+                `}
+              >
+                <link.icon className={`w-6 h-6 ${isActive(link.href) ? 'scale-110' : ''} transition-transform duration-200`} />
+                <span className="text-xs font-medium">{link.label}</span>
+              </Link>
+            ))}
+         </nav>
+      </div>
+
       {/* Right Sidebar - Elevated surface */}
       <aside className="hidden lg:block w-80 fixed right-0 top-0 bottom-0 border-l border-border p-6 bg-surface-800 backdrop-blur-md z-40">
          <div className="sticky top-6 space-y-6">
