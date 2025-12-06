@@ -997,4 +997,249 @@
   .card-interactive:active {
     @apply translate-y-0;
   }
+
+  /* ===== PHASE 2C: MICRO-ANIMATIONS ===== */
+  
+  /* Hover Scale Animations */
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out;
+  }
+  
+  .hover-scale:hover {
+    @apply scale-105;
+  }
+  
+  .hover-scale-sm {
+    @apply transition-transform duration-200 ease-out;
+  }
+  
+  .hover-scale-sm:hover {
+    @apply scale-102;
+  }
+  
+  /* Icon Hover Animations */
+  .icon-hover-rotate {
+    @apply transition-transform duration-300 ease-out;
+  }
+  
+  .icon-hover-rotate:hover {
+    @apply rotate-12;
+  }
+  
+  .icon-hover-pulse {
+    @apply transition-transform duration-200;
+  }
+  
+  .icon-hover-pulse:hover {
+    animation: iconPulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  
+  .icon-hover-bounce {
+    @apply transition-transform duration-200;
+  }
+  
+  .icon-hover-bounce:hover {
+    animation: iconBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  @keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  /* Button Hover Enhancements */
+  .button-hover-lift {
+    @apply transition-all duration-200 ease-out;
+  }
+  
+  .button-hover-lift:hover {
+    @apply -translate-y-0.5 shadow-lg;
+  }
+  
+  .button-hover-lift:active {
+    @apply translate-y-0 shadow-md;
+  }
+  
+  /* Avatar Ring Animation */
+  .avatar-ring-expand {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .avatar-ring-expand:hover {
+    @apply ring-4 ring-primary/40;
+  }
+  
+  /* Dropdown Slide Animation */
+  .dropdown-slide-in {
+    animation: dropdownSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes dropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Content Fade Transition */
+  .content-fade-in {
+    animation: contentFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes contentFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Loading Dots Animation */
+  .loading-dots span {
+    animation: loadingDot 1.4s infinite;
+  }
+  
+  .loading-dots span:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes loadingDot {
+    0%, 60%, 100% {
+      opacity: 0.4;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-8px);
+    }
+  }
+  
+  /* Smooth Expand/Collapse */
+  .expand-collapse {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Image Load Blur Animation */
+  .image-blur-load {
+    animation: imageBlurLoad 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes imageBlurLoad {
+    from {
+      filter: blur(8px);
+      opacity: 0;
+    }
+    to {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Stagger Fade In (for lists) */
+  .stagger-fade-in {
+    animation: staggerFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  
+  .stagger-fade-in:nth-child(1) { animation-delay: 0s; }
+  .stagger-fade-in:nth-child(2) { animation-delay: 0.05s; }
+  .stagger-fade-in:nth-child(3) { animation-delay: 0.1s; }
+  .stagger-fade-in:nth-child(4) { animation-delay: 0.15s; }
+  .stagger-fade-in:nth-child(5) { animation-delay: 0.2s; }
+  .stagger-fade-in:nth-child(6) { animation-delay: 0.25s; }
+  .stagger-fade-in:nth-child(7) { animation-delay: 0.3s; }
+  .stagger-fade-in:nth-child(8) { animation-delay: 0.35s; }
+  .stagger-fade-in:nth-child(9) { animation-delay: 0.4s; }
+  .stagger-fade-in:nth-child(10) { animation-delay: 0.45s; }
+  
+  @keyframes staggerFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Badge Pulse Animation */
+  .badge-pulse {
+    animation: badgePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes badgePulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+  
+  /* Smooth All Transitions */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .transition-smooth-fast {
+    @apply transition-all duration-150 ease-out;
+  }
+  
+  /* Ripple Effect (for touch feedback enhancement) */
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  .ripple-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ripple-effect::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .ripple-effect:active::after {
+    width: 300px;
+    height: 300px;
+  }
 }
