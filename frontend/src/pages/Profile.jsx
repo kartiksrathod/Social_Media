@@ -231,7 +231,7 @@ export default function Profile() {
         {/* Banner */}
         <div className="h-48 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 w-full"></div>
        
-       <div className="container-padding pb-4">
+       <div className="container-padding pb-6">
           <div className="relative flex justify-between items-end -mt-16 mb-6">
              <Avatar className="w-32 h-32 border-4 border-background shadow-xl">
                 <AvatarImage src={profileUser.avatar} className="object-cover" />
@@ -240,14 +240,14 @@ export default function Profile() {
              
              {isOwnProfile ? (
                <Button 
-                 className="mb-2 rounded-full font-semibold" 
+                 className="rounded-full font-semibold" 
                  variant="outline"
                  onClick={() => setEditModalOpen(true)}
                >
                  Edit Profile
                </Button>
              ) : (
-               <div className="flex gap-2 mb-2">
+               <div className="flex gap-2">
                  <Button 
                    className="rounded-full font-semibold" 
                    variant={profileUser.is_following ? "outline" : "default"}
@@ -281,7 +281,7 @@ export default function Profile() {
              )}
              
              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                    <Calendar className="w-4 h-4" /> Joined {formatJoinDate(profileUser.created_at || new Date())}
                 </div>
              </div>
