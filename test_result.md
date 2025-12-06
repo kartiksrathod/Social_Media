@@ -319,6 +319,54 @@ frontend:
         agent: "main"
         comment: "Optimized chat for mobile with safe-area-inset support, larger avatars and text on mobile, improved message bubble spacing, smooth scrolling, and better header touch targets."
 
+  - task: "Pull-to-Refresh - Feed, Explore, Profile, Saved Posts"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/hooks/usePullToRefresh.js, frontend/src/pages/Feed.jsx, frontend/src/pages/Explore.jsx, frontend/src/pages/Profile.jsx, frontend/src/pages/SavedPosts.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented pull-to-refresh on all major pages with visual indicator, haptic feedback, and smooth animations. Users can pull down from top to refresh content."
+
+  - task: "Swipe Gestures - Post Actions"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/hooks/useSwipeGesture.js, frontend/src/components/post/SwipeablePostCard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented swipeable post cards with swipe-right to like and swipe-left to save actions. Includes visual indicators, haptic feedback, and smooth animations."
+
+  - task: "Scroll-to-Top Button"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/hooks/useScrollToTop.js, frontend/src/components/ui/scroll-to-top.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented floating scroll-to-top button on all pages with posts. Auto-shows after 300px scroll with smooth animations and haptic feedback."
+
+  - task: "Enhanced Mobile CSS Utilities"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/index.css"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 15+ new CSS utilities for mobile interactions including swipe actions, pull-to-refresh animations, momentum scrolling, and enhanced touch feedback."
+
 metadata:
   created_by: "testing_agent"
   version: "1.3"
