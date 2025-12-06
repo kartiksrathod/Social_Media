@@ -13,7 +13,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /api/posts - Create new post
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { text, image_url, images, video_url, image_tags, visibility } = req.body;
+    const { text, image_url, images, video_url, image_tags, visibility, poll } = req.body;
 
     if (!text) {
       return res.status(400).json({ detail: 'Post text is required' });
@@ -28,7 +28,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const hashtags = extractHashtags(text);
     const mentions = extractMentions(text);
 
-    const post = new Post({
+    const postData = {
       author_id: user.id,
       author_username: user.username,
       author_avatar: user.avatar,
@@ -42,8 +42,29 @@ router.post('/', authenticateToken, async (req, res) => {
       likes: [],
       comments: [],
       visibility: visibility || 'public'
-    });
+    };
 
+    // Handle poll data if provided
+    if (poll && poll.question && poll.options && poll.options.length >= 2) {
+      const { v4: uuidv4 } = require('uuid');
+      postData.is_poll = true;
+      postData.poll = {
+        question: poll.question,
+        options: poll.options.map(opt => ({
+          id: uuidv4(),
+          text: opt,
+          votes: []
+        })),
+        settings: {
+          allow_multiple: poll.allow_multiple || false,
+          is_anonymous: poll.is_anonymous || false,
+          expires_at: poll.expires_at ? new Date(poll.expires_at) : null
+        },
+        total_votes: 0
+      };
+    }
+
+    const post = new Post(postData);
     await post.save();
 
     const io = req.app.get('io');
