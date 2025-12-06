@@ -215,9 +215,21 @@ export default function Profile() {
   }
 
   return (
-    <div>
-       {/* Banner */}
-       <div className="h-48 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 w-full"></div>
+    <>
+      {/* Pull-to-refresh indicator */}
+      <PullToRefreshIndicator
+        isPulling={isPulling}
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        refreshProgress={refreshProgress}
+      />
+
+      {/* Scroll-to-top button */}
+      <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} />
+
+      <div ref={containerRef}>
+        {/* Banner */}
+        <div className="h-48 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 w-full"></div>
        
        <div className="px-4 pb-4">
           <div className="relative flex justify-between items-end -mt-16 mb-4">
