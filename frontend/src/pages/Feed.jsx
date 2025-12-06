@@ -71,8 +71,10 @@ export default function Feed() {
        <StoriesBar />
        
        {loading ? (
-         <div className="flex justify-center py-12">
-           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+         <div className="space-y-4 sm:space-y-5">
+           {[1, 2, 3].map((i) => (
+             <PostCardSkeleton key={i} />
+           ))}
          </div>
        ) : posts.length === 0 ? (
          <div className="text-center py-12 px-4">
