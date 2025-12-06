@@ -200,8 +200,17 @@ export default function Profile() {
           </TabsList>
           
           <TabsContent value="posts" className="space-y-4 p-4">
+             {/* Show CreatePost component only on own profile */}
+             {isOwnProfile && (
+               <div className="mb-6">
+                 <CreatePost onPostCreated={loadProfile} />
+               </div>
+             )}
+             
              {posts.length === 0 ? (
-               <div className="text-center py-10 text-muted-foreground">No posts yet</div>
+               <div className="text-center py-10 text-muted-foreground">
+                 {isOwnProfile ? "Create your first post above!" : "No posts yet"}
+               </div>
              ) : (
                posts.map(post => (
                  <PostCard key={post.id} post={post} onUpdate={loadProfile} />
