@@ -129,8 +129,10 @@ export default function Explore() {
       <div>
          <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
          {loading ? (
-           <div className="flex justify-center py-12">
-             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+           <div className="space-y-4">
+             {[1, 2, 3].map((i) => (
+               <PostCardSkeleton key={i} />
+             ))}
            </div>
          ) : posts.length === 0 ? (
            <div className="text-center py-12">
