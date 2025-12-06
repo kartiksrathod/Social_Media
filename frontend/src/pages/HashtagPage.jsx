@@ -91,7 +91,7 @@ export default function HashtagPage() {
 
       {/* Posts */}
       <div className="divide-y divide-border/50">
-        {posts.length === 0 ? (
+        {posts.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
               <Hash className="w-8 h-8 text-muted-foreground" />
@@ -102,11 +102,26 @@ export default function HashtagPage() {
             </p>
           </div>
         ) : (
-          posts.map(post => (
-            <div key={post.id} className="px-4 py-4">
-              <PostCard post={post} onUpdate={loadPosts} />
+          <>
+            {posts.map(post => (
+              <div key={post.id} className="px-4 py-4">
+                <PostCard post={post} onUpdate={handlePostUpdate} />
+              </div>
+            ))}
+
+            {/* Infinite scroll trigger */}
+            <div ref={scrollRef} className="flex justify-center py-8">
+              {loadingMore && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <span className="text-sm">Loading more posts...</span>
+                </div>
+              )}
+              {!hasMore && posts.length > 0 && (
+                <p className="text-sm text-muted-foreground">No more posts to load</p>
+              )}
             </div>
-          ))
+          </>
         )}
       </div>
     </div>
