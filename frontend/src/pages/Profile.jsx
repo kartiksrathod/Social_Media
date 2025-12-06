@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PostCard from '@/components/post/PostCard';
+import CreatePost from '@/components/post/CreatePost';
 import EditProfileModal from '@/components/profile/EditProfileModal';
 import FollowersModal from '../components/follow/FollowersModal';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
