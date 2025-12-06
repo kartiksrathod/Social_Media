@@ -103,7 +103,16 @@ export default function ImageCropModal({ open, onClose, imageSrc, onCropComplete
 
   const handleSave = async () => {
     try {
-      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
+      const targetWidth = customWidth ? parseInt(customWidth) : null;
+      const targetHeight = customHeight ? parseInt(customHeight) : null;
+      
+      const croppedImageBlob = await getCroppedImg(
+        imageSrc, 
+        croppedAreaPixels, 
+        rotation,
+        targetWidth,
+        targetHeight
+      );
       const croppedFile = new File([croppedImageBlob], 'cropped-image.jpg', {
         type: 'image/jpeg',
       });
@@ -111,6 +120,28 @@ export default function ImageCropModal({ open, onClose, imageSrc, onCropComplete
       onClose();
     } catch (e) {
       console.error('Error cropping image:', e);
+    }
+  };
+
+  const handleWidthChange = (e) => {
+    const width = e.target.value;
+    setCustomWidth(width);
+    
+    if (maintainAspectRatio && width && croppedAreaPixels) {
+      const ratio = croppedAreaPixels.height / croppedAreaPixels.width;
+      const newHeight = Math.round(parseInt(width) * ratio);
+      setCustomHeight(newHeight.toString());
+    }
+  };
+
+  const handleHeightChange = (e) => {
+    const height = e.target.value;
+    setCustomHeight(height);
+    
+    if (maintainAspectRatio && height && croppedAreaPixels) {
+      const ratio = croppedAreaPixels.width / croppedAreaPixels.height;
+      const newWidth = Math.round(parseInt(height) * ratio);
+      setCustomWidth(newWidth.toString());
     }
   };
 
