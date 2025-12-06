@@ -71,11 +71,11 @@ export default function Notifications() {
         </div>
       ) : (
         <div className="space-y-3 sm:space-y-3">
-          {notifications.map((notif) => (
+          {notifications.map((notif, index) => (
             <Link
               key={notif.id}
               to={notif.link || '#'}
-              className="flex items-start gap-3 sm:gap-4 p-4 sm:p-4 rounded-xl bg-surface-700 hover:bg-surface-600 transition-all duration-200 border border-border hover:border-primary/30 cursor-pointer group card-premium block touch-manipulation min-h-[72px]"
+              className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-4 rounded-xl bg-surface-700 hover:bg-surface-600 transition-all duration-200 border border-border hover:border-primary/30 cursor-pointer group card-premium block touch-manipulation min-h-[72px] hover-lift-sm ${index < 5 ? 'stagger-fade-in' : ''}`}
             >
               <div className="mt-1 flex-shrink-0">
                 <div className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
