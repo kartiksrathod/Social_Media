@@ -95,13 +95,13 @@ const CommentInput = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
       {replyingTo && (
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <span>Replying to <span className="font-semibold">@{replyingTo}</span></span>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground px-3 py-2 surface-700 rounded-lg border border-border/50">
+          <span>Replying to <span className="font-semibold text-primary">@{replyingTo}</span></span>
           {onCancel && (
             <button
               type="button"
               onClick={handleCancel}
-              className="ml-auto text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              className="ml-auto hover-accent"
             >
               <X className="w-4 h-4" />
             </button>
@@ -118,9 +118,9 @@ const CommentInput = ({
             placeholder={placeholder}
             maxLength={maxLength}
             rows={2}
-            className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white"
+            className="w-full px-4 py-2 surface-700 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-foreground placeholder:text-muted-foreground transition-all"
           />
-          <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+          <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
             {text.length}/{maxLength}
           </div>
           
@@ -137,7 +137,7 @@ const CommentInput = ({
           <button
             type="submit"
             disabled={loading || !text.trim()}
-            className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors h-10"
+            className="p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all h-10 glow-subtle hover:glow-primary"
             title={buttonText}
           >
             <Send className="w-4 h-4" />
@@ -147,7 +147,7 @@ const CommentInput = ({
             <button
               type="button"
               onClick={handleCancel}
-              className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors h-10"
+              className="p-2 surface-700 text-foreground rounded-lg hover:surface-600 transition-colors h-10 border border-border"
             >
               <X className="w-4 h-4" />
             </button>
