@@ -212,21 +212,49 @@ We will announce security updates through:
 
 ## Security Checklist for Production
 
-- [ ] Use HTTPS everywhere
-- [ ] Set strong JWT_SECRET (32+ random characters)
-- [ ] Configure specific CORS_ORIGINS (no wildcards)
-- [ ] Use MongoDB authentication
+### Pre-Deployment (Critical)
+- [ ] Use HTTPS everywhere (redirect HTTP to HTTPS)
+- [ ] Set strong JWT_SECRET (32+ random characters, cryptographically secure)
+- [ ] Set strong CSRF_SECRET (32+ random characters, cryptographically secure)
+- [ ] Configure specific CORS_ORIGINS (no wildcards - list exact domains)
+- [ ] Use MongoDB authentication with strong password
 - [ ] Enable MongoDB encryption at rest
-- [ ] Implement rate limiting
-- [ ] Set up monitoring and alerts
-- [ ] Regular security audits (`yarn audit`)
-- [ ] Keep all dependencies updated
-- [ ] Use environment variables for secrets
-- [ ] Implement backup strategy
-- [ ] Set up error logging (but not sensitive data)
-- [ ] Configure Content Security Policy headers
-- [ ] Implement input validation everywhere
-- [ ] Use prepared statements for queries
+- [ ] Change default MongoDB port (27017)
+
+### Configuration
+- [x] Rate limiting implemented (API, auth, posts, messages, uploads)
+- [x] Input sanitization implemented (XSS prevention)
+- [x] CSRF protection enabled
+- [x] Security headers configured (Helmet)
+- [x] MongoDB injection prevention active
+- [x] HPP protection enabled
+- [x] Brute force protection active
+- [ ] Set up monitoring and alerts (logs, metrics, uptime)
+- [ ] Configure error logging service (Sentry, LogRocket)
+- [ ] Set up SSL/TLS certificates (Let's Encrypt recommended)
+
+### Ongoing Maintenance
+- [ ] Regular security audits (`yarn audit` weekly)
+- [ ] Keep all dependencies updated (automated with Dependabot)
+- [ ] Review access logs for suspicious activity
+- [ ] Rotate secrets quarterly (JWT_SECRET, CSRF_SECRET, API keys)
+- [ ] Test backup restoration monthly
+- [ ] Review and update CSP headers as needed
+- [ ] Penetration testing (annual or after major releases)
+
+### Environment Variables Checklist
+```bash
+# Required in production .env
+JWT_SECRET=<64-char-random-string>
+CSRF_SECRET=<64-char-random-string>
+MONGO_URL=mongodb://<user>:<pass>@<host>:<port>/<db>?authSource=admin
+CLOUDINARY_CLOUD_NAME=<your-cloud-name>
+CLOUDINARY_API_KEY=<your-api-key>
+CLOUDINARY_API_SECRET=<your-api-secret>
+CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+NODE_ENV=production
+PORT=8001
+```
 
 ## Resources
 
