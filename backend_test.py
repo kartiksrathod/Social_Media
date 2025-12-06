@@ -248,6 +248,109 @@ def test_authentication_required():
     except requests.exceptions.RequestException as e:
         log_test("Authentication Required", "FAIL", f"Request error: {str(e)}")
 
+def test_image_upload(token):
+    """Test image upload endpoint"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    # Create a simple test image (1x1 pixel PNG)
+    import base64
+    import io
+    
+    # Minimal PNG data (1x1 transparent pixel)
+    png_data = base64.b64decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU8'
+        'IQAAAAABJRU5ErkJggg=='
+    )
+    
+    try:
+        files = {'file': ('test_image.png', io.BytesIO(png_data), 'image/png')}
+        response = requests.post(f"{API_BASE}/posts/upload-image", headers=headers, files=files, timeout=30)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if 'url' in data and data['url']:
+                log_test("Image Upload", "PASS", f"Image URL: {data['url'][:50]}...")
+                return data['url']
+            else:
+                log_test("Image Upload", "FAIL", "Missing URL in response")
+                return None
+        else:
+            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+            log_test("Image Upload", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            return None
+            
+    except requests.exceptions.RequestException as e:
+        log_test("Image Upload", "FAIL", f"Request error: {str(e)}")
+        return None
+
+def test_create_post_with_image(token, image_url=None):
+    """Test creating a post with image"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    post_data = {
+        "text": "Just uploaded a beautiful sunset photo! 🌅 #photography #nature #sunset",
+        "visibility": "public"
+    }
+    
+    if image_url:
+        post_data["images"] = [image_url]
+    
+    try:
+        response = requests.post(f"{API_BASE}/posts", json=post_data, headers=headers, timeout=10)
+        
+        if response.status_code == 201:
+            data = response.json()
+            required_fields = ['id', 'author_username', 'text', 'created_at']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                images_info = f", Images: {len(data.get('images', []))}" if data.get('images') else ""
+                log_test("Create Post with Image", "PASS", f"Post ID: {data['id']}, Text length: {len(data['text'])}{images_info}")
+                return data
+            else:
+                log_test("Create Post with Image", "FAIL", f"Missing fields: {missing_fields}")
+                return None
+        else:
+            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+            log_test("Create Post with Image", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            return None
+            
+    except requests.exceptions.RequestException as e:
+        log_test("Create Post with Image", "FAIL", f"Request error: {str(e)}")
+        return None
+
+def test_create_post_text_only(token):
+    """Test creating a text-only post"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    post_data = {
+        "text": "Having a great day coding! 💻 Working on some exciting new features. #coding #developer #tech",
+        "visibility": "public"
+    }
+    
+    try:
+        response = requests.post(f"{API_BASE}/posts", json=post_data, headers=headers, timeout=10)
+        
+        if response.status_code == 201:
+            data = response.json()
+            required_fields = ['id', 'author_username', 'text', 'created_at']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                log_test("Create Text Post", "PASS", f"Post ID: {data['id']}, Text length: {len(data['text'])}")
+                return data
+            else:
+                log_test("Create Text Post", "FAIL", f"Missing fields: {missing_fields}")
+                return None
+        else:
+            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+            log_test("Create Text Post", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            return None
+            
+    except requests.exceptions.RequestException as e:
+        log_test("Create Text Post", "FAIL", f"Request error: {str(e)}")
+        return None
+
 def main():
     """Run all backend tests"""
     print(f"{Colors.BOLD}🧪 SocialVibe Backend API Testing{Colors.ENDC}")
@@ -289,6 +392,24 @@ def main():
     
     # Test 7: Username Validation
     test_username_validation(token)
+    
+    print(f"\n{Colors.BLUE}📸 Testing Post and Image Upload Features{Colors.ENDC}")
+    print("-" * 60)
+    
+    # Test 8: Image Upload
+    image_url = test_image_upload(token)
+    
+    # Test 9: Create Post with Image
+    if image_url:
+        test_create_post_with_image(token, image_url)
+    else:
+        log_test("Create Post with Image", "WARN", "Skipped due to image upload failure")
+    
+    # Test 10: Create Text-only Post
+    test_create_post_text_only(token)
+    
+    # Test 11: Create Post without Image (fallback test)
+    test_create_post_with_image(token, None)
     
     print("\n" + "=" * 60)
     print(f"{Colors.BOLD}🎯 Backend Testing Complete{Colors.ENDC}")
