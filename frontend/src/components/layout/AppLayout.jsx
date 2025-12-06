@@ -52,18 +52,20 @@ const SidebarContent = ({ isMobile = false }) => {
       <div className="flex flex-col h-full py-6 px-3 items-center">
         {/* Brand Icon Only */}
         <Link to="/home" className="mb-10 group relative">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-110 group-hover:rotate-12">
-            <Sparkles className="w-7 h-7 text-primary-foreground" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-purple-500 to-primary/80 flex items-center justify-center shadow-xl hover:shadow-2xl hover:shadow-primary/60 transition-all duration-500 hover:scale-110 group-hover:rotate-12 relative overflow-hidden">
+            {/* Animated background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <Sparkles className="w-8 h-8 text-primary-foreground relative z-10 animate-pulse group-hover:animate-none" />
           </div>
-          {/* Tooltip */}
-          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-            SocialVibe
-            <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+          {/* Enhanced Tooltip */}
+          <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl text-foreground text-sm font-semibold rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out whitespace-nowrap z-50 border border-primary/20 group-hover:translate-x-0 -translate-x-2">
+            <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">SocialVibe</span>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
           </div>
         </Link>
 
         {/* Navigation - Icon Only */}
-        <nav className="flex-1 flex flex-col gap-2 w-full">
+        <nav className="flex-1 flex flex-col gap-3 w-full">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -72,67 +74,80 @@ const SidebarContent = ({ isMobile = false }) => {
             >
               <div
                 className={`
-                  w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300
+                  w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 relative overflow-hidden
                   ${isActive(link.href) 
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30' 
-                    : 'text-muted-foreground hover:bg-surface-700 hover:text-foreground hover:scale-110'
+                    ? 'bg-gradient-to-br from-primary to-purple-600 text-primary-foreground shadow-xl shadow-primary/40 scale-105' 
+                    : 'text-muted-foreground hover:bg-gradient-to-br hover:from-surface-700 hover:to-surface-600 hover:text-foreground hover:scale-110 hover:shadow-lg'
                   }
                 `}
               >
-                <link.icon className={`w-6 h-6 transition-all duration-300 ${isActive(link.href) ? 'scale-110' : 'group-hover:scale-110'}`} />
+                {/* Active indicator pulse */}
+                {isActive(link.href) && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent animate-pulse"></div>
+                )}
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <link.icon className={`w-6 h-6 transition-all duration-500 relative z-10 ${isActive(link.href) ? 'scale-110 drop-shadow-lg' : 'group-hover:scale-125 group-hover:rotate-6'}`} />
               </div>
-              {/* Tooltip on hover */}
-              <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+              {/* Enhanced Tooltip on hover */}
+              <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl text-foreground text-sm font-semibold rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out whitespace-nowrap z-50 border border-primary/10 group-hover:translate-x-0 -translate-x-2">
                 {link.label}
-                <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
               </div>
             </Link>
           ))}
           
           {/* Post Button - Icon Only */}
           <button className="group relative mt-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-110 hover:rotate-12">
-              <PlusCircle className="w-6 h-6 text-primary-foreground" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center shadow-xl hover:shadow-2xl hover:shadow-primary/60 transition-all duration-500 hover:scale-110 group-hover:rotate-12 relative overflow-hidden">
+              {/* Animated shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+              <PlusCircle className="w-7 h-7 text-primary-foreground relative z-10 group-hover:rotate-90 transition-transform duration-500" />
             </div>
-            {/* Tooltip */}
-            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-              Create Post
-              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+            {/* Enhanced Tooltip */}
+            <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl text-foreground text-sm font-semibold rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out whitespace-nowrap z-50 border border-primary/20 group-hover:translate-x-0 -translate-x-2">
+              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">Create Post</span>
+              <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
             </div>
           </button>
         </nav>
 
         {/* Bottom Section */}
-        <div className="mt-auto flex flex-col gap-2 pt-6 border-t border-border w-full">
+        <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-border/50 w-full">
           {/* User Avatar */}
           {user && (
             <Link to="/profile" className="group relative">
-              <Avatar className="w-12 h-12 ring-2 ring-border hover:ring-primary transition-all duration-300 hover:scale-110 cursor-pointer">
-                <AvatarImage src={user.avatar_url} />
-                <AvatarFallback>{user.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
-              </Avatar>
-              {/* Tooltip */}
-              <div className="absolute left-full ml-4 bottom-0 px-3 py-2 bg-surface-700 text-foreground rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 min-w-[150px]">
-                <p className="text-sm font-semibold">{user.name || user.username}</p>
-                <p className="text-xs text-muted-foreground">@{user.username}</p>
-                <div className="absolute right-full bottom-4 border-8 border-transparent border-r-surface-700"></div>
+              <div className="relative">
+                <Avatar className="w-14 h-14 ring-2 ring-border hover:ring-primary transition-all duration-500 hover:scale-110 cursor-pointer hover:shadow-xl hover:shadow-primary/30">
+                  <AvatarImage src={user.avatar_url} />
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-primary-foreground font-bold">{user.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+                </Avatar>
+                {/* Active status indicator */}
+                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full ring-2 ring-surface-800 group-hover:scale-110 transition-transform duration-300"></div>
+              </div>
+              {/* Enhanced Tooltip */}
+              <div className="absolute left-full ml-6 bottom-0 px-4 py-3 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out z-50 min-w-[180px] border border-primary/10 group-hover:translate-x-0 -translate-x-2">
+                <p className="text-sm font-bold text-foreground">{user.name || user.username}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">@{user.username}</p>
+                <div className="absolute right-full bottom-4 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
               </div>
             </Link>
           )}
           
           {/* Theme Toggle */}
           <button onClick={toggleTheme} className="group relative">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-surface-700 hover:text-foreground transition-all duration-300 hover:scale-110">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-muted-foreground hover:bg-gradient-to-br hover:from-surface-700 hover:to-surface-600 hover:text-foreground transition-all duration-500 hover:scale-110 hover:shadow-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               {theme === 'dark' ? (
-                <Sun className="w-6 h-6" />
+                <Sun className="w-6 h-6 relative z-10 group-hover:rotate-180 transition-transform duration-700" />
               ) : (
-                <Moon className="w-6 h-6" />
+                <Moon className="w-6 h-6 relative z-10 group-hover:-rotate-180 transition-transform duration-700" />
               )}
             </div>
-            {/* Tooltip */}
-            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+            {/* Enhanced Tooltip */}
+            <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl text-foreground text-sm font-semibold rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out whitespace-nowrap z-50 border border-primary/10 group-hover:translate-x-0 -translate-x-2">
               {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+              <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
             </div>
           </button>
           
@@ -144,13 +159,14 @@ const SidebarContent = ({ isMobile = false }) => {
             }}
             className="group relative"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-surface-700 hover:text-destructive transition-all duration-300 hover:scale-110">
-              <LogOut className="w-6 h-6" />
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-muted-foreground hover:bg-gradient-to-br hover:from-red-500/20 hover:to-destructive/20 hover:text-destructive transition-all duration-500 hover:scale-110 hover:shadow-lg hover:shadow-destructive/20 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 via-red-500/10 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <LogOut className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
             </div>
-            {/* Tooltip */}
-            <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-2 bg-surface-700 text-foreground text-sm font-medium rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-              Logout
-              <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-surface-700"></div>
+            {/* Enhanced Tooltip */}
+            <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gradient-to-r from-surface-700 to-surface-600 backdrop-blur-xl text-foreground text-sm font-semibold rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out whitespace-nowrap z-50 border border-destructive/20 group-hover:translate-x-0 -translate-x-2">
+              <span className="text-destructive">Logout</span>
+              <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
             </div>
           </button>
         </div>
