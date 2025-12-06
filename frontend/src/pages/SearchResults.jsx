@@ -10,38 +10,92 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const [activeTab, setActiveTab] = useState('users');
-  const [results, setResults] = useState({ users: [], hashtags: [] });
+  const [users, setUsers] = useState([]);
+  const [hashtags, setHashtags] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [skip, setSkip] = useState(0);
+  const LIMIT = 20;
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
     if (query) {
-      performSearch();
+      // Reset state when query changes
+      setUsers([]);
+      setHashtags([]);
+      setSkip(0);
+      setHasMore(true);
+      performSearch(false);
     }
   }, [query]);
 
-  const performSearch = async () => {
-    setLoading(true);
+  useEffect(() => {
+    // Reset when switching tabs
+    if (activeTab === 'users') {
+      setSkip(0);
+      setHasMore(true);
+    }
+  }, [activeTab]);
+
+  const performSearch = async (isLoadMore = false) => {
     try {
-      const [usersResponse, hashtagsResponse] = await Promise.all([
-        usersAPI.search(query),
-        hashtagsAPI.getTrending(50)
-      ]);
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
 
-      const filteredHashtags = hashtagsResponse.data.filter(h => 
-        h.tag.toLowerCase().includes(query.toLowerCase())
-      );
+      const currentSkip = isLoadMore ? skip : 0;
 
-      setResults({
-        users: usersResponse.data,
-        hashtags: filteredHashtags
-      });
+      if (activeTab === 'users') {
+        const usersResponse = await usersAPI.search(query);
+        const allUsers = usersResponse.data;
+        
+        // Implement client-side pagination
+        const paginatedUsers = allUsers.slice(currentSkip, currentSkip + LIMIT);
+        
+        if (isLoadMore) {
+          setUsers(prev => [...prev, ...paginatedUsers]);
+        } else {
+          setUsers(paginatedUsers);
+        }
+        
+        setSkip(currentSkip + paginatedUsers.length);
+        setHasMore(currentSkip + paginatedUsers.length < allUsers.length);
+      } else {
+        const hashtagsResponse = await hashtagsAPI.getTrending(100);
+        const filteredHashtags = hashtagsResponse.data.filter(h => 
+          h.tag.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        // Implement client-side pagination for hashtags
+        const paginatedHashtags = filteredHashtags.slice(currentSkip, currentSkip + LIMIT);
+        
+        if (isLoadMore) {
+          setHashtags(prev => [...prev, ...paginatedHashtags]);
+        } else {
+          setHashtags(paginatedHashtags);
+        }
+        
+        setSkip(currentSkip + paginatedHashtags.length);
+        setHasMore(currentSkip + paginatedHashtags.length < filteredHashtags.length);
+      }
     } catch (error) {
       console.error('Search failed:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      performSearch(true);
+    }
+  }, [loadingMore, hasMore, skip, activeTab, query]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
 
   return (
     <AppLayout>
