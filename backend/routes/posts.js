@@ -12,7 +12,7 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // POST /api/posts - Create new post
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, postCreationLimiter, async (req, res) => {
   try {
     const { text, image_url, images, video_url, image_tags, visibility, poll } = req.body;
 
