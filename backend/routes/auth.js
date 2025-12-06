@@ -28,56 +28,66 @@ const createAccessToken = (userId) => {
 };
 
 // POST /api/auth/signup - Create new user
-router.post('/signup', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+router.post('/signup',
+  authLimiter, // Rate limit signup attempts
+  validateRequest({
+    username: { required: true, type: 'username' },
+    email: { required: true, type: 'email' },
+    password: { required: true, type: 'password' }
+  }),
+  async (req, res) => {
+    try {
+      const { username, email, password } = req.body;
 
-    // Validate input
-    if (!username || !email || !password) {
-      return res.status(400).json({ detail: 'All fields are required' });
+      // Check if username exists (case-insensitive)
+      const existingUsername = await User.findOne({ 
+        username: { $regex: new RegExp(`^${username}$`, 'i') }
+      });
+      if (existingUsername) {
+        return res.status(400).json({ detail: 'Username already registered' });
+      }
+
+      // Check if email exists (case-insensitive)
+      const existingEmail = await User.findOne({ 
+        email: { $regex: new RegExp(`^${email}$`, 'i') }
+      });
+      if (existingEmail) {
+        return res.status(400).json({ detail: 'Email already registered' });
+      }
+
+      // Hash password with higher cost factor for security
+      const password_hash = await bcrypt.hash(password, 12);
+
+      // Create new user with lowercase username and email
+      const newUser = new User({
+        username: username.toLowerCase(),
+        email: email.toLowerCase(),
+        password_hash,
+        bio: '',
+        avatar: null,
+        followers: [],
+        following: [],
+        saved_posts: []
+      });
+
+      await newUser.save();
+
+      // Create access token
+      const access_token = createAccessToken(newUser.id);
+
+      // Log successful signup
+      console.log(`✅ New user registered: ${username}`);
+
+      res.status(201).json({ 
+        access_token,
+        token_type: 'bearer'
+      });
+    } catch (error) {
+      console.error('Signup error:', error);
+      res.status(500).json({ detail: 'Internal server error' });
     }
-
-    // Check if username exists
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ detail: 'Username already registered' });
-    }
-
-    // Check if email exists
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ detail: 'Email already registered' });
-    }
-
-    // Hash password
-    const password_hash = await bcrypt.hash(password, 10);
-
-    // Create new user
-    const newUser = new User({
-      username,
-      email,
-      password_hash,
-      bio: '',
-      avatar: null,
-      followers: [],
-      following: [],
-      saved_posts: []
-    });
-
-    await newUser.save();
-
-    // Create access token
-    const access_token = createAccessToken(newUser.id);
-
-    res.status(201).json({ 
-      access_token,
-      token_type: 'bearer'
-    });
-  } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({ detail: 'Internal server error' });
   }
-});
+);
 
 // POST /api/auth/login - Login user
 router.post('/login', async (req, res) => {
