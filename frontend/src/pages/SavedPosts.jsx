@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { postsAPI } from '../lib/api';
 import PostCard from '../components/post/PostCard';
+import SwipeablePostCard from '../components/post/SwipeablePostCard';
+import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
+import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
 import { Bookmark, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 export default function SavedPosts() {
   const [posts, setPosts] = useState([]);
