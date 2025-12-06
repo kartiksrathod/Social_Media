@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import CreatePost from '@/components/post/CreatePost';
 import PostCard from '@/components/post/PostCard';
 import StoriesBar from '@/components/story/StoriesBar';
 import { postsAPI } from '../lib/api';
