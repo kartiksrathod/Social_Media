@@ -419,6 +419,26 @@
     @apply space-y-6;  /* 24px between profile sections */
   }
   
+  /* Post List Spacing - for feed/profile post lists */
+  .post-list-spacing {
+    @apply space-y-4;  /* 16px between posts */
+  }
+  
+  /* Infinite Scroll Spacing - for load more sections */
+  .infinite-scroll-spacing {
+    @apply py-6 sm:py-8;  /* 24px mobile, 32px desktop */
+  }
+  
+  /* Empty State Spacing */
+  .empty-state-spacing {
+    @apply py-12 sm:py-16;  /* 48px mobile, 64px desktop */
+  }
+  
+  /* Search Result Item Spacing */
+  .search-result-item {
+    @apply p-4 min-h-[72px] sm:min-h-[60px];  /* Touch-friendly height on mobile */
+  }
+  
   /* Mobile-optimized containers */
   .mobile-container {
     @apply px-4 sm:px-6 py-4 sm:py-6;
