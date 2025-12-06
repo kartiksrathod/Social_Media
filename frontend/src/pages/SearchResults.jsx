@@ -102,7 +102,7 @@ const SearchResults = () => {
     <AppLayout>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 p-4">
+        <div className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 card-padding">
           <div className="flex items-center gap-3 mb-4">
             <Search className="w-6 h-6 text-gray-400" />
             <h1 className="text-xl font-bold">
