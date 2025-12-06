@@ -416,10 +416,20 @@ export default function CreatePost({ onPostCreated }) {
                             variant="secondary"
                             size="sm"
                             className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => openCropModal(index)}
+                          >
+                            <Crop className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => openTagImage(index)}
                           >
                             <TagIcon className="h-3 w-3 mr-1" />
-                            Tag People
+                            Tag
                           </Button>
                         </div>
                         <Button
