@@ -89,12 +89,12 @@ export default function Explore() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-6 px-4 space-y-6">
+    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-3 sm:px-4 space-y-4 sm:space-y-6">
       <div className="relative">
-         <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
          <Input 
             placeholder="Search for people..." 
-            className="pl-10 h-12 rounded-full bg-muted/50 border-none text-lg"
+            className="pl-10 h-12 rounded-full bg-muted/50 border-none text-base sm:text-lg touch-manipulation"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
          />
