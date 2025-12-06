@@ -3,13 +3,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import PostCard from '@/components/post/PostCard';
+import SwipeablePostCard from '@/components/post/SwipeablePostCard';
 import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
+import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
 import { Link } from 'react-router-dom';
 import { postsAPI, usersAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 export default function Explore() {
   const [posts, setPosts] = useState([]);
