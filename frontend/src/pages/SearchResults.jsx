@@ -198,7 +198,7 @@ const SearchResults = () => {
                   
                   {/* Infinite scroll trigger for users */}
                   {users.length > 0 && (
-                    <div ref={scrollRef} className="flex justify-center py-6 sm:py-8">
+                    <div ref={scrollRef} className="flex justify-center infinite-scroll-spacing">
                       {loadingMore && (
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
