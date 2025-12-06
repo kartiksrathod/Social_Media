@@ -152,14 +152,15 @@ export default function Feed() {
          ) : (
            <>
              <div className="post-list-spacing flex flex-col">
-               {posts.map(post => (
-                 <SwipeablePostCard 
-                   key={post.id} 
-                   post={post} 
-                   onUpdate={handlePostUpdate}
-                   onLike={() => handleLike(post.id)}
-                   onSave={() => handleSave(post.id)}
-                 />
+               {posts.map((post, index) => (
+                 <div key={post.id} className={index < 5 ? 'stagger-fade-in' : ''}>
+                   <SwipeablePostCard 
+                     post={post} 
+                     onUpdate={handlePostUpdate}
+                     onLike={() => handleLike(post.id)}
+                     onSave={() => handleSave(post.id)}
+                   />
+                 </div>
                ))}
              </div>
 
