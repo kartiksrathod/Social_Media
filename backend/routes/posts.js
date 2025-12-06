@@ -678,11 +678,13 @@ router.get('/saved', authenticateToken, async (req, res) => {
 router.get('/hashtag/:tag', authenticateToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
+    const skip = parseInt(req.query.skip) || 0;
     const tag = req.params.tag.toLowerCase().replace(/^#/, '');
     const user = await User.findOne({ id: req.userId });
 
     const posts = await Post.find({ hashtags: tag })
       .sort({ created_at: -1 })
+      .skip(skip)
       .limit(limit);
 
     res.json(posts.map(post => postToPublic(post, req.userId, user.saved_posts)));
