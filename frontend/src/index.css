@@ -349,21 +349,75 @@
     min-width: 48px;
   }
   
-  /* Spacing Scale - Consistent 8px grid system */
-  .space-4 { gap: 0.25rem; }  /* 4px */
-  .space-8 { gap: 0.5rem; }   /* 8px */
-  .space-12 { gap: 0.75rem; } /* 12px */
-  .space-16 { gap: 1rem; }    /* 16px */
-  .space-24 { gap: 1.5rem; }  /* 24px */
-  .space-32 { gap: 2rem; }    /* 32px */
+  /* ===== SPACING SYSTEM - 8px Grid ===== */
+  /* Base spacing utilities following 8px grid */
   
-  /* Legacy support - mapped to new system */
-  .space-xs { gap: 0.25rem; } /* 4px */
-  .space-sm { gap: 0.5rem; }  /* 8px */
-  .space-md { gap: 0.75rem; } /* 12px */
-  .space-lg { gap: 1rem; }    /* 16px */
-  .space-xl { gap: 1.5rem; }  /* 24px */
-  .space-2xl { gap: 2rem; }   /* 32px */
+  /* Standard Card Padding */
+  .card-padding {
+    @apply p-4 sm:p-6;  /* 16px mobile, 24px desktop */
+  }
+  
+  .card-padding-sm {
+    @apply p-3 sm:p-4;  /* 12px mobile, 16px desktop */
+  }
+  
+  .card-padding-lg {
+    @apply p-6 sm:p-8;  /* 24px mobile, 32px desktop */
+  }
+  
+  /* Content Spacing (vertical rhythm) */
+  .content-spacing {
+    @apply space-y-4;  /* 16px - standard content gaps */
+  }
+  
+  .content-spacing-sm {
+    @apply space-y-3;  /* 12px - tight content */
+  }
+  
+  .content-spacing-lg {
+    @apply space-y-6;  /* 24px - section spacing */
+  }
+  
+  /* Section Spacing (between major sections) */
+  .section-spacing {
+    @apply space-y-6 sm:space-y-8;  /* 24px mobile, 32px desktop */
+  }
+  
+  .section-spacing-sm {
+    @apply space-y-4 sm:space-y-6;  /* 16px mobile, 24px desktop */
+  }
+  
+  /* List Item Spacing */
+  .list-spacing {
+    @apply gap-4;  /* 16px between list items */
+  }
+  
+  .list-spacing-sm {
+    @apply gap-3;  /* 12px for compact lists */
+  }
+  
+  .list-spacing-lg {
+    @apply gap-6;  /* 24px for spacious lists */
+  }
+  
+  /* Container Padding */
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;  /* Responsive horizontal padding */
+  }
+  
+  .container-padding-y {
+    @apply py-4 sm:py-6 lg:py-8;  /* Responsive vertical padding */
+  }
+  
+  /* Comment Section Spacing */
+  .comment-spacing {
+    @apply space-y-4;  /* 16px between comments */
+  }
+  
+  /* Profile Section Spacing */
+  .profile-section-spacing {
+    @apply space-y-6;  /* 24px between profile sections */
+  }
   
   /* Mobile-optimized containers */
   .mobile-container {
