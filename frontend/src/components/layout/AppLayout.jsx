@@ -18,8 +18,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import TrendingSection from './TrendingSection';
 import SearchBar from '../search/SearchBar';
 import NotificationBell from '../notification/NotificationBell';
@@ -28,6 +29,8 @@ import SuggestedUsers from '../follow/SuggestedUsers';
 const SidebarContent = ({ isMobile = false }) => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   
   const isActive = (path) => {
     return location.pathname === path;
