@@ -304,8 +304,8 @@ export default function AppLayout() {
       </main>
 
       {/* Mobile Bottom Navigation - Touch-optimized */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-t border-border z-50 safe-area-inset-bottom">
-         <nav className="h-full flex items-center justify-around px-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-800/95 backdrop-blur-md border-t border-border z-50 safe-area-inset-bottom">
+         <nav className="h-16 flex items-center justify-around px-2">
             {[
               { label: "Home", href: "/home", icon: Home },
               { label: "Explore", href: "/explore", icon: Search },
@@ -316,8 +316,8 @@ export default function AppLayout() {
                 key={link.href}
                 to={link.href}
                 className={`
-                  flex flex-col items-center justify-center gap-1 min-w-[70px] min-h-[56px] flex-1
-                  transition-all duration-200 touch-manipulation no-select tap-feedback rounded-lg
+                  flex flex-col items-center justify-center gap-1 min-w-[72px] min-h-[56px] flex-1
+                  transition-all duration-200 touch-manipulation no-select tap-feedback rounded-xl px-2
                   ${isActive(link.href) 
                     ? 'text-primary scale-105' 
                     : 'text-muted-foreground active:text-foreground'
