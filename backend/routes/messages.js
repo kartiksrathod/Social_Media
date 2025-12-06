@@ -3,6 +3,7 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const User = require('../models/User');
 const { authenticateToken } = require('../middleware/auth');
+const { messageLimiter } = require('../middleware/security');
 
 const router = express.Router();
 
