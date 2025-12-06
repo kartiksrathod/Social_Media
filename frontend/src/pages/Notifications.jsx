@@ -78,14 +78,14 @@ export default function Notifications() {
               className={`flex items-start gap-3 sm:gap-4 p-4 sm:p-4 rounded-xl bg-surface-700 hover:bg-surface-600 transition-all duration-200 border border-border hover:border-primary/30 cursor-pointer group card-premium block touch-manipulation min-h-[72px] hover-lift-sm ${index < 5 ? 'stagger-fade-in' : ''}`}
             >
               <div className="mt-1 flex-shrink-0">
-                <div className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all icon-hover-pulse">
                   {getNotificationIcon(notif.type)}
                 </div>
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <Avatar className="w-9 h-9 sm:w-8 sm:h-8 ring-2 ring-border group-hover:ring-primary/30 transition-all flex-shrink-0">
+                  <Avatar className="w-9 h-9 sm:w-8 sm:h-8 ring-2 ring-border group-hover:ring-primary/30 transition-all flex-shrink-0 avatar-ring-expand">
                     <AvatarImage src={notif.actor_avatar} />
                     <AvatarFallback>{notif.actor_username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
