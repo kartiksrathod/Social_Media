@@ -333,11 +333,13 @@ router.get('/feed', authenticateToken, async (req, res) => {
 router.get('/explore', authenticateToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
+    const skip = parseInt(req.query.skip) || 0;
     const user = await User.findOne({ id: req.userId });
 
     // Only show public posts in explore (don't show close friends posts)
     const posts = await Post.find({ visibility: 'public' })
       .sort({ created_at: -1 })
+      .skip(skip)
       .limit(limit);
 
     // Populate original posts for reposts
