@@ -142,77 +142,99 @@ export default function Explore() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-4 sm:px-5 space-y-5 sm:space-y-6">
-      <div className="relative">
-         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
-         <Input 
-            placeholder="Search for people..." 
-            className="input-mobile pl-12 h-12 rounded-full bg-muted/50 border-none text-base touch-manipulation"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-         />
-      </div>
+    <>
+      {/* Pull-to-refresh indicator */}
+      <PullToRefreshIndicator
+        isPulling={isPulling}
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        refreshProgress={refreshProgress}
+      />
 
-      {searchQuery && users.length > 0 && (
-        <Card>
-          <CardContent className="p-4 space-y-3">
-            <h3 className="font-semibold">Search Results</h3>
-            {users.map(user => (
-              <Link to={`/profile/${user.username}`} key={user.id}>
-                <div className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors">
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>{user.username?.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-semibold">{user.username}</p>
-                    <p className="text-sm text-muted-foreground">@{user.username}</p>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {user.followers_count} followers
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+      {/* Scroll-to-top button */}
+      <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} />
 
-      <div>
-         <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
-         {loading ? (
-           <div className="space-y-4">
-             {[1, 2, 3].map((i) => (
-               <PostCardSkeleton key={i} />
-             ))}
-           </div>
-         ) : posts.length === 0 ? (
-           <div className="text-center py-12">
-             <p className="text-muted-foreground">No posts to explore yet</p>
-           </div>
-         ) : (
-           <>
+      <div 
+        ref={containerRef}
+        className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-4 sm:px-5 space-y-5 sm:space-y-6"
+      >
+        <div className="relative">
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+           <Input 
+              placeholder="Search for people..." 
+              className="input-mobile pl-12 h-12 rounded-full bg-muted/50 border-none text-base touch-manipulation"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+           />
+        </div>
+
+        {searchQuery && users.length > 0 && (
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <h3 className="font-semibold">Search Results</h3>
+              {users.map(user => (
+                <Link to={`/profile/${user.username}`} key={user.id}>
+                  <div className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors touch-manipulation min-h-[56px]">
+                    <Avatar className="w-11 h-11 sm:w-10 sm:h-10">
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>{user.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="font-semibold text-base sm:text-sm">{user.username}</p>
+                      <p className="text-sm sm:text-xs text-muted-foreground">@{user.username}</p>
+                    </div>
+                    <div className="text-sm sm:text-xs text-muted-foreground">
+                      {user.followers_count} followers
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        <div>
+           <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
+           {loading ? (
              <div className="space-y-4">
-               {posts.map(post => (
-                 <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
+               {[1, 2, 3].map((i) => (
+                 <PostCardSkeleton key={i} />
                ))}
              </div>
-
-             {/* Infinite scroll trigger */}
-             <div ref={scrollRef} className="flex justify-center py-8">
-               {loadingMore && (
-                 <div className="flex items-center gap-2 text-muted-foreground">
-                   <Loader2 className="w-6 h-6 animate-spin" />
-                   <span className="text-sm">Loading more posts...</span>
-                 </div>
-               )}
-               {!hasMore && posts.length > 0 && (
-                 <p className="text-sm text-muted-foreground">No more posts to load</p>
-               )}
+           ) : posts.length === 0 ? (
+             <div className="text-center py-12">
+               <p className="text-muted-foreground">No posts to explore yet</p>
              </div>
-           </>
-         )}
+           ) : (
+             <>
+               <div className="space-y-4">
+                 {posts.map(post => (
+                   <SwipeablePostCard 
+                     key={post.id} 
+                     post={post} 
+                     onUpdate={handlePostUpdate}
+                     onLike={() => handleLike(post.id)}
+                     onSave={() => handleSave(post.id)}
+                   />
+                 ))}
+               </div>
+
+               {/* Infinite scroll trigger */}
+               <div ref={scrollRef} className="flex justify-center py-8">
+                 {loadingMore && (
+                   <div className="flex items-center gap-2 text-muted-foreground">
+                     <Loader2 className="w-6 h-6 animate-spin" />
+                     <span className="text-sm">Loading more posts...</span>
+                   </div>
+                 )}
+                 {!hasMore && posts.length > 0 && (
+                   <p className="text-sm text-muted-foreground">No more posts to load</p>
+                 )}
+               </div>
+             </>
+           )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
