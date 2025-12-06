@@ -338,4 +338,107 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Pull-to-refresh animations */
+  @keyframes pull-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .pull-rotate {
+    animation: pull-rotate 1s ease-in-out;
+  }
+
+  /* Swipe action indicators */
+  .swipe-action-left {
+    @apply absolute left-0 top-0 bottom-0 flex items-center justify-start;
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1));
+  }
+
+  .swipe-action-right {
+    @apply absolute right-0 top-0 bottom-0 flex items-center justify-end;
+    background: linear-gradient(-90deg, transparent, rgba(59, 130, 246, 0.1));
+  }
+
+  /* Enhanced touch interactions */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Long press indicator */
+  @keyframes long-press {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  .long-press-feedback {
+    animation: long-press 0.3s ease-in-out;
+  }
+
+  /* Momentum scrolling enhancement */
+  .momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Prevent overscroll bounce on specific elements */
+  .no-overscroll {
+    overscroll-behavior: contain;
+  }
+
+  /* Better focus for keyboard navigation */
+  .keyboard-focus:focus-visible {
+    @apply outline-2 outline-primary outline-offset-2;
+  }
+
+  /* Skeleton loading animations */
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .skeleton-pulse {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Smooth page transitions */
+  .page-transition {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Enhanced modal backdrop */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  /* Floating action button shadow */
+  .fab-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .fab-shadow {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Improved card hover states */
+  .card-interactive {
+    @apply transition-all duration-200;
+  }
+
+  .card-interactive:hover {
+    @apply shadow-lg -translate-y-0.5;
+  }
+
+  .card-interactive:active {
+    @apply translate-y-0;
+  }
 }
