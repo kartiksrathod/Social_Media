@@ -362,6 +362,7 @@ router.get('/explore', authenticateToken, async (req, res) => {
 router.get('/user/:username', authenticateToken, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 20;
+    const skip = parseInt(req.query.skip) || 0;
     const currentUser = await User.findOne({ id: req.userId });
     const targetUser = await User.findOne({ username: req.params.username });
 
@@ -377,6 +378,7 @@ router.get('/user/:username', authenticateToken, async (req, res) => {
       ]
     })
       .sort({ created_at: -1 })
+      .skip(skip)
       .limit(limit);
 
     // Filter posts based on visibility
