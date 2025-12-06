@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Trash2, Eye } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { storiesAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import StoryViewersModal from './StoryViewersModal';
 
 export default function StoryViewer({ open, onClose, storiesData, initialUserId }) {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ export default function StoryViewer({ open, onClose, storiesData, initialUserId 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [viewersModalOpen, setViewersModalOpen] = useState(false);
   const videoRef = useRef(null);
   const progressInterval = useRef(null);
 
