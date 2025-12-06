@@ -17,6 +17,24 @@ cloudinary.config({
  */
 const uploadToCloudinary = (fileBuffer, folder = 'uploads', options = {}) => {
   return new Promise((resolve, reject) => {
+    // Check if we're in test mode (no valid Cloudinary credentials)
+    if (process.env.CLOUDINARY_CLOUD_NAME === 'test_cloud') {
+      // Mock upload for testing
+      const mockResult = {
+        public_id: `${folder}/test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        url: `https://res.cloudinary.com/test_cloud/${options.resource_type || 'image'}/upload/v1/${folder}/test_image.${options.resource_type === 'video' ? 'mp4' : 'jpg'}`,
+        width: 800,
+        height: 600,
+        format: options.resource_type === 'video' ? 'mp4' : 'jpg',
+        duration: options.resource_type === 'video' ? 30 : null,
+        resource_type: options.resource_type || 'image'
+      };
+      
+      console.log('Mock upload successful:', mockResult.url);
+      resolve(mockResult);
+      return;
+    }
+
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: folder,
