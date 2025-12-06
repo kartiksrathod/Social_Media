@@ -226,6 +226,58 @@ export default function ImageCropModal({ open, onClose, imageSrc, onCropComplete
               className="w-full"
             />
           </div>
+
+          {/* Custom Dimensions */}
+          <div className="space-y-3 border-t pt-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">Output Dimensions (Optional)</Label>
+              {croppedAreaPixels && (
+                <span className="text-xs text-muted-foreground">
+                  Current: {Math.round(croppedAreaPixels.width)} × {Math.round(croppedAreaPixels.height)}px
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="width" className="text-xs">Width (px)</Label>
+                <Input
+                  id="width"
+                  type="number"
+                  placeholder="Auto"
+                  value={customWidth}
+                  onChange={handleWidthChange}
+                  min="50"
+                  max="4000"
+                  className="h-8"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="height" className="text-xs">Height (px)</Label>
+                <Input
+                  id="height"
+                  type="number"
+                  placeholder="Auto"
+                  value={customHeight}
+                  onChange={handleHeightChange}
+                  min="50"
+                  max="4000"
+                  className="h-8"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="maintain-ratio"
+                checked={maintainAspectRatio}
+                onChange={(e) => setMaintainAspectRatio(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300"
+              />
+              <Label htmlFor="maintain-ratio" className="text-xs cursor-pointer">
+                Maintain aspect ratio when adjusting dimensions
+              </Label>
+            </div>
+          </div>
         </div>
 
         <DialogFooter className="flex gap-2">
