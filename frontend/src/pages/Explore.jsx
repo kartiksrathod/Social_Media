@@ -136,11 +136,26 @@ export default function Explore() {
              <p className="text-muted-foreground">No posts to explore yet</p>
            </div>
          ) : (
-           <div className="space-y-4">
-             {posts.map(post => (
-               <PostCard key={post.id} post={post} onUpdate={loadExploreFeed} />
-             ))}
-           </div>
+           <>
+             <div className="space-y-4">
+               {posts.map(post => (
+                 <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
+               ))}
+             </div>
+
+             {/* Infinite scroll trigger */}
+             <div ref={scrollRef} className="flex justify-center py-8">
+               {loadingMore && (
+                 <div className="flex items-center gap-2 text-muted-foreground">
+                   <Loader2 className="w-6 h-6 animate-spin" />
+                   <span className="text-sm">Loading more posts...</span>
+                 </div>
+               )}
+               {!hasMore && posts.length > 0 && (
+                 <p className="text-sm text-muted-foreground">No more posts to load</p>
+               )}
+             </div>
+           </>
          )}
       </div>
     </div>
