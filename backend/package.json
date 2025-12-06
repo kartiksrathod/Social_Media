@@ -12,7 +12,8 @@
     "cloudinary": "^1.41.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "csurf": "^1.11.0",
+    "csrf-csrf": "^4.0.3",
+    "dompurify": "^3.3.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-mongo-sanitize": "^2.2.0",
@@ -26,7 +27,7 @@
     "multer": "^1.4.5-lts.1",
     "socket.io": "^4.8.1",
     "uuid": "^9.0.1",
-    "xss-clean": "^0.1.4"
+    "validator": "^13.15.23"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
