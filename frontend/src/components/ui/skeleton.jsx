@@ -2,11 +2,16 @@ import { cn } from "@/lib/utils"
 
 function Skeleton({
   className,
+  shimmer = true,
   ...props
 }) {
   return (
     <div
-      className={cn("animate-pulse rounded-md surface-600", className)}
+      className={cn(
+        "rounded-md surface-600",
+        shimmer ? "skeleton-shimmer" : "skeleton-pulse",
+        className
+      )}
       {...props} />
   );
 }
