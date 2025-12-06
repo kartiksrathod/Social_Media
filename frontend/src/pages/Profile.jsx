@@ -312,16 +312,14 @@ export default function Profile() {
              </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="posts" className="space-y-4 p-4">
+          <TabsContent value="posts" className="post-list-spacing container-padding">
              {/* Show CreatePost component only on own profile */}
              {isOwnProfile && (
-               <div className="mb-6">
-                 <CreatePost onPostCreated={handlePostUpdate} />
-               </div>
+               <CreatePost onPostCreated={handlePostUpdate} />
              )}
              
              {posts.length === 0 ? (
-               <div className="text-center py-10 text-muted-foreground">
+               <div className="text-center empty-state-spacing text-muted-foreground">
                  {isOwnProfile ? "Create your first post above!" : "No posts yet"}
                </div>
              ) : (
@@ -337,7 +335,7 @@ export default function Profile() {
                  ))}
 
                  {/* Infinite scroll trigger */}
-                 <div ref={scrollRef} className="flex justify-center py-8">
+                 <div ref={scrollRef} className="flex justify-center infinite-scroll-spacing">
                    {loadingMore && (
                      <div className="flex items-center gap-2 text-muted-foreground">
                        <Loader2 className="w-6 h-6 animate-spin" />
