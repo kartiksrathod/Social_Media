@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import PostCard from '@/components/post/PostCard';
+import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
