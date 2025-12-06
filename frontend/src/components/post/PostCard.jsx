@@ -440,20 +440,20 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`group px-3 sm:px-2 h-11 sm:h-9 touch-target transition-colors touch-manipulation tap-feedback no-select ${saved ? 'text-primary' : 'hover-accent'}`}
+              className={`group px-3 sm:px-2 h-11 sm:h-9 touch-target transition-colors touch-manipulation tap-feedback no-select button-press ${saved ? 'text-primary' : 'hover-accent'}`}
               onClick={handleSave}
             >
-              <Bookmark className={`w-5 h-5 transition-all ${saved ? 'fill-current bookmark-save-animation' : ''} group-hover:scale-110`} />
+              <Bookmark className={`w-5 h-5 transition-all ${saved ? 'fill-current bookmark-flip' : ''} icon-hover-pulse`} />
             </Button>
 
             <Button 
               variant="ghost" 
               size="sm" 
-              className="group px-3 sm:px-2 h-11 sm:h-9 touch-target hover-accent touch-manipulation tap-feedback no-select"
+              className="group px-3 sm:px-2 h-11 sm:h-9 touch-target hover-accent touch-manipulation tap-feedback no-select button-press"
               onClick={handleShare}
             >
               {copied ? (
-                <Check className="w-5 h-5 text-green-500 success-checkmark" />
+                <Check className="w-5 h-5 text-green-500 bounce-in" />
               ) : (
                 <Share2 className="w-5 h-5 icon-hover-rotate transition-all" />
               )}
