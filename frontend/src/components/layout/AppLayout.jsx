@@ -246,8 +246,8 @@ const SidebarContent = ({ isMobile = false }) => {
 export default function AppLayout() {
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      {/* Desktop Sidebar - Refined surfaces */}
-      <aside className="hidden md:flex w-72 fixed left-0 top-0 bottom-0 border-r border-border bg-surface-800 backdrop-blur-md z-40">
+      {/* Desktop Sidebar - Icon-Only Sleek Design */}
+      <aside className="hidden md:flex w-20 fixed left-0 top-0 bottom-0 border-r border-border bg-surface-800/95 backdrop-blur-xl z-40">
         <SidebarContent />
       </aside>
 
@@ -275,7 +275,7 @@ export default function AppLayout() {
       </div>
 
       {/* Main Content Area - Natural background */}
-      <main className="flex-1 w-full max-w-2xl md:ml-72 min-h-screen border-x border-border pb-20 md:pb-0 pt-16 md:pt-0 bg-surface-900">
+      <main className="flex-1 w-full max-w-2xl md:ml-20 min-h-screen border-x border-border pb-20 md:pb-0 pt-16 md:pt-0 bg-surface-900">
          <Outlet />
       </main>
 
