@@ -170,39 +170,39 @@ export default function ChatInterface({ conversation, onBack, onNewMessage }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center gap-3">
+      <div className="p-4 sm:p-4 border-b border-border flex items-center gap-3 min-h-[64px] safe-area-inset-top">
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="md:hidden touch-target touch-manipulation tap-feedback"
           onClick={onBack}
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-6 h-6 sm:w-5 sm:h-5" />
         </Button>
-        <Avatar className="w-10 h-10">
+        <Avatar className="w-11 h-11 sm:w-10 sm:h-10 flex-shrink-0">
           <AvatarImage src={participant?.avatar} />
           <AvatarFallback>
             {participant?.username?.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h2 className="font-semibold">{participant?.username}</h2>
+        <div className="flex-1 min-w-0">
+          <h2 className="font-semibold text-base sm:text-base truncate">{participant?.username}</h2>
           {isTyping && (
-            <p className="text-xs text-muted-foreground">typing...</p>
+            <p className="text-sm sm:text-xs text-muted-foreground">typing...</p>
           )}
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-4 space-y-3 sm:space-y-4 scroll-smooth-mobile">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-center">
+          <div className="flex items-center justify-center h-full text-center px-4">
             <div>
-              <p className="text-muted-foreground mb-2">No messages yet</p>
+              <p className="text-base sm:text-sm text-muted-foreground mb-2">No messages yet</p>
               <p className="text-sm text-muted-foreground">
                 Say hi to {participant?.username}!
               </p>
@@ -220,11 +220,11 @@ export default function ChatInterface({ conversation, onBack, onNewMessage }) {
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+                  className={`flex gap-2 sm:gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
                 >
-                  <div className="w-8 flex-shrink-0">
+                  <div className="w-9 sm:w-8 flex-shrink-0">
                     {showAvatar && !isOwn && (
-                      <Avatar className="w-8 h-8">
+                      <Avatar className="w-9 h-9 sm:w-8 sm:h-8">
                         <AvatarImage src={message.sender_avatar} />
                         <AvatarFallback>
                           {message.sender_username?.charAt(0).toUpperCase()}
@@ -232,20 +232,20 @@ export default function ChatInterface({ conversation, onBack, onNewMessage }) {
                       </Avatar>
                     )}
                   </div>
-                  <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[70%]`}>
+                  <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[75%] sm:max-w-[70%]`}>
                     <div
-                      className={`rounded-2xl px-4 py-2 ${
+                      className={`rounded-2xl px-4 py-2.5 sm:py-2 ${
                         isOwn
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap break-words">
+                      <p className="text-base sm:text-sm whitespace-pre-wrap break-words">
                         {message.text}
                       </p>
                     </div>
                     {showTimestamp && (
-                      <span className="text-xs text-muted-foreground mt-1 px-2">
+                      <span className="text-sm sm:text-xs text-muted-foreground mt-1 px-2">
                         {formatDistanceToNow(new Date(message.created_at), {
                           addSuffix: true,
                         })}
@@ -261,7 +261,7 @@ export default function ChatInterface({ conversation, onBack, onNewMessage }) {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 sm:p-4 border-t border-border safe-area-inset-bottom">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
             value={newMessage}
@@ -274,6 +274,7 @@ export default function ChatInterface({ conversation, onBack, onNewMessage }) {
             type="submit"
             disabled={!newMessage.trim() || sending}
             size="icon"
+            className="flex-shrink-0 touch-manipulation tap-feedback"
           >
             {sending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
