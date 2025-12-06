@@ -5,6 +5,7 @@ const Notification = require('../models/Notification');
 const { authenticateToken } = require('../middleware/auth');
 const { uploadToCloudinary } = require('../utils/cloudinary');
 const { extractHashtags, extractMentions, postToPublic } = require('../utils/helpers');
+const { postCreationLimiter, uploadLimiter } = require('../middleware/security');
 const multer = require('multer');
 
 const router = express.Router();
