@@ -31,15 +31,15 @@ const SuggestedUsers = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 space-y-4">
-        <h2 className="font-bold text-xl">Suggested For You</h2>
+      <div className="card-premium rounded-2xl p-4 space-y-4">
+        <h2 className="font-bold text-xl text-foreground">Suggested For You</h2>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="flex items-center gap-3 animate-pulse">
-              <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-              <div className="flex-1">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+              <div className="w-10 h-10 surface-600 rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 surface-600 rounded w-24"></div>
+                <div className="h-3 surface-600 rounded w-32"></div>
               </div>
             </div>
           ))}
@@ -53,11 +53,11 @@ const SuggestedUsers = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 space-y-4">
-      <h2 className="font-bold text-xl">Suggested For You</h2>
-      <div className="space-y-4">
+    <div className="card-premium rounded-2xl p-4 space-y-4">
+      <h2 className="font-bold text-xl text-foreground">Suggested For You</h2>
+      <div className="space-y-3">
         {users.map((user) => (
-          <div key={user.id} className="flex items-center justify-between gap-3">
+          <div key={user.id} className="flex items-center justify-between gap-3 p-2 rounded-lg hover:surface-700 transition-colors">
             <Link
               to={`/profile/${user.username}`}
               className="flex items-center gap-3 flex-1 min-w-0"
@@ -65,12 +65,12 @@ const SuggestedUsers = () => {
               <img
                 src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
                 alt={user.username}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-border"
               />
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">{user.username}</p>
+                <p className="font-semibold text-sm truncate text-foreground">{user.username}</p>
                 {user.bio && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.bio}</p>
                 )}
               </div>
             </Link>
