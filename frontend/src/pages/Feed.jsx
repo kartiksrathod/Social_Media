@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PostCard from '@/components/post/PostCard';
+import SwipeablePostCard from '@/components/post/SwipeablePostCard';
 import StoriesBar from '@/components/story/StoriesBar';
 import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
+import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
+import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
 import { postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 import { Loader2 } from 'lucide-react';
 
 export default function Feed() {
