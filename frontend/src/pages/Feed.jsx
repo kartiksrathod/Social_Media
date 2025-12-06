@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PostCard from '@/components/post/PostCard';
 import StoriesBar from '@/components/story/StoriesBar';
+import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
 import { postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
