@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { usersAPI, hashtagsAPI } from '../../lib/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
