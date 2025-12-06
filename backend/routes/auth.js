@@ -90,39 +90,60 @@ router.post('/signup',
 );
 
 // POST /api/auth/login - Login user
-router.post('/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
+router.post('/login',
+  authLimiter, // Rate limit login attempts
+  loginSpeedLimiter, // Slow down repeated attempts
+  bruteForceProtection, // Block after multiple failed attempts
+  async (req, res) => {
+    try {
+      const { username, password } = req.body;
 
-    // Validate input
-    if (!username || !password) {
-      return res.status(400).json({ detail: 'Username and password are required' });
+      // Validate input
+      if (!username || !password) {
+        return res.status(400).json({ detail: 'Username and password are required' });
+      }
+
+      const identifier = username || req.ip;
+
+      // Find user by username (case-insensitive)
+      const user = await User.findOne({ 
+        username: { $regex: new RegExp(`^${username}$`, 'i') }
+      });
+
+      if (!user) {
+        // Record failed attempt
+        recordFailedLogin(identifier);
+        return res.status(401).json({ detail: 'Invalid username or password' });
+      }
+
+      // Verify password
+      const isValidPassword = await bcrypt.compare(password, user.password_hash);
+      if (!isValidPassword) {
+        // Record failed attempt
+        recordFailedLogin(identifier);
+        console.warn(`⚠️ Failed login attempt for user: ${username}`);
+        return res.status(401).json({ detail: 'Invalid username or password' });
+      }
+
+      // Clear failed login attempts on successful login
+      clearLoginAttempts(identifier);
+
+      // Create access token
+      const access_token = createAccessToken(user.id);
+
+      // Log successful login
+      console.log(`✅ User logged in: ${username}`);
+
+      res.json({ 
+        access_token,
+        token_type: 'bearer'
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).json({ detail: 'Internal server error' });
     }
-
-    // Find user by username
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).json({ detail: 'Invalid username or password' });
-    }
-
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    if (!isValidPassword) {
-      return res.status(401).json({ detail: 'Invalid username or password' });
-    }
-
-    // Create access token
-    const access_token = createAccessToken(user.id);
-
-    res.json({ 
-      access_token,
-      token_type: 'bearer'
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ detail: 'Internal server error' });
   }
-});
+);
 
 // GET /api/auth/me - Get current user info
 router.get('/me', authenticateToken, async (req, res) => {
