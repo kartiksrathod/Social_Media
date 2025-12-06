@@ -74,29 +74,29 @@ export default function Feed() {
            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
          </div>
        ) : posts.length === 0 ? (
-         <div className="text-center py-12">
-           <p className="text-muted-foreground">
+         <div className="text-center py-12 px-4">
+           <p className="text-sm sm:text-base text-muted-foreground">
              No posts yet. Follow some users or create your first post!
            </p>
          </div>
        ) : (
          <>
-           <div className="space-y-5">
+           <div className="space-y-4 sm:space-y-5">
              {posts.map(post => (
                <PostCard key={post.id} post={post} onUpdate={handlePostUpdate} />
              ))}
            </div>
 
            {/* Infinite scroll trigger */}
-           <div ref={scrollRef} className="flex justify-center py-8">
+           <div ref={scrollRef} className="flex justify-center py-6 sm:py-8">
              {loadingMore && (
                <div className="flex items-center gap-2 text-muted-foreground">
-                 <Loader2 className="w-6 h-6 animate-spin" />
-                 <span className="text-sm">Loading more posts...</span>
+                 <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
+                 <span className="text-xs sm:text-sm">Loading more posts...</span>
                </div>
              )}
              {!hasMore && posts.length > 0 && (
-               <p className="text-sm text-muted-foreground">No more posts to load</p>
+               <p className="text-xs sm:text-sm text-muted-foreground">No more posts to load</p>
              )}
            </div>
          </>
