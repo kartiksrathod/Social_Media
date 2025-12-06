@@ -145,6 +145,14 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
     }
   };
 
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      loadComments(true);
+    }
+  }, [loadingMore, hasMore, offset]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
+
   const handleSortChange = (value) => {
     setSortBy(value);
     // Save sort preference to localStorage
