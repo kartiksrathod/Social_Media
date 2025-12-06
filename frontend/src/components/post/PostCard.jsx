@@ -415,9 +415,9 @@ export default function PostCard({ post, onUpdate }) {
         )}
       </CardContent>
 
-      <CardFooter className="p-4 pt-0 border-t border-border/50">
+      <CardFooter className="p-3 sm:p-4 pt-0 border-t border-border/50">
         <div className="flex items-center justify-between w-full text-text-muted">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
             <ReactionButton
               userReaction={userReaction}
               reactionCounts={reactionCounts}
@@ -428,7 +428,7 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="group px-2 h-8 hover-accent"
+              className="group px-2 h-10 sm:h-8 min-w-[44px] sm:min-w-0 hover-accent touch-manipulation"
               onClick={() => setCommentsOpen(true)}
             >
               <MessageCircle className="w-5 h-5 mr-1.5 group-hover:scale-110 transition-transform" />
@@ -436,11 +436,11 @@ export default function PostCard({ post, onUpdate }) {
             </Button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Button 
               variant="ghost" 
               size="sm" 
-              className={`group px-2 h-8 transition-colors ${saved ? 'text-primary' : 'hover-accent'}`}
+              className={`group px-2 h-10 sm:h-8 min-w-[44px] sm:min-w-0 transition-colors touch-manipulation ${saved ? 'text-primary' : 'hover-accent'}`}
               onClick={handleSave}
             >
               <Bookmark className={`w-5 h-5 transition-transform group-active:scale-75 ${saved ? 'fill-current' : ''}`} />
@@ -449,7 +449,7 @@ export default function PostCard({ post, onUpdate }) {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="group px-2 h-8 hover-accent"
+              className="group px-2 h-10 sm:h-8 min-w-[44px] sm:min-w-0 hover-accent touch-manipulation"
               onClick={handleShare}
             >
               {copied ? (
