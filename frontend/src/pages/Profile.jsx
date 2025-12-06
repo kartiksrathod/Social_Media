@@ -366,6 +366,7 @@ export default function Profile() {
          userId={profileUser?.id}
          title="Following"
        />
-    </div>
+      </div>
+    </>
   );
 }
