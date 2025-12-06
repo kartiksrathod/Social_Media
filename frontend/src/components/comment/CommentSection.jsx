@@ -212,14 +212,14 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
           
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
         
         {/* Add Comment Input */}
-        <div className="px-6 py-4 border-b dark:border-gray-700">
+        <div className="px-3 sm:px-6 py-3 sm:py-4 border-b dark:border-gray-700">
           <CommentInput
             onSubmit={handleAddComment}
             placeholder="Write a comment..."
@@ -227,7 +227,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
         </div>
         
         {/* Comments List */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+        <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 overscroll-contain">
           {loading && comments.length === 0 ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto" />
