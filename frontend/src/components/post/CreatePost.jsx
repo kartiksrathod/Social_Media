@@ -3,13 +3,14 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Image, Video, X, Tag as TagIcon, Globe, Users } from 'lucide-react';
+import { Image, Video, X, Tag as TagIcon, Globe, Users, Edit } from 'lucide-react';
 import { postsAPI, usersAPI, collaborationsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import MentionAutocomplete from './MentionAutocomplete';
 import ImageTagging from './ImageTagging';
 import CollaboratorSelector from './CollaboratorSelector';
+import ImageCropModal from './ImageCropModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
