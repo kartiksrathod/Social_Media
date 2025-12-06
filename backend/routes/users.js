@@ -17,6 +17,8 @@ const userToPublic = (user, currentUserId = null, currentUser = null) => {
     email: user.email,
     bio: user.bio || '',
     avatar: user.avatar,
+    avatar_url: user.avatar,
+    created_at: user.created_at,
     followers: user.followers,
     following: user.following,
     followers_count: user.followers.length,
