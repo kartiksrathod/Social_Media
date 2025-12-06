@@ -3,6 +3,8 @@ import Cropper from 'react-easy-crop';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Slider } from '../ui/slider';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { RotateCw, ZoomIn, ZoomOut } from 'lucide-react';
 
 const createImage = (url) =>
