@@ -143,7 +143,7 @@ router.post('/upload-image', authenticateToken, uploadLimiter, upload.single('fi
 });
 
 // POST /api/posts/upload-video - Upload post video
-router.post('/upload-video', authenticateToken, upload.single('file'), async (req, res) => {
+router.post('/upload-video', authenticateToken, uploadLimiter, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ detail: 'No file uploaded' });
