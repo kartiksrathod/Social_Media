@@ -571,6 +571,20 @@ export default function CreatePost({ onPostCreated }) {
         </CardContent>
       </Card>
 
+      {/* Image Crop Modal */}
+      {cropModalOpen && currentCropImage && (
+        <ImageCropModal
+          open={cropModalOpen}
+          onClose={() => {
+            setCropModalOpen(false);
+            setCurrentCropImage(null);
+            setCurrentCropIndex(null);
+          }}
+          imageSrc={currentCropImage}
+          onCropComplete={handleCropComplete}
+        />
+      )}
+
       {/* Image Tagging Modal */}
       {tagImageIndex !== null && uploadedImageUrls[tagImageIndex] && (
         <ImageTagging
