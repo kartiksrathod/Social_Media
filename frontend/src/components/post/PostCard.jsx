@@ -266,7 +266,7 @@ export default function PostCard({ post, onUpdate }) {
         </div>
       )}
 
-      <CardHeader className={`card-padding pb-3 flex flex-row items-start gap-3 sm:gap-4 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
+      <CardHeader className={`card-padding pb-2 flex flex-row items-start gap-3 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
         <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`} className="touch-target-lg flex items-center justify-center -m-2">
           <Avatar className="w-11 h-11 sm:w-10 sm:h-10 cursor-pointer hover:ring-2 hover:ring-primary transition-all flex-shrink-0">
             <AvatarImage src={isRepost && originalPost ? originalPost.author_avatar : post.author_avatar} />
@@ -275,7 +275,7 @@ export default function PostCard({ post, onUpdate }) {
         </Link>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="space-y-1">
               {/* Show collaborative post authors */}
               {post.is_collaborative && post.collaboration_status === 'accepted' ? (
                 <div className="flex items-center gap-1 flex-wrap">
