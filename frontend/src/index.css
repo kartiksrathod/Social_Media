@@ -230,4 +230,45 @@
     background: hsl(var(--primary) / 0.1);
     border-color: hsl(var(--primary) / 0.3);
   }
+  
+  /* Mobile Touch Improvements */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Spacing Scale - Consistent system */
+  .space-xs { gap: 0.25rem; } /* 4px */
+  .space-sm { gap: 0.5rem; }  /* 8px */
+  .space-md { gap: 0.75rem; } /* 12px */
+  .space-lg { gap: 1rem; }    /* 16px */
+  .space-xl { gap: 1.5rem; }  /* 24px */
+  .space-2xl { gap: 2rem; }   /* 32px */
+  
+  /* Mobile-optimized containers */
+  .mobile-container {
+    @apply px-3 sm:px-4 py-4 sm:py-6;
+  }
+  
+  .mobile-card-spacing {
+    @apply space-y-3 sm:space-y-4;
+  }
+  
+  /* Improved focus states for mobile */
+  .focus-mobile:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 outline-none;
+  }
+  
+  /* Better tap feedback */
+  .tap-feedback {
+    @apply active:scale-95 transition-transform duration-100;
+  }
+  
+  /* Prevent text selection on buttons (better mobile UX) */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 }
