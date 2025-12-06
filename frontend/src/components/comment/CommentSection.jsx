@@ -155,7 +155,9 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
       
       // Add new comment to the beginning
       setComments([response.data, ...comments]);
-      setTotal(total + 1);
+      const newTotal = total + 1;
+      setTotal(newTotal);
+      if (onCommentCountChange) onCommentCountChange(newTotal);
     } catch (error) {
       console.error('Failed to add comment:', error);
       throw error;
