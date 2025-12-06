@@ -4,10 +4,27 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const helmet = require('helmet');
 const { Server } = require('socket.io');
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
+
+// Import security middleware
+const {
+  apiLimiter,
+  mongoSanitizer,
+  hppProtection,
+  securityHeaders,
+  sanitizeInput
+} = require('./middleware/security');
+
+const {
+  cookieParser,
+  conditionalCsrfProtection,
+  csrfErrorHandler,
+  getCsrfToken
+} = require('./middleware/csrf');
 
 // Import routes
 const authRoutes = require('./routes/auth');
