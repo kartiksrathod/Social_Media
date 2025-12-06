@@ -303,8 +303,8 @@ export default function AppLayout() {
          <Outlet />
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-t border-border z-50">
+      {/* Mobile Bottom Navigation - Touch-optimized */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-800/95 backdrop-blur-md border-t border-border z-50 safe-area-inset-bottom">
          <nav className="h-full flex items-center justify-around px-2">
             {[
               { label: "Home", href: "/home", icon: Home },
@@ -316,16 +316,16 @@ export default function AppLayout() {
                 key={link.href}
                 to={link.href}
                 className={`
-                  flex flex-col items-center justify-center gap-1 min-w-[64px] h-full
-                  transition-all duration-200 touch-manipulation
+                  flex flex-col items-center justify-center gap-1 min-w-[70px] min-h-[56px] flex-1
+                  transition-all duration-200 touch-manipulation no-select tap-feedback rounded-lg
                   ${isActive(link.href) 
-                    ? 'text-primary' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'text-primary scale-105' 
+                    : 'text-muted-foreground active:text-foreground'
                   }
                 `}
               >
-                <link.icon className={`w-6 h-6 ${isActive(link.href) ? 'scale-110' : ''} transition-transform duration-200`} />
-                <span className="text-xs font-medium">{link.label}</span>
+                <link.icon className={`w-6 h-6 ${isActive(link.href) ? 'scale-110 drop-shadow-lg' : ''} transition-all duration-200`} />
+                <span className={`text-xs font-medium ${isActive(link.href) ? 'font-semibold' : ''}`}>{link.label}</span>
               </Link>
             ))}
          </nav>
