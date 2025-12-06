@@ -25,10 +25,10 @@ export function ScrollToTopButton({ show, onClick, className }) {
             size="icon"
             onClick={onClick}
             className={cn(
-              'h-12 w-12 rounded-full shadow-lg',
+              'h-12 w-12 rounded-full button-floating',
               'bg-primary hover:bg-primary/90',
               'touch-target tap-feedback',
-              'transition-all duration-200'
+              'transition-all duration-300'
             )}
             aria-label="Scroll to top"
           >
