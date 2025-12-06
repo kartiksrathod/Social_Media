@@ -146,9 +146,10 @@ const SearchResults = () => {
         {/* Results */}
         <div className="bg-white dark:bg-gray-900">
           {loading ? (
-            <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto"></div>
-              <p className="mt-4 text-gray-500">Searching...</p>
+            <div className="divide-y dark:divide-gray-800">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <UserCardSkeleton key={i} />
+              ))}
             </div>
           ) : (
             <>
