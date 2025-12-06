@@ -372,11 +372,11 @@ export default function CreatePost({ onPostCreated }) {
 
   return (
     <>
-      <Card className="mb-6 card-premium">
-        <CardContent className="pt-6">
+      <Card className="mb-5 card-premium">
+        <CardContent className="pt-5 pb-5 px-4 sm:px-5">
           <form onSubmit={handleSubmit}>
-            <div className="flex gap-4">
-              <Avatar className="w-10 h-10 ring-2 ring-border">
+            <div className="flex gap-3 sm:gap-4">
+              <Avatar className="w-11 h-11 sm:w-10 sm:h-10 ring-2 ring-border flex-shrink-0">
                 <AvatarImage src={user?.avatar} />
                 <AvatarFallback>
                   {user?.username?.charAt(0).toUpperCase()}
@@ -389,7 +389,7 @@ export default function CreatePost({ onPostCreated }) {
                   value={text}
                   onChange={handleTextChange}
                   onKeyDown={handleMentionKeyDown}
-                  className="min-h-[100px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 bg-transparent placeholder:text-text-muted"
+                  className="textarea-mobile min-h-[120px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 bg-transparent placeholder:text-text-muted text-base"
                 />
                 
                 {showMentions && mentionSuggestions.length > 0 && (
