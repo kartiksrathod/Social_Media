@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import PostCard from '@/components/post/PostCard';
 import CreatePost from '@/components/post/CreatePost';
@@ -6,12 +6,13 @@ import EditProfileModal from '@/components/profile/EditProfileModal';
 import FollowersModal from '../components/follow/FollowersModal';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar, Star, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '../contexts/AuthContext';
 import { usersAPI, postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export default function Profile() {
   const { username } = useParams();
@@ -19,11 +20,15 @@ export default function Profile() {
   const [profileUser, setProfileUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [skip, setSkip] = useState(0);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [closeFriendLoading, setCloseFriendLoading] = useState(false);
+  const LIMIT = 10;
 
   const isOwnProfile = !username || username === currentUser?.username;
 
@@ -31,12 +36,16 @@ export default function Profile() {
     setLoading(true);
     try {
       const targetUsername = username || currentUser?.username;
-      const [profileResponse, postsResponse] = await Promise.all([
-        usersAPI.getProfile(targetUsername),
-        postsAPI.getUserPosts(targetUsername),
-      ]);
+      const profileResponse = await usersAPI.getProfile(targetUsername);
       setProfileUser(profileResponse.data);
-      setPosts(postsResponse.data);
+      
+      // Reset posts state when loading new profile
+      setPosts([]);
+      setSkip(0);
+      setHasMore(true);
+      
+      // Load first batch of posts
+      await loadPosts(targetUsername, false);
     } catch (error) {
       toast.error('Failed to load profile');
     } finally {
@@ -44,9 +53,53 @@ export default function Profile() {
     }
   };
 
+  const loadPosts = async (targetUsername, isLoadMore = false) => {
+    try {
+      if (isLoadMore) {
+        setLoadingMore(true);
+      }
+
+      const currentSkip = isLoadMore ? skip : 0;
+      const postsResponse = await postsAPI.getUserPosts(targetUsername, LIMIT, currentSkip);
+      const newPosts = postsResponse.data;
+
+      if (isLoadMore) {
+        setPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setPosts(newPosts);
+      }
+
+      setSkip(currentSkip + newPosts.length);
+      setHasMore(newPosts.length === LIMIT);
+    } catch (error) {
+      if (!isLoadMore) {
+        toast.error('Failed to load posts');
+      }
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore && profileUser) {
+      const targetUsername = username || currentUser?.username;
+      loadPosts(targetUsername, true);
+    }
+  }, [loadingMore, hasMore, skip, profileUser, username, currentUser]);
+
+  const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
+
   useEffect(() => {
     loadProfile();
   }, [username, currentUser]);
+
+  const handlePostUpdate = () => {
+    // Reset and reload from start
+    setSkip(0);
+    setHasMore(true);
+    const targetUsername = username || currentUser?.username;
+    loadPosts(targetUsername, false);
+  };
 
   const handleFollow = async () => {
     if (!profileUser) return;
