@@ -96,6 +96,17 @@ export default function Profile() {
 
   const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
 
+  // Pull-to-refresh functionality
+  const handleRefresh = async () => {
+    await loadProfile();
+  };
+
+  const { containerRef, isPulling, pullDistance, isRefreshing, refreshProgress } = 
+    usePullToRefresh(handleRefresh, { enabled: !loading });
+
+  // Scroll-to-top functionality
+  const { showScrollTop, scrollToTop } = useScrollToTop(300);
+
   useEffect(() => {
     loadProfile();
   }, [username, currentUser]);
@@ -106,6 +117,40 @@ export default function Profile() {
     setHasMore(true);
     const targetUsername = username || currentUser?.username;
     loadPosts(targetUsername, false);
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const postToUpdate = posts.find(p => p.id === postId);
+      if (!postToUpdate) return;
+
+      if (postToUpdate.is_liked) {
+        await postsAPI.unlike(postId);
+      } else {
+        await postsAPI.like(postId);
+      }
+      handlePostUpdate();
+    } catch (error) {
+      toast.error('Failed to update like');
+    }
+  };
+
+  const handleSave = async (postId) => {
+    try {
+      const postToUpdate = posts.find(p => p.id === postId);
+      if (!postToUpdate) return;
+
+      if (postToUpdate.is_saved) {
+        await postsAPI.unsave(postId);
+        toast.success('Post removed from saved');
+      } else {
+        await postsAPI.save(postId);
+        toast.success('Post saved');
+      }
+      handlePostUpdate();
+    } catch (error) {
+      toast.error('Failed to save post');
+    }
   };
 
   const handleFollow = async () => {
