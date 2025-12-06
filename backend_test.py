@@ -351,6 +351,44 @@ def test_create_post_text_only(token):
         log_test("Create Text Post", "FAIL", f"Request error: {str(e)}")
         return None
 
+def create_test_posts(token):
+    """Create 2-3 test posts with hashtags as requested"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    test_posts = [
+        {
+            "text": "Just launched my new mobile app! 📱 The user experience is amazing and the interface is so smooth. #test #mobile #ux #app #launch",
+            "visibility": "public"
+        },
+        {
+            "text": "Working on some exciting new features for our platform. The mobile optimization is coming along great! #test #mobile #development #features",
+            "visibility": "public"
+        },
+        {
+            "text": "Love how intuitive this new UX design is! Mobile-first approach really makes a difference. #test #ux #mobile #design #userexperience",
+            "visibility": "public"
+        }
+    ]
+    
+    created_posts = []
+    
+    for i, post_data in enumerate(test_posts, 1):
+        try:
+            response = requests.post(f"{API_BASE}/posts", json=post_data, headers=headers, timeout=10)
+            
+            if response.status_code == 201:
+                data = response.json()
+                log_test(f"Create Test Post {i}", "PASS", f"Post ID: {data['id']}, Hashtags: {len(data.get('hashtags', []))}")
+                created_posts.append(data)
+            else:
+                error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+                log_test(f"Create Test Post {i}", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+                
+        except requests.exceptions.RequestException as e:
+            log_test(f"Create Test Post {i}", "FAIL", f"Request error: {str(e)}")
+    
+    return created_posts
+
 def main():
     """Run all backend tests"""
     print(f"{Colors.BOLD}🧪 SocialVibe Backend API Testing{Colors.ENDC}")
