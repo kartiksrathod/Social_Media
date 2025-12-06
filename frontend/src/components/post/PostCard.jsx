@@ -228,7 +228,7 @@ export default function PostCard({ post, onUpdate }) {
   };
 
   return (
-    <Card className="card-premium-hover overflow-hidden bg-card">
+    <Card className="card-premium-hover overflow-hidden bg-card card-enter">
       {/* Repost indicator */}
       {isRepost && (
         <div className="px-4 sm:px-6 pt-4 pb-0">
