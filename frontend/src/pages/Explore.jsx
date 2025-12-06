@@ -156,7 +156,7 @@ export default function Explore() {
 
       <div 
         ref={containerRef}
-        className="w-full max-w-2xl mx-auto py-4 sm:py-6 px-4 sm:px-5 space-y-5 sm:space-y-6"
+        className="w-full max-w-2xl mx-auto container-padding-y container-padding section-spacing-sm"
       >
         <div className="relative">
            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
@@ -170,16 +170,16 @@ export default function Explore() {
 
         {searchQuery && users.length > 0 && (
           <Card>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="card-padding list-spacing-sm flex flex-col">
               <h3 className="font-semibold">Search Results</h3>
               {users.map(user => (
                 <Link to={`/profile/${user.username}`} key={user.id}>
-                  <div className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-lg transition-colors touch-manipulation min-h-[56px]">
+                  <div className="flex items-center gap-4 p-2 hover:bg-muted/50 rounded-lg transition-colors touch-manipulation min-h-[56px]">
                     <Avatar className="w-11 h-11 sm:w-10 sm:h-10">
                       <AvatarImage src={user.avatar} />
                       <AvatarFallback>{user.username?.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 space-y-1">
                       <p className="font-semibold text-base sm:text-sm">{user.username}</p>
                       <p className="text-sm sm:text-xs text-muted-foreground">@{user.username}</p>
                     </div>
@@ -196,7 +196,7 @@ export default function Explore() {
         <div>
            <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
            {loading ? (
-             <div className="space-y-4">
+             <div className="list-spacing flex flex-col">
                {[1, 2, 3].map((i) => (
                  <PostCardSkeleton key={i} />
                ))}
