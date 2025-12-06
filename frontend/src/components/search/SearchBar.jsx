@@ -77,23 +77,25 @@ const SearchBar = () => {
   return (
     <div ref={searchRef} className="relative flex-1 max-w-md">
       <form onSubmit={handleSubmit} className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-        <input
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none z-10" />
+        <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query && setIsOpen(true)}
           placeholder="Search users and hashtags..."
-          className="w-full pl-10 pr-10 py-2 surface-700 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+          className="w-full pl-10 pr-10 rounded-full"
         />
         {query && (
-          <button
+          <Button
             type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover-accent"
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 text-muted-foreground hover-accent touch-target touch-manipulation tap-feedback"
           >
             <X className="w-4 h-4" />
-          </button>
+          </Button>
         )}
       </form>
 
