@@ -195,7 +195,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-surface-800 rounded-t-3xl sm:rounded-2xl shadow-2xl max-w-2xl w-full h-[95vh] sm:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-border">
+        <div className="flex items-center justify-between card-padding border-b border-border">
           <div className="flex items-center gap-3 sm:gap-4">
             <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
             <h2 className="text-lg sm:text-xl font-semibold">
@@ -235,7 +235,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
         </div>
         
         {/* Add Comment Input */}
-        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border">
+        <div className="card-padding border-b border-border">
           <CommentInput
             onSubmit={handleAddComment}
             placeholder="Write a comment..."
@@ -243,7 +243,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
         </div>
         
         {/* Comments List */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6 overscroll-contain scroll-smooth-mobile">
+        <div className="flex-1 overflow-y-auto card-padding comment-spacing overscroll-contain scroll-smooth-mobile">
           {loading && comments.length === 0 ? (
             <CommentSkeleton />
           ) : comments.length === 0 ? (
