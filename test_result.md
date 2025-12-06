@@ -259,6 +259,42 @@ frontend:
         agent: "main"
         comment: "Responsive design implemented with Tailwind breakpoints (sm:, md:, lg:). Needs testing across different screen sizes."
 
+  - task: "Mobile Input Optimization - iOS Zoom Prevention"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ui/input.jsx, frontend/src/components/ui/textarea.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added explicit 16px font-size to Input and Textarea components to prevent iOS auto-zoom on focus. Added input-mobile and textarea-mobile classes."
+
+  - task: "SearchBar Mobile Optimization"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/search/SearchBar.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Replaced inline input with Input component for consistent mobile styling. Improved clear button with touch-target classes. Enhanced dropdown results with larger touch areas (min-h-[56px] on mobile)."
+
+  - task: "Dialog/Modal Mobile Enhancement"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ui/dialog.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Enhanced dialog close button with touch-target and tap-feedback classes. Increased text sizes on mobile (text-xl for title, text-base for description). Added max-height for better mobile viewport handling."
+
 metadata:
   created_by: "testing_agent"
   version: "1.1"
