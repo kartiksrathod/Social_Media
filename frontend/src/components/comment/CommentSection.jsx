@@ -48,7 +48,11 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
     socket.on('new_comment', (data) => {
       if (data.comment.post_id === postId && !data.parent_comment_id) {
         setComments(prev => [data.comment, ...prev]);
-        setTotal(prev => prev + 1);
+        setTotal(prev => {
+          const newTotal = prev + 1;
+          if (onCommentCountChange) onCommentCountChange(newTotal);
+          return newTotal;
+        });
       }
     });
 
