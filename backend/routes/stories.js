@@ -209,15 +209,69 @@ router.post('/:storyId/view', authenticateToken, async (req, res) => {
       return res.json({ message: 'Story already viewed' });
     }
 
-    // Add view
+    // Get viewer info
+    const viewer = await User.findOne({ id: req.userId });
+    if (!viewer) {
+      return res.status(404).json({ detail: 'User not found' });
+    }
+
+    // Add view with user details
     await Story.updateOne(
       { id: storyId },
-      { $push: { views: { user_id: req.userId, viewed_at: new Date() } } }
+      { 
+        $push: { 
+          views: { 
+            user_id: req.userId,
+            username: viewer.username,
+            avatar: viewer.avatar,
+            name: viewer.name,
+            viewed_at: new Date() 
+          } 
+        } 
+      }
     );
 
     res.json({ message: 'Story viewed successfully' });
   } catch (error) {
     console.error('View story error:', error);
+    res.status(500).json({ detail: 'Internal server error' });
+  }
+});
+
+// GET /api/stories/:storyId/viewers - Get list of users who viewed the story
+router.get('/:storyId/viewers', authenticateToken, async (req, res) => {
+  try {
+    const { storyId } = req.params;
+    const story = await Story.findOne({ id: storyId });
+
+    if (!story) {
+      return res.status(404).json({ detail: 'Story not found' });
+    }
+
+    // Check if user is the owner
+    if (story.user_id !== req.userId) {
+      return res.status(403).json({ detail: 'You can only view your own story viewers' });
+    }
+
+    // Return viewers with details
+    const viewers = story.views.map(view => ({
+      user_id: view.user_id,
+      username: view.username,
+      avatar: view.avatar,
+      name: view.name,
+      viewed_at: view.viewed_at
+    }));
+
+    // Sort by most recent first
+    viewers.sort((a, b) => new Date(b.viewed_at) - new Date(a.viewed_at));
+
+    res.json({ 
+      story_id: story.id,
+      total_views: viewers.length,
+      viewers: viewers
+    });
+  } catch (error) {
+    console.error('Get story viewers error:', error);
     res.status(500).json({ detail: 'Internal server error' });
   }
 });
