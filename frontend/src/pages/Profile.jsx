@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import PostCard from '@/components/post/PostCard';
+import SwipeablePostCard from '@/components/post/SwipeablePostCard';
 import CreatePost from '@/components/post/CreatePost';
 import EditProfileModal from '@/components/profile/EditProfileModal';
 import FollowersModal from '../components/follow/FollowersModal';
@@ -8,6 +9,8 @@ import ProfileSkeleton from '@/components/skeletons/ProfileSkeleton';
 import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
+import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
 import { Calendar, Star, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '../contexts/AuthContext';
@@ -15,6 +18,8 @@ import { usersAPI, postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 export default function Profile() {
   const { username } = useParams();
