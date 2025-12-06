@@ -98,7 +98,7 @@ const SidebarContent = ({ isMobile = false }) => {
           ))}
           
           {/* Post Button - Icon Only */}
-          <button className="group relative mt-4">
+          <Link to="/profile" className="group relative mt-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center shadow-xl hover:shadow-2xl hover:shadow-primary/60 transition-all duration-500 hover:scale-110 group-hover:rotate-12 relative overflow-hidden">
               {/* Animated shimmer effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
@@ -109,7 +109,7 @@ const SidebarContent = ({ isMobile = false }) => {
               <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">Create Post</span>
               <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-surface-700"></div>
             </div>
-          </button>
+          </Link>
         </nav>
 
         {/* Bottom Section */}
