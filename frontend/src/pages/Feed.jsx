@@ -129,29 +129,29 @@ export default function Feed() {
 
       <div 
         ref={containerRef}
-        className="w-full max-w-2xl mx-auto py-6 px-4 space-y-6"
+        className="w-full max-w-2xl mx-auto container-padding-y container-padding section-spacing-sm"
       >
-         <h2 className="text-xl sm:text-2xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-4 -mx-4 px-4 border-b border-border/50 md:hidden">
+         <h2 className="text-xl sm:text-2xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 border-b border-border/50 md:hidden">
             Home
          </h2>
          
          <StoriesBar />
          
          {loading ? (
-           <div className="space-y-6">
+           <div className="list-spacing flex flex-col">
              {[1, 2, 3].map((i) => (
                <PostCardSkeleton key={i} />
              ))}
            </div>
          ) : posts.length === 0 ? (
-           <div className="text-center py-16 px-4">
+           <div className="text-center card-padding-lg">
              <p className="text-base text-muted-foreground">
                No posts yet. Follow some users or create your first post!
              </p>
            </div>
          ) : (
            <>
-             <div className="space-y-5">
+             <div className="list-spacing flex flex-col">
                {posts.map(post => (
                  <SwipeablePostCard 
                    key={post.id} 
