@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-const CommentSection = ({ postId, onClose, initialCommentCount = 0 }) => {
+const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCountChange }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
