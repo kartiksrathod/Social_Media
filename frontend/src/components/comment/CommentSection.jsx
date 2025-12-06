@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCountChange }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(initialCommentCount);
