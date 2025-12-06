@@ -75,20 +75,20 @@ const SearchBar = () => {
   return (
     <div ref={searchRef} className="relative flex-1 max-w-md">
       <form onSubmit={handleSubmit} className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query && setIsOpen(true)}
           placeholder="Search users and hashtags..."
-          className="w-full pl-10 pr-10 py-2 bg-gray-100 dark:bg-gray-800 border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full pl-10 pr-10 py-2 surface-700 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
         />
         {query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover-accent"
           >
             <X className="w-4 h-4" />
           </button>
@@ -97,31 +97,31 @@ const SearchBar = () => {
 
       {/* Search Results Dropdown */}
       {isOpen && (query || results.users.length > 0 || results.hashtags.length > 0) && (
-        <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border dark:border-gray-800 max-h-96 overflow-y-auto z-50">
+        <div className="absolute top-full mt-2 w-full card-premium rounded-2xl max-h-96 overflow-y-auto z-50">
           {loading ? (
-            <div className="p-4 text-center text-gray-500">Searching...</div>
+            <div className="p-4 text-center text-muted-foreground">Searching...</div>
           ) : (
             <>
               {/* Users */}
               {results.users.length > 0 && (
                 <div className="p-2">
-                  <p className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Users</p>
+                  <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Users</p>
                   {results.users.map((user) => (
                     <Link
                       key={user.id}
                       to={`/profile/${user.username}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 hover:surface-700 rounded-lg transition-colors"
                     >
                       <img
                         src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
                         alt={user.username}
-                        className="w-10 h-10 rounded-full"
+                        className="w-10 h-10 rounded-full ring-2 ring-border"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{user.username}</p>
+                        <p className="font-semibold text-sm truncate text-foreground">{user.username}</p>
                         {user.bio && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.bio}</p>
+                          <p className="text-xs text-muted-foreground truncate">{user.bio}</p>
                         )}
                       </div>
                     </Link>
@@ -131,19 +131,19 @@ const SearchBar = () => {
 
               {/* Hashtags */}
               {results.hashtags.length > 0 && (
-                <div className="p-2 border-t dark:border-gray-800">
-                  <p className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Hashtags</p>
+                <div className="p-2 border-t border-border">
+                  <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Hashtags</p>
                   {results.hashtags.map((hashtag) => (
                     <Link
                       key={hashtag.tag}
                       to={`/hashtag/${hashtag.tag}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                      className="flex items-center justify-between px-3 py-2 hover:surface-700 rounded-lg transition-colors"
                     >
                       <div>
-                        <p className="font-semibold text-sm">#{hashtag.tag}</p>
+                        <p className="font-semibold text-sm text-foreground">#{hashtag.tag}</p>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{hashtag.count} posts</p>
+                      <p className="text-xs text-muted-foreground">{hashtag.count} posts</p>
                     </Link>
                   ))}
                 </div>
@@ -151,7 +151,7 @@ const SearchBar = () => {
 
               {/* No Results */}
               {results.users.length === 0 && results.hashtags.length === 0 && query && (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-muted-foreground">
                   No results found for "{query}"
                 </div>
               )}
@@ -161,7 +161,7 @@ const SearchBar = () => {
                 <Link
                   to={`/search?q=${encodeURIComponent(query)}`}
                   onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 text-center text-sm font-medium text-purple-600 hover:bg-gray-100 dark:hover:bg-gray-800 border-t dark:border-gray-800"
+                  className="block px-4 py-3 text-center text-sm font-medium text-primary hover:surface-700 border-t border-border transition-colors"
                 >
                   See all results for "{query}"
                 </Link>
