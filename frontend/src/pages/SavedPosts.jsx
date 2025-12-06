@@ -54,6 +54,19 @@ export default function SavedPosts() {
 
   const scrollRef = useInfiniteScroll(loadMore, hasMore, loadingMore);
 
+  // Pull-to-refresh functionality
+  const handleRefresh = async () => {
+    setSkip(0);
+    setHasMore(true);
+    await loadSavedPosts(false);
+  };
+
+  const { containerRef, isPulling, pullDistance, isRefreshing, refreshProgress } = 
+    usePullToRefresh(handleRefresh, { enabled: !loading });
+
+  // Scroll-to-top functionality
+  const { showScrollTop, scrollToTop } = useScrollToTop(300);
+
   useEffect(() => {
     loadSavedPosts();
   }, []);
@@ -63,6 +76,32 @@ export default function SavedPosts() {
     setSkip(0);
     setHasMore(true);
     loadSavedPosts(false);
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const postToUpdate = posts.find(p => p.id === postId);
+      if (!postToUpdate) return;
+
+      if (postToUpdate.is_liked) {
+        await postsAPI.unlike(postId);
+      } else {
+        await postsAPI.like(postId);
+      }
+      handlePostUpdate();
+    } catch (error) {
+      toast.error('Failed to update like');
+    }
+  };
+
+  const handleSave = async (postId) => {
+    try {
+      await postsAPI.unsave(postId);
+      toast.success('Post removed from saved');
+      handlePostUpdate();
+    } catch (error) {
+      toast.error('Failed to remove post');
+    }
   };
 
   if (loading) {
