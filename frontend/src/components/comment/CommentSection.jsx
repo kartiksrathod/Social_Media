@@ -247,7 +247,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
           {loading && comments.length === 0 ? (
             <CommentSkeleton />
           ) : comments.length === 0 ? (
-            <div className="text-center py-16 sm:py-12">
+            <div className="text-center empty-state-spacing">
               <MessageCircle className="w-16 h-16 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground text-base sm:text-sm">
                 No comments yet. Be the first to comment!
@@ -266,7 +266,7 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
               ))}
               
               {/* Infinite scroll trigger */}
-              <div ref={scrollRef} className="flex justify-center py-6">
+              <div ref={scrollRef} className="flex justify-center infinite-scroll-spacing">
                 {loadingMore && (
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Loader2 className="w-6 h-6 sm:w-5 sm:h-5 animate-spin" />
