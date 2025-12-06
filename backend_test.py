@@ -390,8 +390,8 @@ def create_test_posts(token):
     return created_posts
 
 def main():
-    """Run all backend tests"""
-    print(f"{Colors.BOLD}🧪 SocialVibe Backend API Testing{Colors.ENDC}")
+    """Create test data for SocialVibe app"""
+    print(f"{Colors.BOLD}🧪 SocialVibe Test Data Creation{Colors.ENDC}")
     print(f"Testing backend at: {BASE_URL}")
     print("=" * 60)
     
@@ -400,10 +400,7 @@ def main():
         print(f"\n{Colors.RED}❌ Server is not accessible. Stopping tests.{Colors.ENDC}")
         return False
     
-    # Test 2: Authentication Required
-    test_authentication_required()
-    
-    # Test 3: User Signup
+    # Test 2: User Signup
     token = test_user_signup()
     
     # If user already exists, try login
@@ -414,43 +411,24 @@ def main():
         print(f"\n{Colors.RED}❌ Could not obtain authentication token. Stopping user tests.{Colors.ENDC}")
         return False
     
-    # Test 4: Get Current User
+    # Test 3: Get Current User to verify
     current_user = test_get_current_user(token)
     if not current_user:
-        print(f"\n{Colors.RED}❌ Could not get current user info. Stopping profile tests.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Could not get current user info.{Colors.ENDC}")
         return False
     
-    username = current_user['username']
-    
-    # Test 5: Update Profile
-    test_update_profile(token)
-    
-    # Test 6: Get User Profile by Username
-    test_get_user_profile(token, username)
-    
-    # Test 7: Username Validation
-    test_username_validation(token)
-    
-    print(f"\n{Colors.BLUE}📸 Testing Post and Image Upload Features{Colors.ENDC}")
+    print(f"\n{Colors.BLUE}📝 Creating Test Posts with Hashtags{Colors.ENDC}")
     print("-" * 60)
     
-    # Test 8: Image Upload
-    image_url = test_image_upload(token)
+    # Create test posts with hashtags
+    created_posts = create_test_posts(token)
     
-    # Test 9: Create Post with Image
-    if image_url:
-        test_create_post_with_image(token, image_url)
-    else:
-        log_test("Create Post with Image", "WARN", "Skipped due to image upload failure")
-    
-    # Test 10: Create Text-only Post
-    test_create_post_text_only(token)
-    
-    # Test 11: Create Post without Image (fallback test)
-    test_create_post_with_image(token, None)
-    
-    print("\n" + "=" * 60)
-    print(f"{Colors.BOLD}🎯 Backend Testing Complete{Colors.ENDC}")
+    print(f"\n{Colors.GREEN}✅ Test Data Creation Complete{Colors.ENDC}")
+    print("=" * 60)
+    print(f"{Colors.BOLD}Login Credentials for Frontend Testing:{Colors.ENDC}")
+    print(f"Username: testuser")
+    print(f"Password: Test123!")
+    print(f"Created {len(created_posts)} test posts with hashtags")
     
     return True
 
