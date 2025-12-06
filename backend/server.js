@@ -114,18 +114,60 @@ io.on('connection', (socket) => {
 app.set('io', io);
 app.set('userSockets', userSockets);
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ===== SECURITY MIDDLEWARE =====
+
+// Helmet - Set security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "ws:", "wss:"],
+      fontSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'", "https:"],
+      frameSrc: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Required for Cloudinary uploads
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
+
+// Custom security headers
+app.use(securityHeaders);
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' })); // Limit payload size
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Cookie parser (required for CSRF)
+app.use(cookieParser);
 
 // CORS Configuration
 const corsOrigins = process.env.CORS_ORIGINS || '*';
 app.use(cors({
   origin: corsOrigins === '*' ? '*' : corsOrigins.split(','),
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'x-csrf-token']
 }));
+
+// MongoDB injection prevention
+app.use(mongoSanitizer);
+
+// HTTP Parameter Pollution prevention
+app.use(hppProtection);
+
+// Input sanitization
+app.use(sanitizeInput);
+
+// API rate limiting (applies to all routes)
+app.use('/api', apiLimiter);
+
+// CSRF Protection (applies to state-changing requests)
+app.use(conditionalCsrfProtection);
 
 // MongoDB Connection
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/socialvibe';
