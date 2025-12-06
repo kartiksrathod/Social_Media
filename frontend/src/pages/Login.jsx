@@ -15,8 +15,21 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [errors, setErrors] = useState({});
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrors({});
+    
+    if (!username.trim()) {
+      setErrors({ username: "Username is required" });
+      return;
+    }
+    if (!password.trim()) {
+      setErrors({ password: "Password is required" });
+      return;
+    }
+    
     setLoading(true);
     
     const result = await login(username, password);
@@ -28,6 +41,7 @@ export default function Login() {
       navigate("/home");
     } else {
       toast.error(result.error);
+      setErrors({ general: result.error });
     }
   };
 
