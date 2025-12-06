@@ -196,18 +196,18 @@ export default function Explore() {
         <div>
            <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
            {loading ? (
-             <div className="list-spacing flex flex-col">
+             <div className="post-list-spacing flex flex-col">
                {[1, 2, 3].map((i) => (
                  <PostCardSkeleton key={i} />
                ))}
              </div>
            ) : posts.length === 0 ? (
-             <div className="text-center card-padding-lg">
+             <div className="text-center empty-state-spacing">
                <p className="text-muted-foreground">No posts to explore yet</p>
              </div>
            ) : (
              <>
-               <div className="list-spacing flex flex-col">
+               <div className="post-list-spacing flex flex-col">
                  {posts.map(post => (
                    <SwipeablePostCard 
                      key={post.id} 
@@ -220,7 +220,7 @@ export default function Explore() {
                </div>
 
                {/* Infinite scroll trigger */}
-               <div ref={scrollRef} className="flex justify-center py-8">
+               <div ref={scrollRef} className="flex justify-center infinite-scroll-spacing">
                  {loadingMore && (
                    <div className="flex items-center gap-2 text-muted-foreground">
                      <Loader2 className="w-6 h-6 animate-spin" />
