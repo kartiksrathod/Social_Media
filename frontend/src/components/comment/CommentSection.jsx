@@ -192,32 +192,32 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl max-w-2xl w-full h-[95vh] sm:max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-surface-800 rounded-t-3xl sm:rounded-2xl shadow-2xl max-w-2xl w-full h-[95vh] sm:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b dark:border-gray-700">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
-            <h2 className="text-base sm:text-lg font-semibold">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-border">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+            <h2 className="text-lg sm:text-xl font-semibold">
               Comments {total > 0 && `(${total})`}
             </h2>
             
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 sm:h-10 gap-1.5 min-w-[44px] touch-manipulation">
+                <Button variant="ghost" size="sm" className="h-10 sm:h-9 gap-2 touch-target touch-manipulation tap-feedback">
                   <ArrowUpDown className="w-4 h-4" />
-                  <span className="text-xs hidden sm:inline">
+                  <span className="text-sm hidden sm:inline">
                     {sortOptions.find(opt => opt.value === sortBy)?.label}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
+              <DropdownMenuContent align="start" className="min-w-[180px]">
                 {sortOptions.map(option => (
                   <DropdownMenuItem
                     key={option.value}
                     onClick={() => handleSortChange(option.value)}
-                    className={sortBy === option.value ? 'bg-accent' : ''}
+                    className={`h-12 sm:h-10 text-base sm:text-sm ${sortBy === option.value ? 'bg-accent' : ''}`}
                   >
                     {option.label}
                   </DropdownMenuItem>
@@ -228,14 +228,14 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
           
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+            className="p-2 hover:bg-surface-700 rounded-full transition-colors touch-target flex items-center justify-center touch-manipulation tap-feedback"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6 sm:w-5 sm:h-5" />
           </button>
         </div>
         
         {/* Add Comment Input */}
-        <div className="px-3 sm:px-6 py-3 sm:py-4 border-b dark:border-gray-700">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border">
           <CommentInput
             onSubmit={handleAddComment}
             placeholder="Write a comment..."
@@ -243,13 +243,13 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
         </div>
         
         {/* Comments List */}
-        <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 overscroll-contain">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6 overscroll-contain scroll-smooth-mobile">
           {loading && comments.length === 0 ? (
             <CommentSkeleton />
           ) : comments.length === 0 ? (
-            <div className="text-center py-12">
-              <MessageCircle className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <div className="text-center py-16 sm:py-12">
+              <MessageCircle className="w-16 h-16 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground text-base sm:text-sm">
                 No comments yet. Be the first to comment!
               </p>
             </div>
@@ -266,15 +266,15 @@ const CommentSection = ({ postId, onClose, initialCommentCount = 0, onCommentCou
               ))}
               
               {/* Infinite scroll trigger */}
-              <div ref={scrollRef} className="flex justify-center py-4 sm:py-6">
+              <div ref={scrollRef} className="flex justify-center py-6">
                 {loadingMore && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-xs sm:text-sm">Loading more comments...</span>
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Loader2 className="w-6 h-6 sm:w-5 sm:h-5 animate-spin" />
+                    <span className="text-sm">Loading more comments...</span>
                   </div>
                 )}
                 {!hasMore && comments.length > 0 && (
-                  <p className="text-xs sm:text-sm text-muted-foreground">No more comments</p>
+                  <p className="text-sm text-muted-foreground">No more comments</p>
                 )}
               </div>
             </>
