@@ -263,7 +263,7 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-background flex justify-center">
       {/* Desktop Sidebar - Icon-Only Sleek Design */}
-      <aside className="hidden md:flex w-20 fixed left-0 top-0 bottom-0 border-r border-border bg-surface-800/95 backdrop-blur-xl z-40">
+      <aside className="hidden md:flex w-24 fixed left-0 top-0 bottom-0 border-r border-border/50 bg-gradient-to-b from-surface-800/95 via-surface-800/98 to-surface-900/95 backdrop-blur-2xl z-40 shadow-2xl">
         <SidebarContent />
       </aside>
 
