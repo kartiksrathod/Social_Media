@@ -3,6 +3,7 @@ import { X, MessageCircle, ArrowUpDown, Loader2 } from 'lucide-react';
 import { commentsAPI } from '../../lib/api';
 import CommentInput from './CommentInput';
 import CommentItem from './CommentItem';
+import CommentSkeleton from '../skeletons/CommentSkeleton';
 import { useSocket } from '../../contexts/SocketContext';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import {
