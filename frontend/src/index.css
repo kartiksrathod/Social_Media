@@ -308,7 +308,8 @@
   
   /* Better text overflow handling */
   .text-overflow-safe {
-    @apply break-words overflow-wrap-anywhere;
+    @apply break-words;
+    overflow-wrap: anywhere;
   }
   
   /* Mobile input improvements */
