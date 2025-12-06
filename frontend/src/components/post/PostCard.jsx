@@ -231,7 +231,7 @@ export default function PostCard({ post, onUpdate }) {
     <Card className="card-premium-hover overflow-hidden bg-card">
       {/* Repost indicator */}
       {isRepost && (
-        <div className="px-4 pt-3 pb-0">
+        <div className="px-4 sm:px-6 pt-4 pb-0">
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <Repeat2 className="w-3.5 h-3.5 text-green-500" />
             <span className="font-medium">{post.author_username} reposted</span>
@@ -241,7 +241,7 @@ export default function PostCard({ post, onUpdate }) {
 
       {/* Quote text - shown above original post for quote reposts */}
       {isRepost && post.repost_text && (
-        <div className="px-4 pt-3">
+        <div className="px-4 sm:px-6 pt-4">
           <div className="flex gap-3">
             <Link to={`/profile/${post.author_username}`}>
               <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
@@ -258,7 +258,7 @@ export default function PostCard({ post, onUpdate }) {
               <p className="text-xs text-muted-foreground mb-2">
                 @{post.author_username} • {formatTime(post.created_at)}
               </p>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap mb-3">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap mb-4">
                 {renderTextWithHashtagsAndMentions(post.repost_text)}
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function PostCard({ post, onUpdate }) {
         </div>
       )}
 
-      <CardHeader className={`p-4 sm:p-5 pb-3 flex flex-row items-start gap-3 sm:gap-4 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
+      <CardHeader className={`card-padding pb-3 flex flex-row items-start gap-3 sm:gap-4 space-y-0 ${isRepost && post.repost_text ? 'pt-0' : ''}`}>
         <Link to={`/profile/${isRepost && originalPost ? originalPost.author_username : post.author_username}`} className="touch-target-lg flex items-center justify-center -m-2">
           <Avatar className="w-11 h-11 sm:w-10 sm:h-10 cursor-pointer hover:ring-2 hover:ring-primary transition-all flex-shrink-0">
             <AvatarImage src={isRepost && originalPost ? originalPost.author_avatar : post.author_avatar} />
