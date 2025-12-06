@@ -41,7 +41,7 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
             e.stopPropagation();
             navigate(`/profile/${username}`);
           }}
-          className="text-purple-600 dark:text-purple-400 hover:underline cursor-pointer font-medium"
+          className="text-primary hover:underline cursor-pointer font-medium"
         >
           @{username}
         </span>
@@ -162,10 +162,10 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
   if (isDeleted) {
     return (
       <div className="flex gap-3 opacity-60">
-        <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex-shrink-0" />
+        <div className="w-8 h-8 rounded-full surface-600 flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400 italic">[deleted]</p>
+          <div className="surface-700 rounded-2xl px-4 py-2 border border-border/30">
+            <p className="text-sm text-muted-foreground italic">[deleted]</p>
           </div>
         </div>
       </div>
@@ -190,19 +190,19 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
               buttonText="Save"
             />
           ) : (
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2">
+            <div className="surface-700 rounded-2xl px-4 py-2 border border-border/30">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-sm">{comment.username}</span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold text-sm text-foreground">{comment.username}</span>
+                    <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                     </span>
                     {comment.is_edited && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">(edited)</span>
+                      <span className="text-xs text-muted-foreground/70">(edited)</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-900 dark:text-gray-100 break-words">
+                  <p className="text-sm text-foreground break-words">
                     {renderTextWithMentions(comment.text)}
                   </p>
                 </div>
@@ -211,19 +211,19 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
                   <div className="relative">
                     <button
                       onClick={() => setShowMenu(!showMenu)}
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                      className="p-1 surface-600 hover:surface-600 rounded-full transition-colors hover-accent"
                     >
-                      <MoreVertical className="w-4 h-4 text-gray-500" />
+                      <MoreVertical className="w-4 h-4 text-muted-foreground" />
                     </button>
                     
                     {showMenu && (
-                      <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
+                      <div className="absolute right-0 top-8 surface-800 border border-border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
                         <button
                           onClick={() => {
                             setIsEditing(true);
                             setShowMenu(false);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                          className="w-full px-4 py-2 text-left text-sm hover:surface-700 flex items-center gap-2 text-foreground transition-colors"
                         >
                           <Edit2 className="w-3 h-3" />
                           Edit
@@ -233,7 +233,7 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
                             handleDelete();
                             setShowMenu(false);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                          className="w-full px-4 py-2 text-left text-sm text-destructive hover:surface-700 flex items-center gap-2 transition-colors"
                         >
                           <Trash2 className="w-3 h-3" />
                           Delete
@@ -257,7 +257,7 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
               
               <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-purple-500 transition-colors px-2 h-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover-accent px-2 h-8 rounded-md hover:surface-700 transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Reply</span>
@@ -266,7 +266,7 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
               {comment.reply_count > 0 && (
                 <button
                   onClick={() => setShowReplies(!showReplies)}
-                  className="text-xs font-medium text-purple-600 dark:text-purple-400 hover:underline"
+                  className="text-xs font-medium text-primary hover:underline"
                 >
                   {showReplies ? 'Hide' : 'View'} {comment.reply_count} {comment.reply_count === 1 ? 'reply' : 'replies'}
                 </button>
