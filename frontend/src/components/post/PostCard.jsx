@@ -231,7 +231,7 @@ export default function PostCard({ post, onUpdate }) {
     <Card className="card-premium-hover overflow-hidden bg-card card-enter">
       {/* Repost indicator */}
       {isRepost && (
-        <div className="px-4 sm:px-6 pt-4 pb-0">
+        <div className="card-padding pb-0">
           <div className="flex items-center gap-2 text-xs text-text-muted">
             <Repeat2 className="w-3.5 h-3.5 text-green-500" />
             <span className="font-medium">{post.author_username} reposted</span>
@@ -241,7 +241,7 @@ export default function PostCard({ post, onUpdate }) {
 
       {/* Quote text - shown above original post for quote reposts */}
       {isRepost && post.repost_text && (
-        <div className="px-4 sm:px-6 pt-4">
+        <div className="card-padding">
           <div className="flex gap-3">
             <Link to={`/profile/${post.author_username}`}>
               <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
@@ -249,16 +249,16 @@ export default function PostCard({ post, onUpdate }) {
                 <AvatarFallback>{post.author_username?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
             </Link>
-            <div className="flex-1">
+            <div className="flex-1 space-y-2">
               <Link to={`/profile/${post.author_username}`}>
                 <h4 className="font-semibold text-sm hover:underline cursor-pointer">
                   {post.author_username}
                 </h4>
               </Link>
-              <p className="text-xs text-muted-foreground mb-2">
+              <p className="text-xs text-muted-foreground">
                 @{post.author_username} • {formatTime(post.created_at)}
               </p>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap mb-4">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">
                 {renderTextWithHashtagsAndMentions(post.repost_text)}
               </p>
             </div>
