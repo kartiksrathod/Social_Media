@@ -418,6 +418,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Draft Posts Feature - Auto-Save and Persistence"
     - "Infinite Scroll - Feed Page"
     - "Infinite Scroll - Explore Page"
     - "Infinite Scroll - Profile Page"
