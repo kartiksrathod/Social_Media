@@ -21,6 +21,8 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [userReaction, setUserReaction] = useState(comment.user_reaction || null);
   const [reactionCounts, setReactionCounts] = useState(comment.reaction_summary || {});
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
 
   const isOwnComment = currentUser?.id === comment.user_id;
   const isDeleted = comment.text === '[deleted]';
