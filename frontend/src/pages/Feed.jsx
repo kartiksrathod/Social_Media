@@ -1,16 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PostCard from '@/components/post/PostCard';
 import SwipeablePostCard from '@/components/post/SwipeablePostCard';
 import StoriesBar from '@/components/story/StoriesBar';
 import PostCardSkeleton from '@/components/skeletons/PostCardSkeleton';
 import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
 import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
+import VirtualizedFeed from '@/components/feed/VirtualizedFeed';
 import { postsAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import { Loader2 } from 'lucide-react';
+import { 
+  PERFORMANCE_CONFIG, 
+  shouldUseVirtualScrolling,
+  getOptimalPageSize 
+} from '../config/performance';
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -18,7 +24,13 @@ export default function Feed() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [skip, setSkip] = useState(0);
-  const LIMIT = 10;
+  const LIMIT = getOptimalPageSize();
+
+  // Determine if we should use virtual scrolling
+  const useVirtualScroll = useMemo(() => 
+    shouldUseVirtualScrolling(posts.length), 
+    [posts.length]
+  );
 
   const loadFeed = async (isLoadMore = false) => {
     try {
