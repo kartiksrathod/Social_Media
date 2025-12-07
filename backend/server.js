@@ -165,10 +165,12 @@ app.use(hppProtection);
 app.use(sanitizeInput);
 
 // API rate limiting (applies to all routes)
-app.use('/api', apiLimiter);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use('/api', apiLimiter);
 
 // CSRF Protection (applies to state-changing requests)
-app.use(conditionalCsrfProtection);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use(conditionalCsrfProtection);
 
 // MongoDB Connection
 const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/socialvibe';
