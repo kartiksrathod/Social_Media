@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { MessageCircle, MoreVertical, Edit2, Trash2, Flag, Ban } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { commentsAPI } from '../../lib/api';
 import CommentInput from './CommentInput';
@@ -8,6 +8,10 @@ import ReactionButton from '../post/ReactionButton';
 import { useNavigate } from 'react-router-dom';
 import LazyImage from '../ui/lazy-image';
 import { getAvatarUrl } from '../../lib/imageOptimizer';
+import ReportDialog from '../safety/ReportDialog';
+import { blockUser } from '@/lib/safetyAPI';
+import { toast } from 'sonner';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
   const navigate = useNavigate();
