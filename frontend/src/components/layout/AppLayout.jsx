@@ -46,6 +46,11 @@ const SidebarContent = ({ isMobile = false }) => {
     { label: "Profile", href: "/profile", icon: User },
   ];
 
+  // Settings links (shown in mobile sidebar)
+  const settingsLinks = [
+    { label: "Blocked Users", href: "/blocked-users", icon: Ban },
+  ];
+
   // Desktop: Icon-only sidebar
   if (!isMobile) {
     return (
