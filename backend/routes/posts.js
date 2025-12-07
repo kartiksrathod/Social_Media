@@ -387,10 +387,20 @@ router.get('/feed', authenticateToken, async (req, res) => {
       return res.status(404).json({ detail: 'User not found' });
     }
 
-    const followingIds = [...user.following, user.id];
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: req.userId }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: req.userId }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
 
-    // Include posts where user is author OR collaborator (with accepted status)
+    const followingIds = [...user.following, user.id].filter(id => !blockedUserIds.includes(id));
+
+    // Include posts where user is author OR collaborator (with accepted status), excluding blocked users
     const posts = await Post.find({
+      author_id: { $nin: blockedUserIds },
       $or: [
         { author_id: { $in: followingIds } },
         { collaborator_id: { $in: followingIds }, collaboration_status: 'accepted' }
