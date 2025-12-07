@@ -223,6 +223,20 @@ export default function Profile() {
     }
   };
 
+  const handleBlock = async () => {
+    try {
+      await blockUser(profileUser.id);
+      setBlockDialogOpen(false);
+      toast.success(`Blocked @${profileUser.username}`, {
+        description: 'You will no longer see their posts or receive messages.'
+      });
+      // Optionally navigate back or reload
+      window.history.back();
+    } catch (error) {
+      toast.error('Failed to block user');
+    }
+  };
+
   const formatJoinDate = (dateString) => {
     try {
       const date = new Date(dateString);
