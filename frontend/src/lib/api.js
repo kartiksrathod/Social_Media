@@ -74,9 +74,9 @@ export const postsAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
-  getFeed: (limit = 20, skip = 0) => api.get('/posts/feed', { params: { limit, skip } }),
-  getExplore: (limit = 20, skip = 0) => api.get('/posts/explore', { params: { limit, skip } }),
-  getUserPosts: (username, limit = 20, skip = 0) => api.get(`/posts/user/${username}`, { params: { limit, skip } }),
+  getFeed: (limit = 20, skip = 0) => api.get('/posts/feed', { params: { limit, skip }, ...cacheConfig.feed }),
+  getExplore: (limit = 20, skip = 0) => api.get('/posts/explore', { params: { limit, skip }, ...cacheConfig.explore }),
+  getUserPosts: (username, limit = 20, skip = 0) => api.get(`/posts/user/${username}`, { params: { limit, skip }, ...cacheConfig.profile }),
   like: (postId) => api.post(`/posts/${postId}/like`),
   unlike: (postId) => api.post(`/posts/${postId}/unlike`),
   addComment: (postId, text) => api.post(`/posts/${postId}/comments`, { text }),
