@@ -3,10 +3,16 @@ const Story = require('../models/Story');
 const User = require('../models/User');
 const { authenticateToken } = require('../middleware/auth');
 const { uploadToCloudinary } = require('../utils/cloudinary');
+const { processStoryImage, validateImageFile } = require('../utils/imageProcessor');
 const multer = require('multer');
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024 // 50MB limit (for videos)
+  }
+});
 
 // POST /api/stories/upload - Upload story media
 router.post('/upload', authenticateToken, upload.single('file'), async (req, res) => {
