@@ -23,14 +23,14 @@ export const optimizeCloudinaryImage = (url, options = {}) => {
   const {
     width = 'auto',
     height,
-    quality = 'auto',
+    quality = 'auto:good', // Enhanced quality setting
     format = 'auto', // auto will serve WebP to supported browsers
     crop = 'fill',
     gravity = 'auto',
-    fetchFormat = 'auto',
+    dpr = 'auto', // Device pixel ratio for retina displays
   } = options;
 
-  // Build transformation string
+  // Build transformation string with performance optimizations
   const transformations = [];
   
   if (width) transformations.push(`w_${width}`);
@@ -39,7 +39,13 @@ export const optimizeCloudinaryImage = (url, options = {}) => {
   if (format) transformations.push(`f_${format}`);
   if (crop) transformations.push(`c_${crop}`);
   if (gravity) transformations.push(`g_${gravity}`);
-  if (fetchFormat) transformations.push(`f_${fetchFormat}`);
+  if (dpr) transformations.push(`dpr_${dpr}`);
+  
+  // Add progressive loading for better perceived performance
+  transformations.push('fl_progressive');
+  
+  // Add lossy compression for better file size
+  transformations.push('fl_lossy');
 
   const transformString = transformations.join(',');
 
