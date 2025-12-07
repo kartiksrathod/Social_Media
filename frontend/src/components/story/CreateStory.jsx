@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Image, Video, X } from 'lucide-react';
 import { storiesAPI } from '../../lib/api';
 import { toast } from 'sonner';
+import LazyImage from '../ui/lazy-image';
 
 export default function CreateStory({ open, onClose, onStoryCreated }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -128,10 +129,11 @@ export default function CreateStory({ open, onClose, onStoryCreated }) {
           ) : (
             <div className="relative">
               {mediaType === 'image' ? (
-                <img
+                <LazyImage
                   src={preview}
                   alt="Story preview"
                   className="w-full h-96 object-cover rounded-lg"
+                  loading="eager"
                 />
               ) : (
                 <video
@@ -153,17 +155,17 @@ export default function CreateStory({ open, onClose, onStoryCreated }) {
           )}
 
           {preview && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-end">
               <Button
+                type="button"
                 variant="outline"
-                className="flex-1"
                 onClick={handleRemove}
                 disabled={loading}
               >
-                Change
+                Cancel
               </Button>
               <Button
-                className="flex-1"
+                type="button"
                 onClick={handleSubmit}
                 disabled={loading}
               >
