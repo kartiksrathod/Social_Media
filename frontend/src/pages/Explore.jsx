@@ -206,6 +206,44 @@ export default function Explore() {
     </>
   ), [searchQuery, users]);
 
+  // Use virtual scrolling for very long feeds (100+ posts)
+  if (useVirtualScroll) {
+    return (
+      <>
+        {/* Pull-to-refresh indicator */}
+        <PullToRefreshIndicator
+          isPulling={isPulling}
+          isRefreshing={isRefreshing}
+          pullDistance={pullDistance}
+          refreshProgress={refreshProgress}
+        />
+
+        {/* Scroll-to-top button */}
+        <ScrollToTopButton show={showScrollTop} onClick={scrollToTop} />
+
+        <div 
+          ref={containerRef}
+          className="w-full h-full max-w-2xl mx-auto"
+          style={{ height: 'calc(100vh - 64px)' }}
+        >
+          <VirtualizedFeed
+            posts={posts}
+            loading={loading}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+            onLike={handleLike}
+            onSave={handleSave}
+            onPostUpdate={handlePostUpdate}
+            enableSwipe={PERFORMANCE_CONFIG.ENABLE_SWIPE_GESTURES}
+            Header={ExploreHeader}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // Regular infinite scroll (for most users)
   return (
     <>
       {/* Pull-to-refresh indicator */}
