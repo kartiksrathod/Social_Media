@@ -93,7 +93,7 @@ export default function Explore() {
   };
 
   const { containerRef, isPulling, pullDistance, isRefreshing, refreshProgress } = 
-    usePullToRefresh(handleRefresh, { enabled: !loading });
+    usePullToRefresh(handleRefresh, { enabled: !loading && PERFORMANCE_CONFIG.ENABLE_PULL_TO_REFRESH });
 
   // Scroll-to-top functionality
   const { showScrollTop, scrollToTop } = useScrollToTop(300);
@@ -123,14 +123,14 @@ export default function Explore() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const handlePostUpdate = () => {
+  const handlePostUpdate = useCallback(() => {
     // Reset and reload from start
     setSkip(0);
     setHasMore(true);
     loadExploreFeed(false);
-  };
+  }, []);
 
-  const handleLike = async (postId) => {
+  const handleLike = useCallback(async (postId) => {
     try {
       const postToUpdate = posts.find(p => p.id === postId);
       if (!postToUpdate) return;
@@ -144,9 +144,9 @@ export default function Explore() {
     } catch (error) {
       toast.error('Failed to update like');
     }
-  };
+  }, [posts, handlePostUpdate]);
 
-  const handleSave = async (postId) => {
+  const handleSave = useCallback(async (postId) => {
     try {
       const postToUpdate = posts.find(p => p.id === postId);
       if (!postToUpdate) return;
@@ -162,7 +162,49 @@ export default function Explore() {
     } catch (error) {
       toast.error('Failed to save post');
     }
-  };
+  }, [posts, handlePostUpdate]);
+
+  // Render search header
+  const ExploreHeader = useMemo(() => (
+    <>
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+        <Input 
+          placeholder="Search for people..." 
+          className="input-mobile pl-12 h-12 rounded-full bg-muted/50 border-none text-base touch-manipulation"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {searchQuery && users.length > 0 && (
+        <Card>
+          <CardContent className="card-padding list-spacing-sm flex flex-col">
+            <h3 className="font-semibold">Search Results</h3>
+            {users.map(user => (
+              <Link to={`/profile/${user.username}`} key={user.id}>
+                <div className="flex items-center gap-4 p-2 hover:bg-muted/50 rounded-lg transition-colors touch-manipulation min-h-[56px]">
+                  <Avatar className="w-11 h-11 sm:w-10 sm:h-10">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>{user.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-1">
+                    <p className="font-semibold text-base sm:text-sm">{user.username}</p>
+                    <p className="text-sm sm:text-xs text-muted-foreground">@{user.username}</p>
+                  </div>
+                  <div className="text-sm sm:text-xs text-muted-foreground">
+                    {user.followers_count} followers
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      <h3 className="text-lg font-heading font-bold mb-4">Discover Posts</h3>
+    </>
+  ), [searchQuery, users]);
 
   return (
     <>
