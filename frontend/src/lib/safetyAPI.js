@@ -22,7 +22,7 @@ export const unblockUser = async (userId) => {
 };
 
 export const getBlockedUsers = async () => {
-  const response = await axios.get('/api/safety/blocks');
+  const response = await api.get('/safety/blocks');
   return response.data;
 };
 
