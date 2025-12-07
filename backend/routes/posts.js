@@ -4,12 +4,18 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { authenticateToken } = require('../middleware/auth');
 const { uploadToCloudinary } = require('../utils/cloudinary');
+const { processPostImage, validateImageFile } = require('../utils/imageProcessor');
 const { extractHashtags, extractMentions, postToPublic } = require('../utils/helpers');
 const { postCreationLimiter, uploadLimiter } = require('../middleware/security');
 const multer = require('multer');
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // POST /api/posts - Create new post
 router.post('/', authenticateToken, postCreationLimiter, async (req, res) => {
