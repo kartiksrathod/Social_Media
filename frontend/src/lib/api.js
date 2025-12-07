@@ -1,16 +1,33 @@
 import axios from 'axios';
-import { cache, cacheConfig, clearCache, invalidateUserCache, invalidatePostCache } from './requestCache';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API_URL = `${BACKEND_URL}/api`;
 
+// Create axios instance without cache adapter
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  adapter: cache.adapter, // Enable caching
 });
+
+// Define cache utilities as no-ops for now
+export const clearCache = async () => {};
+export const invalidateUserCache = async () => {};
+export const invalidatePostCache = async () => {};
+
+// Empty cache config for compatibility
+export const cacheConfig = {
+  static: {},
+  profile: {},
+  feed: {},
+  explore: {},
+  notifications: {},
+  trending: {},
+  suggestions: {},
+  search: {},
+  noCache: {},
+};
 
 // Add token to requests
 api.interceptors.request.use((config) => {
