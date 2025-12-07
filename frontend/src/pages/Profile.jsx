@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import PostCard from '@/components/post/PostCard';
 import SwipeablePostCard from '@/components/post/SwipeablePostCard';
@@ -11,6 +11,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
 import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
+import VirtualizedFeed from '@/components/feed/VirtualizedFeed';
 import { Calendar, Star, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '../contexts/AuthContext';
@@ -20,6 +21,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { useScrollToTop } from '../hooks/useScrollToTop';
+import { 
+  PERFORMANCE_CONFIG, 
+  shouldUseVirtualScrolling,
+  getOptimalPageSize 
+} from '../config/performance';
 
 export default function Profile() {
   const { username } = useParams();
@@ -35,9 +41,15 @@ export default function Profile() {
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [closeFriendLoading, setCloseFriendLoading] = useState(false);
-  const LIMIT = 10;
+  const LIMIT = getOptimalPageSize();
 
   const isOwnProfile = !username || username === currentUser?.username;
+
+  // Determine if we should use virtual scrolling
+  const useVirtualScroll = useMemo(() => 
+    shouldUseVirtualScrolling(posts.length), 
+    [posts.length]
+  );
 
   const loadProfile = async () => {
     setLoading(true);
