@@ -102,10 +102,11 @@ export default function LandingPage() {
 
             <div className="flex-1 relative w-full max-w-[600px] lg:max-w-none">
               <div className="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20 border border-border/50 bg-card/50 backdrop-blur-sm">
-                 <img 
+                 <LazyImage 
                     src="https://images.unsplash.com/photo-1644088379091-d574269d422f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGNvbm5lY3Rpb258ZW58MHx8fHwxNzY0NjgwODM3fDA&ixlib=rb-4.1.0&q=85" 
                     alt="App Dashboard" 
                     className="object-cover w-full h-full opacity-90 hover:scale-105 transition-transform duration-700"
+                    loading="eager"
                  />
                  
                  {/* Floating Elements - Glassmorphism */}
