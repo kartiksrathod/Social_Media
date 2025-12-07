@@ -27,7 +27,7 @@ export const getBlockedUsers = async () => {
 };
 
 export const isUserBlocked = async (userId) => {
-  const response = await axios.get(`/api/safety/is-blocked/${userId}`);
+  const response = await api.get(`/safety/is-blocked/${userId}`);
   return response.data;
 };
 
