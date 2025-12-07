@@ -23,6 +23,9 @@ logs/
 # Testing
 /coverage
 .nyc_output
+test_result.md
+*_test.py
+backend_test.py
 
 # Production builds
 /build
