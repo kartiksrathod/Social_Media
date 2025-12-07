@@ -193,11 +193,12 @@ export default function StoryViewer({ open, onClose, storiesData, initialUserId 
       {/* Content */}
       <div className="relative w-full max-w-lg h-full max-h-[90vh] flex items-center justify-center">
         {currentStory.media_type === 'image' ? (
-          <img
-            src={currentStory.media_url}
+          <LazyImage
+            src={getOptimizedImageUrl(currentStory.media_url, { width: 1024, type: 'post' })}
             alt="Story"
             className="w-full h-full object-contain"
             onClick={() => setIsPaused(!isPaused)}
+            loading="eager"
           />
         ) : (
           <video
