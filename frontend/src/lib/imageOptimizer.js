@@ -131,10 +131,10 @@ export const getAvatarUrl = (url, size = 200) => {
  */
 export const getPostImageUrl = (url, size = 'medium') => {
   const sizeMap = {
-    thumbnail: { width: 300, quality: 'auto' },
-    medium: { width: 800, quality: 'auto' },
-    large: { width: 1200, quality: 'auto' },
-    full: { width: 1920, quality: 'auto' },
+    thumbnail: { width: 300, quality: 'auto:low' },
+    medium: { width: 800, quality: 'auto:good' },
+    large: { width: 1200, quality: 'auto:good' },
+    full: { width: 1920, quality: 'auto:best' },
   };
 
   const options = sizeMap[size] || sizeMap.medium;
@@ -143,6 +143,7 @@ export const getPostImageUrl = (url, size = 'medium') => {
     ...options,
     format: 'auto',
     crop: 'limit', // Don't upscale
+    dpr: 'auto', // Support retina displays
   });
 };
 
