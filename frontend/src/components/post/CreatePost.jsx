@@ -3,7 +3,7 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Image, Video, X, Tag as TagIcon, Globe, Users, Edit, Crop, FileText } from 'lucide-react';
+import { Image, Video, X, Tag as TagIcon, Globe, Users, Edit, Crop, FileText, Trash2, Check } from 'lucide-react';
 import { postsAPI, usersAPI, collaborationsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ import CollaboratorSelector from './CollaboratorSelector';
 import ImageCropModal from './ImageCropModal';
 import LazyImage from '../ui/lazy-image';
 import EmojiPickerComponent from '../ui/emoji-picker';
+import { saveDraft, loadDraft, deleteDraft, hasDraft as checkHasDraft, getTimeSinceDraft, cleanupOldDrafts } from '../../lib/draftStorage';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,8 @@ export default function CreatePost({ onPostCreated }) {
   const [loading, setLoading] = useState(false);
   const [visibility, setVisibility] = useState('public');
   const [hasDraft, setHasDraft] = useState(false);
+  const [draftTimestamp, setDraftTimestamp] = useState(null);
+  const [showDraftIndicator, setShowDraftIndicator] = useState(false);
   
   // Collaborator state
   const [collaborator, setCollaborator] = useState(null);
@@ -56,25 +59,36 @@ export default function CreatePost({ onPostCreated }) {
   const textareaRef = useRef(null);
   const searchTimeout = useRef(null);
   const draftTimeout = useRef(null);
+  const draftIndicatorTimeout = useRef(null);
 
-  // Load draft on mount
+  // Load draft on mount and cleanup old drafts
   useEffect(() => {
-    const savedDraft = localStorage.getItem('post_draft');
+    // Cleanup old drafts first
+    cleanupOldDrafts();
+    
+    const savedDraft = loadDraft();
     if (savedDraft) {
-      try {
-        const draft = JSON.parse(savedDraft);
-        setText(draft.text || '');
-        setVisibility(draft.visibility || 'public');
-        setHasDraft(true);
-      } catch (error) {
-        console.error('Error loading draft:', error);
-      }
+      // Restore all draft data
+      setText(savedDraft.text || '');
+      setVisibility(savedDraft.visibility || 'public');
+      setImagePreviews(savedDraft.imagePreviews || []);
+      setUploadedImageUrls(savedDraft.uploadedImageUrls || []);
+      setImageTags(savedDraft.imageTags || []);
+      setVideoPreview(savedDraft.videoPreview || null);
+      setCollaborator(savedDraft.collaborator || null);
+      setHasDraft(true);
+      setDraftTimestamp(savedDraft.timestamp);
+      
+      // Show toast notification about restored draft
+      toast.success(`Draft restored from ${getTimeSinceDraft(savedDraft.timestamp)}`);
     }
   }, []);
 
-  // Auto-save draft
+  // Auto-save draft with debounce
   useEffect(() => {
-    if (text.trim()) {
+    const hasContent = text.trim() || imagePreviews.length > 0 || videoPreview;
+    
+    if (hasContent) {
       if (draftTimeout.current) {
         clearTimeout(draftTimeout.current);
       }
@@ -83,22 +97,43 @@ export default function CreatePost({ onPostCreated }) {
         const draft = {
           text,
           visibility,
-          timestamp: Date.now()
+          imagePreviews,
+          uploadedImageUrls,
+          imageTags,
+          videoPreview,
+          collaborator
         };
-        localStorage.setItem('post_draft', JSON.stringify(draft));
-        setHasDraft(true);
+        
+        const saved = saveDraft(draft);
+        if (saved) {
+          setHasDraft(true);
+          setDraftTimestamp(Date.now());
+          
+          // Show draft saved indicator briefly
+          setShowDraftIndicator(true);
+          if (draftIndicatorTimeout.current) {
+            clearTimeout(draftIndicatorTimeout.current);
+          }
+          draftIndicatorTimeout.current = setTimeout(() => {
+            setShowDraftIndicator(false);
+          }, 2000);
+        }
       }, 1000);
     } else {
-      localStorage.removeItem('post_draft');
+      deleteDraft();
       setHasDraft(false);
+      setDraftTimestamp(null);
     }
 
     return () => {
       if (draftTimeout.current) {
         clearTimeout(draftTimeout.current);
       }
+      if (draftIndicatorTimeout.current) {
+        clearTimeout(draftIndicatorTimeout.current);
+      }
     };
-  }, [text, visibility]);
+  }, [text, visibility, imagePreviews, uploadedImageUrls, imageTags, videoPreview, collaborator]);
 
   // Handle mention search
   useEffect(() => {
@@ -353,6 +388,25 @@ export default function CreatePost({ onPostCreated }) {
     setImageTags(updatedTags);
   };
 
+  const handleDiscardDraft = () => {
+    // Confirm before discarding
+    if (window.confirm('Are you sure you want to discard this draft? This cannot be undone.')) {
+      deleteDraft();
+      setText('');
+      setImageFiles([]);
+      setImagePreviews([]);
+      setUploadedImageUrls([]);
+      setImageTags([]);
+      setVideoFile(null);
+      setVideoPreview(null);
+      setVisibility('public');
+      setCollaborator(null);
+      setHasDraft(false);
+      setDraftTimestamp(null);
+      toast.success('Draft discarded');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -393,6 +447,8 @@ export default function CreatePost({ onPostCreated }) {
         toast.success('Post created successfully!');
       }
 
+      // Clear draft and reset form
+      deleteDraft();
       setText('');
       setImageFiles([]);
       setImagePreviews([]);
@@ -402,6 +458,8 @@ export default function CreatePost({ onPostCreated }) {
       setVideoPreview(null);
       setVisibility('public');
       setCollaborator(null);
+      setHasDraft(false);
+      setDraftTimestamp(null);
       
       if (onPostCreated) {
         onPostCreated();
@@ -430,6 +488,37 @@ export default function CreatePost({ onPostCreated }) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-4 relative">
+                {/* Draft Indicator */}
+                {hasDraft && (
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 text-xs text-text-muted">
+                        {showDraftIndicator ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-success" />
+                            <span className="text-success font-medium">Draft saved</span>
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="h-3.5 w-3.5" />
+                            <span>Draft saved {draftTimestamp && getTimeSinceDraft(draftTimestamp)}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleDiscardDraft}
+                      className="h-7 px-2 text-xs text-text-muted hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      Discard
+                    </Button>
+                  </div>
+                )}
+                
                 <Textarea
                   ref={textareaRef}
                   placeholder="What's on your mind? Type @ to mention someone"
@@ -642,7 +731,8 @@ export default function CreatePost({ onPostCreated }) {
           onTagsChange={(tags) => handleImageTagsChange(tagImageIndex, tags)}
           onClose={() => setTagImageIndex(null)}
         />
-      )}
+      )
+      }
     </>
   );
 }
