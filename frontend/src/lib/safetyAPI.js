@@ -17,7 +17,7 @@ export const blockUser = async (userId, reason = '') => {
 };
 
 export const unblockUser = async (userId) => {
-  const response = await axios.delete(`/api/safety/block/${userId}`);
+  const response = await api.delete(`/safety/block/${userId}`);
   return response.data;
 };
 
