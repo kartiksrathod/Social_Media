@@ -37,19 +37,40 @@ router.post('/upload', authenticateToken, upload.single('file'), async (req, res
       });
     }
 
-    const result = await uploadToCloudinary(
-      req.file.buffer, 
-      'stories',
-      isVideo ? { resource_type: 'video' } : {}
-    );
+    let result;
+    let compressionRatio;
+
+    if (isImage) {
+      // Process and compress image stories
+      validateImageFile(req.file);
+      const processed = await processStoryImage(req.file.buffer);
+      
+      console.log(`Story image compression: ${(processed.originalSize / 1024).toFixed(1)}KB -> ${(processed.size / 1024).toFixed(1)}KB (${processed.compressionRatio} saved)`);
+      
+      compressionRatio = processed.compressionRatio;
+      result = await uploadToCloudinary(processed.buffer, 'stories', {
+        width: processed.width,
+        height: processed.height,
+        format: processed.format
+      });
+    } else {
+      // Videos are not compressed (would require ffmpeg)
+      result = await uploadToCloudinary(req.file.buffer, 'stories', {
+        resource_type: 'video'
+      });
+    }
 
     res.json({ 
       url: result.url,
-      media_type: isVideo ? 'video' : 'image'
+      media_type: isVideo ? 'video' : 'image',
+      width: result.width,
+      height: result.height,
+      format: result.format,
+      compressionRatio: compressionRatio || 'N/A'
     });
   } catch (error) {
     console.error('Upload story media error:', error);
-    res.status(500).json({ detail: 'Media upload failed' });
+    res.status(500).json({ detail: error.message || 'Media upload failed' });
   }
 });
 
