@@ -68,7 +68,17 @@ router.get('/search', authenticateToken, async (req, res) => {
 router.get('/suggested', authenticateToken, async (req, res) => {
   try {
     const currentUser = await User.findOne({ id: req.userId });
-    const excludeIds = [req.userId, ...currentUser.following];
+    
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: req.userId }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: req.userId }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
+    
+    const excludeIds = [req.userId, ...currentUser.following, ...blockedUserIds];
 
     const users = await User.find(
       { id: { $nin: excludeIds } }
