@@ -31,6 +31,7 @@ export default function CreatePost({ onPostCreated }) {
   const [videoPreview, setVideoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [visibility, setVisibility] = useState('public');
+  const [hasDraft, setHasDraft] = useState(false);
   
   // Collaborator state
   const [collaborator, setCollaborator] = useState(null);
@@ -54,6 +55,7 @@ export default function CreatePost({ onPostCreated }) {
   
   const textareaRef = useRef(null);
   const searchTimeout = useRef(null);
+  const draftTimeout = useRef(null);
 
   // Handle mention search
   useEffect(() => {
