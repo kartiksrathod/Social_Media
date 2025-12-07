@@ -78,7 +78,20 @@ router.post('/upload-avatar', authenticateToken, upload.single('file'), async (r
       return res.status(400).json({ detail: 'No file uploaded' });
     }
 
-    const result = await uploadToCloudinary(req.file.buffer, 'avatars');
+    // Validate image file
+    validateImageFile(req.file);
+
+    // Process and compress avatar (smaller dimensions for avatars)
+    const processed = await processAvatar(req.file.buffer);
+    
+    console.log(`Avatar compression: ${(processed.originalSize / 1024).toFixed(1)}KB -> ${(processed.size / 1024).toFixed(1)}KB (${processed.compressionRatio} saved)`);
+
+    // Upload compressed avatar to Cloudinary
+    const result = await uploadToCloudinary(processed.buffer, 'avatars', {
+      width: processed.width,
+      height: processed.height,
+      format: processed.format
+    });
 
     // Update user avatar
     await User.updateOne(
@@ -86,10 +99,16 @@ router.post('/upload-avatar', authenticateToken, upload.single('file'), async (r
       { $set: { avatar: result.url } }
     );
 
-    res.json({ url: result.url });
+    res.json({ 
+      url: result.url,
+      width: result.width,
+      height: result.height,
+      format: result.format,
+      compressionRatio: processed.compressionRatio
+    });
   } catch (error) {
     console.error('Upload avatar error:', error);
-    res.status(500).json({ detail: 'Image upload failed' });
+    res.status(500).json({ detail: error.message || 'Image upload failed' });
   }
 });
 
