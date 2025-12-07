@@ -31,6 +31,39 @@ const LazyImage = ({
   const imgRef = useRef(null);
   const observerRef = useRef(null);
 
+  // Generate responsive srcset if enabled and URL is from Cloudinary
+  const responsiveSrcSet = useMemo(() => {
+    if (!responsive || srcSet || !src || typeof src !== 'string') return srcSet;
+    
+    // Check if it's a Cloudinary URL
+    if (src.includes('cloudinary.com')) {
+      // Extract base URL and transformation parts
+      const parts = src.split('/upload/');
+      if (parts.length === 2) {
+        const baseUrl = parts[0] + '/upload/';
+        const imagePath = parts[1];
+        
+        // Generate srcset with different widths
+        const widths = [320, 640, 768, 1024, 1280, 1920];
+        return widths
+          .map(w => `${baseUrl}w_${w},f_auto,q_auto/${imagePath} ${w}w`)
+          .join(', ');
+      }
+    }
+    
+    return srcSet;
+  }, [src, srcSet, responsive]);
+
+  // Generate sizes attribute if not provided and responsive is enabled
+  const responsiveSizes = useMemo(() => {
+    if (sizes) return sizes;
+    if (responsive) {
+      // Default responsive sizes
+      return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+    }
+    return undefined;
+  }, [sizes, responsive]);
+
   useEffect(() => {
     // If browser supports native lazy loading and loading prop is lazy, use it
     if ('loading' in HTMLImageElement.prototype && loading === 'lazy') {
