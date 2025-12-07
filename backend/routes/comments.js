@@ -183,6 +183,15 @@ router.get('/:postId', authenticateToken, async (req, res) => {
     const { limit = 20, offset = 0, sort = 'newest' } = req.query;
     const { user_id } = req.user;
 
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: user_id }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: user_id }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
+
     // Determine sort criteria
     let sortCriteria = { created_at: -1 }; // Default: newest first
     if (sort === 'most_liked') {
@@ -191,10 +200,11 @@ router.get('/:postId', authenticateToken, async (req, res) => {
       sortCriteria = { reply_count: -1, created_at: -1 };
     }
 
-    // Get top-level comments (parent_comment_id is null)
+    // Get top-level comments (parent_comment_id is null), excluding blocked users
     const comments = await Comment.find({ 
       post_id: postId, 
-      parent_comment_id: null 
+      parent_comment_id: null,
+      user_id: { $nin: blockedUserIds }
     })
       .sort(sortCriteria)
       .skip(parseInt(offset))
