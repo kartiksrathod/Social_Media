@@ -3,7 +3,7 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Image, Video, X, Tag as TagIcon, Globe, Users, Edit, Crop } from 'lucide-react';
+import { Image, Video, X, Tag as TagIcon, Globe, Users, Edit, Crop, FileText } from 'lucide-react';
 import { postsAPI, usersAPI, collaborationsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ import ImageTagging from './ImageTagging';
 import CollaboratorSelector from './CollaboratorSelector';
 import ImageCropModal from './ImageCropModal';
 import LazyImage from '../ui/lazy-image';
+import EmojiPickerComponent from '../ui/emoji-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
