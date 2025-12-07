@@ -167,6 +167,20 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
     }
   };
 
+  const handleBlock = async () => {
+    try {
+      await blockUser(comment.user_id);
+      setBlockDialogOpen(false);
+      setShowMenu(false);
+      toast.success(`Blocked @${comment.username}`, {
+        description: 'You will no longer see their posts or receive messages.'
+      });
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error('Failed to block user');
+    }
+  };
+
   if (isDeleted) {
     return (
       <div className="flex gap-3 opacity-60">
