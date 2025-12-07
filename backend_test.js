@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Backend URL from frontend .env
-const BACKEND_URL = 'https://auth-fix-75.preview.emergentagent.com';
+const BACKEND_URL = 'https://working-auth-deploy.preview.emergentagent.com';
 
 // Test data
 const testUser = {
