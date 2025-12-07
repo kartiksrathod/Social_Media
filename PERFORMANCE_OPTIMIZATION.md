@@ -22,6 +22,14 @@ This document outlines all performance optimizations implemented to make SocialV
 - `/frontend/src/components/ui/lazy-image.jsx` - LazyImage component (already existed)
 - `/frontend/src/components/post/PostCard.jsx` - Main post images now use LazyImage
 - `/frontend/src/components/story/StoryViewer.jsx` - Story images use LazyImage
+- `/frontend/src/pages/SearchResults.jsx` - User avatars now lazy loaded
+- `/frontend/src/components/follow/SuggestedUsers.jsx` - Suggested user avatars lazy loaded
+- `/frontend/src/components/follow/FollowersModal.jsx` - Follower/following avatars lazy loaded
+- `/frontend/src/components/comment/CommentItem.jsx` - Comment author avatars lazy loaded
+- `/frontend/src/components/comment/CommentList.jsx` - Comment author avatars lazy loaded
+- `/frontend/src/components/search/SearchBar.jsx` - Search result avatars lazy loaded
+- `/frontend/src/components/notification/NotificationPanel.jsx` - Notification avatars lazy loaded
+- `/frontend/src/components/post/RepostDialog.jsx` - Post preview images lazy loaded
 
 **Benefits:**
 - **40-60% faster initial page load** (especially on Feed/Explore pages)
