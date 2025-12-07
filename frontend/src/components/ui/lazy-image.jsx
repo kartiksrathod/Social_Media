@@ -163,6 +163,19 @@ const LazyImage = React.memo(({
       )}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function for React.memo
+  // Only re-render if src, alt, className, or loading changes
+  return (
+    prevProps.src === nextProps.src &&
+    prevProps.alt === nextProps.alt &&
+    prevProps.className === nextProps.className &&
+    prevProps.loading === nextProps.loading &&
+    prevProps.width === nextProps.width &&
+    prevProps.height === nextProps.height
+  );
+});
+
+LazyImage.displayName = 'LazyImage';
 
 export default LazyImage;
