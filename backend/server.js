@@ -189,6 +189,7 @@ app.use('/api/stories', storyRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/collaborations', collaborationRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/safety', safetyRoutes);
 
 // CSRF token endpoint
 app.get('/api/csrf-token', getCsrfToken);
