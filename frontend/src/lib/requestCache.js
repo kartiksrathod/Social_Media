@@ -38,47 +38,70 @@ export const cache = setupCache({
 
 /**
  * Cache configuration for different endpoint types
+ * Optimized for social media app usage patterns
  */
 export const cacheConfig = {
   // Static data - cache for 1 hour
   static: {
     cache: {
       maxAge: 60 * 60 * 1000, // 1 hour
+      ignoreCache: false,
     },
   },
   
-  // User profiles - cache for 10 minutes
+  // User profiles - cache for 10 minutes (frequently viewed)
   profile: {
     cache: {
       maxAge: 10 * 60 * 1000, // 10 minutes
+      ignoreCache: false,
     },
   },
   
-  // Feed data - cache for 2 minutes
+  // Feed data - cache for 1 minute (balance between freshness and performance)
   feed: {
     cache: {
-      maxAge: 2 * 60 * 1000, // 2 minutes
+      maxAge: 60 * 1000, // 1 minute
+      ignoreCache: false,
     },
   },
   
-  // Notifications - cache for 30 seconds
+  // Explore/Discovery - cache for 3 minutes
+  explore: {
+    cache: {
+      maxAge: 3 * 60 * 1000, // 3 minutes
+      ignoreCache: false,
+    },
+  },
+  
+  // Notifications - cache for 15 seconds (needs to be fresh)
   notifications: {
     cache: {
-      maxAge: 30 * 1000, // 30 seconds
+      maxAge: 15 * 1000, // 15 seconds
+      ignoreCache: false,
     },
   },
   
-  // Trending hashtags - cache for 5 minutes
+  // Trending hashtags - cache for 10 minutes
   trending: {
     cache: {
-      maxAge: 5 * 60 * 1000, // 5 minutes
+      maxAge: 10 * 60 * 1000, // 10 minutes
+      ignoreCache: false,
     },
   },
   
-  // User suggestions - cache for 15 minutes
+  // User suggestions - cache for 30 minutes (static recommendations)
   suggestions: {
     cache: {
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 30 * 60 * 1000, // 30 minutes
+      ignoreCache: false,
+    },
+  },
+  
+  // Search results - cache for 5 minutes
+  search: {
+    cache: {
+      maxAge: 5 * 60 * 1000, // 5 minutes
+      ignoreCache: false,
     },
   },
   
@@ -86,6 +109,7 @@ export const cacheConfig = {
   noCache: {
     cache: {
       maxAge: 0,
+      ignoreCache: true,
     },
   },
 };
