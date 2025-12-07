@@ -97,12 +97,12 @@ export const postsAPI = {
 
 // ==================== HASHTAGS ====================
 export const hashtagsAPI = {
-  getTrending: (limit = 10) => api.get('/hashtags/trending', { params: { limit } }),
+  getTrending: (limit = 10) => api.get('/hashtags/trending', { params: { limit }, ...cacheConfig.trending }),
 };
 
 // ==================== NOTIFICATIONS ====================
 export const notificationsAPI = {
-  getAll: () => api.get('/notifications'),
+  getAll: () => api.get('/notifications', cacheConfig.notifications),
   markRead: (notificationId) => api.post(`/notifications/${notificationId}/read`),
   markAllRead: () => api.post('/notifications/read-all'),
 };
