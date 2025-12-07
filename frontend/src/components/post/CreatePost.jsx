@@ -57,6 +57,49 @@ export default function CreatePost({ onPostCreated }) {
   const searchTimeout = useRef(null);
   const draftTimeout = useRef(null);
 
+  // Load draft on mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('post_draft');
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setText(draft.text || '');
+        setVisibility(draft.visibility || 'public');
+        setHasDraft(true);
+      } catch (error) {
+        console.error('Error loading draft:', error);
+      }
+    }
+  }, []);
+
+  // Auto-save draft
+  useEffect(() => {
+    if (text.trim()) {
+      if (draftTimeout.current) {
+        clearTimeout(draftTimeout.current);
+      }
+
+      draftTimeout.current = setTimeout(() => {
+        const draft = {
+          text,
+          visibility,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('post_draft', JSON.stringify(draft));
+        setHasDraft(true);
+      }, 1000);
+    } else {
+      localStorage.removeItem('post_draft');
+      setHasDraft(false);
+    }
+
+    return () => {
+      if (draftTimeout.current) {
+        clearTimeout(draftTimeout.current);
+      }
+    };
+  }, [text, visibility]);
+
   // Handle mention search
   useEffect(() => {
     if (mentionQuery.length > 0) {
