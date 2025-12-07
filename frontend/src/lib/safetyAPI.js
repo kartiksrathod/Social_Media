@@ -9,7 +9,7 @@ import { api } from './api';
 // ============================================
 
 export const blockUser = async (userId, reason = '') => {
-  const response = await axios.post('/api/safety/block', {
+  const response = await api.post('/safety/block', {
     user_id: userId,
     reason
   });
