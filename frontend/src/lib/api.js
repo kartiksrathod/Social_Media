@@ -33,14 +33,14 @@ export const authAPI = {
 
 // ==================== USERS ====================
 export const usersAPI = {
-  getProfile: (username) => api.get(`/users/${username}`),
+  getProfile: (username) => api.get(`/users/${username}`, cacheConfig.profile),
   updateProfile: (data) => api.put('/users/me', data),
   follow: (userId) => api.post(`/users/${userId}/follow`),
   unfollow: (userId) => api.post(`/users/${userId}/unfollow`),
-  getFollowers: (userId) => api.get(`/users/${userId}/followers`),
-  getFollowing: (userId) => api.get(`/users/${userId}/following`),
-  search: (query) => api.get('/users/search', { params: { q: query } }),
-  getSuggested: () => api.get('/users/suggested'),
+  getFollowers: (userId) => api.get(`/users/${userId}/followers`, cacheConfig.profile),
+  getFollowing: (userId) => api.get(`/users/${userId}/following`, cacheConfig.profile),
+  search: (query) => api.get('/users/search', { params: { q: query }, ...cacheConfig.profile }),
+  getSuggested: () => api.get('/users/suggested', cacheConfig.suggestions),
   uploadAvatar: (file) => {
     const formData = new FormData();
     formData.append('file', file);
