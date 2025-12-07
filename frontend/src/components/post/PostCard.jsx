@@ -37,6 +37,8 @@ export default function PostCard({ post, onUpdate }) {
   const [repostCount, setRepostCount] = useState(post.repost_count || 0);
   const [userReaction, setUserReaction] = useState(post.user_reaction);
   const [reactionCounts, setReactionCounts] = useState(post.reaction_counts || {});
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
 
   const isOwnPost = user && post.author_id === user.id;
   const isRepost = post.is_repost;
