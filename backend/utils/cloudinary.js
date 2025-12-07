@@ -23,11 +23,12 @@ const uploadToCloudinary = (fileBuffer, folder = 'uploads', options = {}) => {
       const mockResult = {
         public_id: `${folder}/test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         url: `https://res.cloudinary.com/test_cloud/${options.resource_type || 'image'}/upload/v1/${folder}/test_image.${options.resource_type === 'video' ? 'mp4' : 'jpg'}`,
-        width: 800,
-        height: 600,
-        format: options.resource_type === 'video' ? 'mp4' : 'jpg',
+        width: options.width || 800,
+        height: options.height || 600,
+        format: options.format || (options.resource_type === 'video' ? 'mp4' : 'jpg'),
         duration: options.resource_type === 'video' ? 30 : null,
-        resource_type: options.resource_type || 'image'
+        resource_type: options.resource_type || 'image',
+        bytes: fileBuffer.length
       };
       
       console.log('Mock upload successful:', mockResult.url);
@@ -35,13 +36,19 @@ const uploadToCloudinary = (fileBuffer, folder = 'uploads', options = {}) => {
       return;
     }
 
+    const uploadOptions = {
+      folder: folder,
+      resource_type: options.resource_type || 'image',
+      secure: true,
+      // Add transformation options for Cloudinary
+      transformation: options.resource_type === 'image' ? [
+        { fetch_format: 'auto', quality: 'auto' }
+      ] : undefined,
+      ...options
+    };
+
     const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: folder,
-        resource_type: options.resource_type || 'image',
-        secure: true,
-        ...options
-      },
+      uploadOptions,
       (error, result) => {
         if (error) {
           console.error('Cloudinary upload error:', error);
@@ -54,7 +61,8 @@ const uploadToCloudinary = (fileBuffer, folder = 'uploads', options = {}) => {
             height: result.height,
             format: result.format,
             duration: result.duration || null, // For videos
-            resource_type: result.resource_type
+            resource_type: result.resource_type,
+            bytes: result.bytes
           });
         }
       }
