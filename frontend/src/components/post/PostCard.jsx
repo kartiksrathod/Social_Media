@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import LazyImage from '@/components/ui/lazy-image';
 import { postsAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -15,6 +16,7 @@ import { formatDistanceToNow } from 'date-fns';
 import RepostDialog from './RepostDialog';
 import ReactionButton from './ReactionButton';
 import CommentSection from '../comment/CommentSection';
+import { getPostImageUrl } from '../../lib/imageOptimizer';
 
 export default function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
