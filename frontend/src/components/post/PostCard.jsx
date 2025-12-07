@@ -187,6 +187,21 @@ export default function PostCard({ post, onUpdate }) {
     if (onUpdate) onUpdate();
   };
 
+  const handleBlock = async () => {
+    try {
+      const authorId = isRepost && originalPost ? originalPost.author_id : post.author_id;
+      const authorUsername = isRepost && originalPost ? originalPost.author_username : post.author_username;
+      await blockUser(authorId);
+      setBlockDialogOpen(false);
+      toast.success(`Blocked @${authorUsername}`, {
+        description: 'You will no longer see their posts or receive messages.'
+      });
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      toast.error('Failed to block user');
+    }
+  };
+
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % postImages.length);
   };
