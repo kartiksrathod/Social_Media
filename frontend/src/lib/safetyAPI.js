@@ -1,4 +1,4 @@
-import axios from './axios';
+import { api } from './api';
 
 /**
  * Safety API - Block and Report functionality
