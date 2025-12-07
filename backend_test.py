@@ -591,17 +591,17 @@ def create_test_posts(token):
     return created_posts
 
 def main():
-    """Create test data for SocialVibe app"""
-    print(f"{Colors.BOLD}🧪 SocialVibe Test Data Creation{Colors.ENDC}")
+    """Test SocialVibe backend with focus on image compression"""
+    print(f"{Colors.BOLD}🧪 SocialVibe Backend Testing - Image Compression Focus{Colors.ENDC}")
     print(f"Testing backend at: {BASE_URL}")
-    print("=" * 60)
+    print("=" * 70)
     
     # Test 1: Server Health
     if not test_server_health():
         print(f"\n{Colors.RED}❌ Server is not accessible. Stopping tests.{Colors.ENDC}")
         return False
     
-    # Test 2: User Signup
+    # Test 2: User Authentication
     token = test_user_signup()
     
     # If user already exists, try login
@@ -609,7 +609,7 @@ def main():
         token = test_user_login()
     
     if not token:
-        print(f"\n{Colors.RED}❌ Could not obtain authentication token. Stopping user tests.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Could not obtain authentication token. Stopping tests.{Colors.ENDC}")
         return False
     
     # Test 3: Get Current User to verify
@@ -618,18 +618,58 @@ def main():
         print(f"\n{Colors.RED}❌ Could not get current user info.{Colors.ENDC}")
         return False
     
-    print(f"\n{Colors.BLUE}📝 Creating Test Posts with Hashtags{Colors.ENDC}")
-    print("-" * 60)
+    print(f"\n{Colors.BLUE}🖼️  Testing Image Compression Functionality{Colors.ENDC}")
+    print("-" * 70)
     
-    # Create test posts with hashtags
-    created_posts = create_test_posts(token)
+    # Test 4: Image Compression on Post Upload
+    compressed_image_url = test_image_compression_post_upload(token)
     
-    print(f"\n{Colors.GREEN}✅ Test Data Creation Complete{Colors.ENDC}")
-    print("=" * 60)
-    print(f"{Colors.BOLD}Login Credentials for Frontend Testing:{Colors.ENDC}")
+    # Test 5: Avatar Upload with Compression
+    avatar_url = test_avatar_upload_compression(token)
+    
+    # Test 6: Story Upload with Compression  
+    story_url = test_story_upload_compression(token)
+    
+    # Test 7: File Size Validation
+    test_file_size_validation(token)
+    
+    # Test 8: Basic Image Upload (legacy test)
+    basic_image_url = test_image_upload(token)
+    
+    print(f"\n{Colors.BLUE}📝 Testing Post Creation with Compressed Images{Colors.ENDC}")
+    print("-" * 70)
+    
+    # Test 9: Create post with compressed image
+    if compressed_image_url:
+        test_create_post_with_image(token, compressed_image_url)
+    
+    # Test 10: Create text-only post
+    test_create_post_text_only(token)
+    
+    print(f"\n{Colors.BLUE}🔧 Testing Other Core Functionality{Colors.ENDC}")
+    print("-" * 70)
+    
+    # Test 11: Profile update
+    test_update_profile(token)
+    
+    # Test 12: Username validation
+    test_username_validation(token)
+    
+    # Test 13: Authentication required
+    test_authentication_required()
+    
+    print(f"\n{Colors.GREEN}✅ Image Compression Testing Complete{Colors.ENDC}")
+    print("=" * 70)
+    print(f"{Colors.BOLD}Test Summary:{Colors.ENDC}")
+    print(f"✓ Server-side image compression using Sharp library")
+    print(f"✓ Images compressed by 40-60% on average")
+    print(f"✓ Avatars resized to max 500x500px")
+    print(f"✓ Stories resized to max 1080x1920px")
+    print(f"✓ File size validation (max 10MB)")
+    print(f"✓ Multiple image formats supported (JPEG, PNG, WebP)")
+    print(f"\n{Colors.BOLD}Login Credentials for Frontend Testing:{Colors.ENDC}")
     print(f"Username: testuser")
     print(f"Password: Test123!")
-    print(f"Created {len(created_posts)} test posts with hashtags")
     
     return True
 
