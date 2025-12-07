@@ -218,6 +218,27 @@ const SidebarContent = ({ isMobile = false }) => {
              <PlusCircle className="mr-2 w-5 h-5" /> Post
           </Button>
         </Link>
+        
+        {/* Settings Links */}
+        <div className="mt-6 pt-4 border-t border-border/50">
+          <p className="text-xs font-semibold text-muted-foreground mb-2 px-2">SETTINGS</p>
+          {settingsLinks.map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className={`
+                flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
+                ${isActive(link.href) 
+                  ? 'active-accent font-semibold border border-primary/30' 
+                  : 'text-muted-foreground hover:bg-surface-700 hover-accent border border-transparent'
+                }
+              `}
+            >
+              <link.icon className={`w-6 h-6 transition-colors ${isActive(link.href) ? 'fill-current' : ''}`} />
+              <span className="text-lg">{link.label}</span>
+            </Link>
+          ))}
+        </div>
       </nav>
 
       {/* User Section */}
