@@ -342,6 +342,44 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
           <CommentReplies commentId={comment.id} postId={comment.post_id} currentUser={currentUser} />
         </div>
       )}
+
+      {/* Report Dialog */}
+      <ReportDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        type="comment"
+        targetId={comment.id}
+        targetName={comment.username}
+      />
+
+      {/* Block Confirmation Dialog */}
+      <AlertDialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Block @{comment.username}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              They will not be able to:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>See your posts or profile</li>
+                <li>Send you messages</li>
+                <li>Follow you or see your activity</li>
+              </ul>
+              <p className="mt-3 text-sm">
+                You won't see their content either. You can unblock them anytime from settings.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBlock}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Block User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
