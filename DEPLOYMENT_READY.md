@@ -34,7 +34,7 @@ This repository has been cleaned up and verified for deployment.
 
 ### Frontend Configuration (`/app/frontend/.env`):
 ✅ **VERIFIED** - Already configured correctly:
-- Backend API URL: https://deploy-ready-68.preview.emergentagent.com
+- Backend API URL: https://socket-connect-issue.preview.emergentagent.com
 - WebSocket configuration
 - Production-ready settings
 
