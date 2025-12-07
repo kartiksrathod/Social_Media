@@ -86,10 +86,13 @@ const uploadLimiter = rateLimit({
 
 // Sanitize user input to prevent XSS
 const sanitizeInput = (req, res, next) => {
+  // Fields that should NOT be sanitized (will be handled by validation or need to be stored as-is)
+  const skipFields = ['password', 'email', 'password_hash'];
+  
   // Sanitize body
   if (req.body) {
     Object.keys(req.body).forEach(key => {
-      if (typeof req.body[key] === 'string') {
+      if (typeof req.body[key] === 'string' && !skipFields.includes(key)) {
         // Escape HTML entities
         req.body[key] = validator.escape(req.body[key]);
       }
@@ -99,7 +102,7 @@ const sanitizeInput = (req, res, next) => {
   // Sanitize query params
   if (req.query) {
     Object.keys(req.query).forEach(key => {
-      if (typeof req.query[key] === 'string') {
+      if (typeof req.query[key] === 'string' && !skipFields.includes(key)) {
         req.query[key] = validator.escape(req.query[key]);
       }
     });
@@ -108,7 +111,7 @@ const sanitizeInput = (req, res, next) => {
   // Sanitize params
   if (req.params) {
     Object.keys(req.params).forEach(key => {
-      if (typeof req.params[key] === 'string') {
+      if (typeof req.params[key] === 'string' && !skipFields.includes(key)) {
         req.params[key] = validator.escape(req.params[key]);
       }
     });
