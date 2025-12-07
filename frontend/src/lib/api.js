@@ -38,9 +38,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Export cache utilities
-export { clearCache, invalidateUserCache, invalidatePostCache };
-
 // ==================== AUTH ====================
 export const authAPI = {
   signup: (data) => api.post('/auth/signup', data),
