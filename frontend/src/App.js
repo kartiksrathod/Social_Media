@@ -71,6 +71,8 @@ function App() {
                       <Route path="/messages" element={<Messages />} />
                       <Route path="/saved" element={<SavedPosts />} />
                       <Route path="/close-friends" element={<CloseFriends />} />
+                      <Route path="/blocked-users" element={<BlockedUsers />} />
+                      <Route path="/admin/reports" element={<AdminDashboard />} />
                       <Route path="/hashtag/:tag" element={<HashtagPage />} />
                       <Route path="/profile/:username" element={<Profile />} />
                       <Route path="/profile" element={<Profile />} /> {/* Self profile */}
