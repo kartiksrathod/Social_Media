@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight, Trash2, Eye } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Button } from '../ui/button';
+import LazyImage from '../ui/lazy-image';
 import { storiesAPI } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import StoryViewersModal from './StoryViewersModal';
+import { getOptimizedImageUrl } from '../../lib/imageOptimizer';
 
 export default function StoryViewer({ open, onClose, storiesData, initialUserId }) {
   const { user } = useAuth();
