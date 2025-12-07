@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles, CheckCircle, Users, Shield, Zap, ArrowRight, Menu, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import LazyImage from '@/components/ui/lazy-image';
 
 export default function LandingPage() {
   const navigate = useNavigate();
