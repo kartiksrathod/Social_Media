@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 
 /**
  * Safety API - Block and Report functionality
