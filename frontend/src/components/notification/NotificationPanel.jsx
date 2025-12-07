@@ -2,6 +2,8 @@ import React from 'react';
 import { X, Heart, MessageCircle, UserPlus, AtSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const NotificationPanel = ({ notifications, onClose, onMarkAsRead, onMarkAllAsRead }) => {
   const getNotificationIcon = (type) => {
@@ -97,10 +99,12 @@ const NotificationPanel = ({ notifications, onClose, onMarkAsRead, onMarkAllAsRe
                   `}
                 >
                   <div className="relative">
-                    <img
-                      src={notification.actor_avatar || `https://ui-avatars.com/api/?name=${notification.actor_username}&background=random`}
+                    <LazyImage
+                      src={getAvatarUrl(notification.actor_avatar || `https://ui-avatars.com/api/?name=${notification.actor_username}&background=random`, 40)}
                       alt={notification.actor_username}
                       className="w-10 h-10 rounded-full ring-2 ring-border"
+                      width={40}
+                      height={40}
                     />
                     <div className="absolute -bottom-1 -right-1 surface-800 rounded-full p-1 border border-border">
                       {getNotificationIcon(notification.type)}

@@ -4,6 +4,8 @@ import { usersAPI, hashtagsAPI } from '../../lib/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -117,10 +119,12 @@ const SearchBar = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 px-3 py-3 sm:py-2 hover:surface-700 rounded-lg transition-colors touch-manipulation min-h-[56px] sm:min-h-0"
                     >
-                      <img
-                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+                      <LazyImage
+                        src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`, 48)}
                         alt={user.username}
                         className="w-12 h-12 sm:w-10 sm:h-10 rounded-full ring-2 ring-border flex-shrink-0"
+                        width={48}
+                        height={48}
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-base sm:text-sm truncate text-foreground">{user.username}</p>
