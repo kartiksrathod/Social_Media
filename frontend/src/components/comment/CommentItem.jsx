@@ -231,41 +231,66 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
                   </p>
                 </div>
                 
-                {isOwnComment && (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowMenu(!showMenu)}
-                      className="p-1 surface-600 hover:surface-600 rounded-full transition-colors hover-accent"
-                    >
-                      <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                    
-                    {showMenu && (
-                      <div className="absolute right-0 top-8 surface-800 border border-border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
-                        <button
-                          onClick={() => {
-                            setIsEditing(true);
-                            setShowMenu(false);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm hover:surface-700 flex items-center gap-2 text-foreground transition-colors"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleDelete();
-                            setShowMenu(false);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm text-destructive hover:surface-700 flex items-center gap-2 transition-colors"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowMenu(!showMenu)}
+                    className="p-1 surface-600 hover:surface-600 rounded-full transition-colors hover-accent"
+                  >
+                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                  
+                  {showMenu && (
+                    <div className="absolute right-0 top-8 surface-800 border border-border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
+                      {isOwnComment ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setIsEditing(true);
+                              setShowMenu(false);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:surface-700 flex items-center gap-2 text-foreground transition-colors"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleDelete();
+                              setShowMenu(false);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-destructive hover:surface-700 flex items-center gap-2 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setReportOpen(true);
+                              setShowMenu(false);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:surface-700 flex items-center gap-2 text-foreground transition-colors"
+                          >
+                            <Flag className="w-3 h-3" />
+                            Report
+                          </button>
+                          <button
+                            onClick={() => {
+                              setBlockDialogOpen(true);
+                              setShowMenu(false);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-destructive hover:surface-700 flex items-center gap-2 transition-colors"
+                          >
+                            <Ban className="w-3 h-3" />
+                            Block @{comment.username}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
