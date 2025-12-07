@@ -248,11 +248,211 @@ def test_authentication_required():
     except requests.exceptions.RequestException as e:
         log_test("Authentication Required", "FAIL", f"Request error: {str(e)}")
 
-def test_image_upload(token):
-    """Test image upload endpoint"""
+def create_test_image(width=800, height=600, format='JPEG'):
+    """Create a test image with specified dimensions and format"""
+    from PIL import Image, ImageDraw
+    import io
+    
+    # Create a colorful test image
+    img = Image.new('RGB', (width, height), color='white')
+    draw = ImageDraw.Draw(img)
+    
+    # Add some colorful shapes to make it compressible
+    draw.rectangle([50, 50, width-50, height-50], fill='lightblue', outline='darkblue', width=5)
+    draw.ellipse([100, 100, width-100, height-100], fill='lightgreen', outline='darkgreen', width=3)
+    draw.rectangle([width//4, height//4, 3*width//4, 3*height//4], fill='lightyellow', outline='orange', width=2)
+    
+    # Save to bytes
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format=format, quality=95)  # High quality to test compression
+    img_bytes.seek(0)
+    
+    return img_bytes.getvalue()
+
+def test_image_compression_post_upload(token):
+    """Test image compression on post upload endpoint"""
     headers = {"Authorization": f"Bearer {token}"}
     
-    # Create a simple test image (1x1 pixel PNG)
+    try:
+        # Test with different image formats and sizes
+        test_cases = [
+            {'format': 'JPEG', 'width': 1200, 'height': 800, 'name': 'large_jpeg.jpg', 'mime': 'image/jpeg'},
+            {'format': 'PNG', 'width': 800, 'height': 600, 'name': 'medium_png.png', 'mime': 'image/png'},
+            {'format': 'JPEG', 'width': 400, 'height': 300, 'name': 'small_jpeg.jpg', 'mime': 'image/jpeg'},
+        ]
+        
+        results = []
+        
+        for case in test_cases:
+            log_test(f"Testing {case['name']}", "INFO", f"Format: {case['format']}, Size: {case['width']}x{case['height']}")
+            
+            # Create test image
+            image_data = create_test_image(case['width'], case['height'], case['format'])
+            original_size = len(image_data)
+            
+            files = {'file': (case['name'], io.BytesIO(image_data), case['mime'])}
+            response = requests.post(f"{API_BASE}/posts/upload-image", headers=headers, files=files, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ['url', 'width', 'height', 'format', 'originalSize', 'compressedSize', 'compressionRatio']
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if not missing_fields:
+                    compression_ratio = float(data['compressionRatio'].replace('%', ''))
+                    size_reduction = ((original_size - data['compressedSize']) / original_size) * 100
+                    
+                    log_test(f"Image Compression - {case['name']}", "PASS", 
+                           f"Original: {original_size//1024}KB -> Compressed: {data['compressedSize']//1024}KB "
+                           f"({data['compressionRatio']} saved), Dimensions: {data['width']}x{data['height']}")
+                    
+                    results.append({
+                        'name': case['name'],
+                        'success': True,
+                        'compression_ratio': compression_ratio,
+                        'url': data['url']
+                    })
+                else:
+                    log_test(f"Image Compression - {case['name']}", "FAIL", f"Missing fields: {missing_fields}")
+                    results.append({'name': case['name'], 'success': False})
+            else:
+                error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+                log_test(f"Image Compression - {case['name']}", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+                results.append({'name': case['name'], 'success': False})
+        
+        # Check if compression is working effectively
+        successful_results = [r for r in results if r['success']]
+        if successful_results:
+            avg_compression = sum(r['compression_ratio'] for r in successful_results) / len(successful_results)
+            if avg_compression >= 30:  # At least 30% compression on average
+                log_test("Image Compression Effectiveness", "PASS", f"Average compression: {avg_compression:.1f}%")
+                return successful_results[0]['url'] if successful_results else None
+            else:
+                log_test("Image Compression Effectiveness", "WARN", f"Low compression ratio: {avg_compression:.1f}%")
+                return successful_results[0]['url'] if successful_results else None
+        else:
+            log_test("Image Compression Effectiveness", "FAIL", "No successful compressions")
+            return None
+            
+    except Exception as e:
+        log_test("Image Compression Test", "FAIL", f"Exception: {str(e)}")
+        return None
+
+def test_avatar_upload_compression(token):
+    """Test avatar upload with compression"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    try:
+        # Create a larger avatar image to test compression and resizing
+        image_data = create_test_image(800, 800, 'JPEG')  # Large square image
+        original_size = len(image_data)
+        
+        files = {'file': ('avatar.jpg', io.BytesIO(image_data), 'image/jpeg')}
+        response = requests.post(f"{API_BASE}/users/upload-avatar", headers=headers, files=files, timeout=30)
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ['url', 'width', 'height', 'format', 'compressionRatio']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                # Check if avatar was resized to max 500x500
+                if data['width'] <= 500 and data['height'] <= 500:
+                    log_test("Avatar Upload Compression", "PASS", 
+                           f"Resized to {data['width']}x{data['height']}, Compression: {data['compressionRatio']}")
+                    return data['url']
+                else:
+                    log_test("Avatar Upload Compression", "FAIL", 
+                           f"Avatar not properly resized: {data['width']}x{data['height']} (should be ≤500x500)")
+                    return None
+            else:
+                log_test("Avatar Upload Compression", "FAIL", f"Missing fields: {missing_fields}")
+                return None
+        else:
+            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+            log_test("Avatar Upload Compression", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            return None
+            
+    except Exception as e:
+        log_test("Avatar Upload Compression", "FAIL", f"Exception: {str(e)}")
+        return None
+
+def test_story_upload_compression(token):
+    """Test story upload with compression"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    try:
+        # Create a story-sized image (portrait orientation)
+        image_data = create_test_image(1080, 1920, 'JPEG')  # Story dimensions
+        original_size = len(image_data)
+        
+        files = {'file': ('story.jpg', io.BytesIO(image_data), 'image/jpeg')}
+        response = requests.post(f"{API_BASE}/stories/upload", headers=headers, files=files, timeout=30)
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ['url', 'media_type', 'width', 'height', 'format', 'compressionRatio']
+            missing_fields = [field for field in required_fields if field not in data]
+            
+            if not missing_fields:
+                # Check if it's properly processed as image
+                if data['media_type'] == 'image' and data['compressionRatio'] != 'N/A':
+                    log_test("Story Upload Compression", "PASS", 
+                           f"Story image: {data['width']}x{data['height']}, Compression: {data['compressionRatio']}")
+                    return data['url']
+                else:
+                    log_test("Story Upload Compression", "FAIL", 
+                           f"Story not properly processed: media_type={data['media_type']}, compression={data['compressionRatio']}")
+                    return None
+            else:
+                log_test("Story Upload Compression", "FAIL", f"Missing fields: {missing_fields}")
+                return None
+        else:
+            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
+            log_test("Story Upload Compression", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            return None
+            
+    except Exception as e:
+        log_test("Story Upload Compression", "FAIL", f"Exception: {str(e)}")
+        return None
+
+def test_file_size_validation(token):
+    """Test file size validation (max 10MB)"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    try:
+        # Create a very large image (should be rejected)
+        large_image_data = create_test_image(4000, 4000, 'JPEG')  # Very large image
+        
+        # Check if it's actually over 10MB, if not, create a larger one
+        if len(large_image_data) < 10 * 1024 * 1024:
+            # Create an even larger image by repeating data
+            large_image_data = large_image_data * 5  # This should exceed 10MB
+        
+        files = {'file': ('huge_image.jpg', io.BytesIO(large_image_data), 'image/jpeg')}
+        response = requests.post(f"{API_BASE}/posts/upload-image", headers=headers, files=files, timeout=30)
+        
+        if response.status_code == 400:
+            error_data = response.json()
+            if 'too large' in error_data.get('detail', '').lower() or '10mb' in error_data.get('detail', '').lower():
+                log_test("File Size Validation", "PASS", "Correctly rejected oversized file")
+                return True
+            else:
+                log_test("File Size Validation", "FAIL", f"Wrong error message: {error_data.get('detail', 'Unknown')}")
+                return False
+        else:
+            log_test("File Size Validation", "FAIL", f"Expected 400, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        log_test("File Size Validation", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_image_upload(token):
+    """Test basic image upload endpoint (legacy test)"""
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    # Create a simple test image
     import base64
     import io
     
@@ -269,18 +469,18 @@ def test_image_upload(token):
         if response.status_code == 200:
             data = response.json()
             if 'url' in data and data['url']:
-                log_test("Image Upload", "PASS", f"Image URL: {data['url'][:50]}...")
+                log_test("Basic Image Upload", "PASS", f"Image URL: {data['url'][:50]}...")
                 return data['url']
             else:
-                log_test("Image Upload", "FAIL", "Missing URL in response")
+                log_test("Basic Image Upload", "FAIL", "Missing URL in response")
                 return None
         else:
             error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {'detail': response.text}
-            log_test("Image Upload", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
+            log_test("Basic Image Upload", "FAIL", f"Status code: {response.status_code}, Error: {error_data.get('detail', 'Unknown error')}")
             return None
             
     except requests.exceptions.RequestException as e:
-        log_test("Image Upload", "FAIL", f"Request error: {str(e)}")
+        log_test("Basic Image Upload", "FAIL", f"Request error: {str(e)}")
         return None
 
 def test_create_post_with_image(token, image_url=None):
