@@ -162,13 +162,16 @@ app.use(cors({
 }));
 
 // MongoDB injection prevention
-app.use(mongoSanitizer);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use(mongoSanitizer);
 
 // HTTP Parameter Pollution prevention
-app.use(hppProtection);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use(hppProtection);
 
 // Input sanitization
-app.use(sanitizeInput);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use(sanitizeInput);
 
 // API rate limiting (applies to all routes)
 // TEMPORARILY DISABLED FOR DEBUGGING
