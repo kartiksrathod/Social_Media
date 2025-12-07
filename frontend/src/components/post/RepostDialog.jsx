@@ -6,6 +6,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Repeat2, MessageSquareQuote } from 'lucide-react';
 import { postsAPI } from '../../lib/api';
 import { toast } from 'sonner';
+import LazyImage from '../ui/lazy-image';
+import { getPostImageUrl } from '../../lib/imageOptimizer';
 
 export default function RepostDialog({ post, open, onOpenChange, onRepost }) {
   const [quoteText, setQuoteText] = useState('');
