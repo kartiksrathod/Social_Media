@@ -83,7 +83,18 @@ export default function Profile() {
       const newPosts = postsResponse.data;
 
       if (isLoadMore) {
-        setPosts(prev => [...prev, ...newPosts]);
+        setPosts(prev => {
+          const combined = [...prev, ...newPosts];
+          
+          // DOM cleanup: keep max posts to prevent memory issues
+          if (!useVirtualScroll && combined.length > PERFORMANCE_CONFIG.MAX_POSTS_IN_DOM) {
+            const excess = combined.length - PERFORMANCE_CONFIG.MAX_POSTS_IN_DOM;
+            console.log(`[Performance] Cleaning up ${excess} old posts from DOM`);
+            return combined.slice(excess);
+          }
+          
+          return combined;
+        });
       } else {
         setPosts(newPosts);
       }
