@@ -52,28 +52,30 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
 
-                {/* Protected App Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route element={<AppLayout />}>
-                    <Route path="/home" element={<Feed />} />
-                    <Route path="/explore" element={<Explore />} />
-                    <Route path="/search" element={<SearchResults />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/saved" element={<SavedPosts />} />
-                    <Route path="/close-friends" element={<CloseFriends />} />
-                    <Route path="/hashtag/:tag" element={<HashtagPage />} />
-                    <Route path="/profile/:username" element={<Profile />} />
-                    <Route path="/profile" element={<Profile />} /> {/* Self profile */}
+                  {/* Protected App Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route element={<AppLayout />}>
+                      <Route path="/home" element={<Feed />} />
+                      <Route path="/explore" element={<Explore />} />
+                      <Route path="/search" element={<SearchResults />} />
+                      <Route path="/notifications" element={<Notifications />} />
+                      <Route path="/messages" element={<Messages />} />
+                      <Route path="/saved" element={<SavedPosts />} />
+                      <Route path="/close-friends" element={<CloseFriends />} />
+                      <Route path="/hashtag/:tag" element={<HashtagPage />} />
+                      <Route path="/profile/:username" element={<Profile />} />
+                      <Route path="/profile" element={<Profile />} /> {/* Self profile */}
+                    </Route>
                   </Route>
-                </Route>
-              </Routes>
+                </Routes>
+              </Suspense>
             </BrowserRouter>
             <Toaster position="bottom-right" theme="system" />
           </SocketProvider>
