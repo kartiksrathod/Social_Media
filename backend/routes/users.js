@@ -43,9 +43,19 @@ router.get('/search', authenticateToken, async (req, res) => {
       return res.status(400).json({ detail: 'Search query required' });
     }
 
-    const users = await User.find(
-      { username: { $regex: q, $options: 'i' } }
-    ).limit(20);
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: req.userId }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: req.userId }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
+
+    const users = await User.find({
+      username: { $regex: q, $options: 'i' },
+      id: { $nin: blockedUserIds }
+    }).limit(20);
 
     res.json(users.map(user => userToPublic(user, req.userId)));
   } catch (error) {
