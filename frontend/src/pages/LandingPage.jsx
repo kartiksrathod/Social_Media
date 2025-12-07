@@ -127,7 +127,11 @@ export default function LandingPage() {
                        <div className="flex -space-x-2">
                           {[1,2,3].map(i => (
                              <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                                <img src={`https://i.pravatar.cc/100?img=${i + 20}`} alt="user" />
+                                <LazyImage 
+                                  src={`https://i.pravatar.cc/100?img=${i + 20}`} 
+                                  alt="user"
+                                  className="w-full h-full object-cover"
+                                />
                              </div>
                           ))}
                        </div>
