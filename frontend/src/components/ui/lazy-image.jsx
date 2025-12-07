@@ -118,6 +118,8 @@ const LazyImage = ({
       <img
         ref={imgRef}
         src={imageSrc}
+        srcSet={responsiveSrcSet}
+        sizes={responsiveSizes}
         alt={alt}
         width={width}
         height={height}
