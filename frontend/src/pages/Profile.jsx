@@ -310,6 +310,23 @@ export default function Profile() {
                  >
                    <Star className={`w-5 h-5 ${profileUser.is_close_friend ? 'fill-current' : ''}`} />
                  </Button>
+                 <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button variant="outline" size="icon" className="rounded-full">
+                       <MoreHorizontal className="w-5 h-5" />
+                     </Button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent align="end">
+                     <DropdownMenuItem onClick={() => setReportOpen(true)}>
+                       <Flag className="w-4 h-4 mr-2" />
+                       Report User
+                     </DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => setBlockDialogOpen(true)} className="text-red-600">
+                       <Ban className="w-4 h-4 mr-2" />
+                       Block @{profileUser.username}
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                 </DropdownMenu>
                </div>
              )}
           </div>
