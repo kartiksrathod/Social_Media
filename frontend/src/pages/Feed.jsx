@@ -88,7 +88,7 @@ export default function Feed() {
   };
 
   const { containerRef, isPulling, pullDistance, isRefreshing, refreshProgress } = 
-    usePullToRefresh(handleRefresh, { enabled: !loading });
+    usePullToRefresh(handleRefresh, { enabled: !loading && PERFORMANCE_CONFIG.ENABLE_PULL_TO_REFRESH });
 
   // Scroll-to-top functionality
   const { showScrollTop, scrollToTop } = useScrollToTop(300);
@@ -97,14 +97,14 @@ export default function Feed() {
     loadFeed();
   }, []);
 
-  const handlePostUpdate = () => {
+  const handlePostUpdate = useCallback(() => {
     // Reset and reload from start
     setSkip(0);
     setHasMore(true);
     loadFeed(false);
-  };
+  }, []);
 
-  const handleLike = async (postId) => {
+  const handleLike = useCallback(async (postId) => {
     try {
       const postToUpdate = posts.find(p => p.id === postId);
       if (!postToUpdate) return;
@@ -118,9 +118,9 @@ export default function Feed() {
     } catch (error) {
       toast.error('Failed to update like');
     }
-  };
+  }, [posts, handlePostUpdate]);
 
-  const handleSave = async (postId) => {
+  const handleSave = useCallback(async (postId) => {
     try {
       const postToUpdate = posts.find(p => p.id === postId);
       if (!postToUpdate) return;
@@ -136,7 +136,17 @@ export default function Feed() {
     } catch (error) {
       toast.error('Failed to save post');
     }
-  };
+  }, [posts, handlePostUpdate]);
+
+  // Render header (stories bar)
+  const FeedHeader = useMemo(() => (
+    <>
+      <h2 className="text-xl sm:text-2xl font-heading font-bold sticky top-0 bg-background/95 backdrop-blur z-30 py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 border-b border-border/50 md:hidden">
+        Home
+      </h2>
+      <StoriesBar />
+    </>
+  ), []);
 
   return (
     <>
