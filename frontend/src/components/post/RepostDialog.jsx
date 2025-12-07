@@ -161,8 +161,8 @@ export default function RepostDialog({ post, open, onOpenChange, onRepost }) {
               {truncateText(post.text)}
             </p>
             {post.image_url && (
-              <img 
-                src={post.image_url} 
+              <LazyImage 
+                src={getPostImageUrl(post.image_url, 'thumbnail')} 
                 alt="Post" 
                 className="mt-2 rounded-md max-h-32 object-cover w-full"
               />
