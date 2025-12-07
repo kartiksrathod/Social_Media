@@ -18,6 +18,8 @@ const HashtagPage = lazy(() => import("./pages/HashtagPage"));
 const Messages = lazy(() => import("./pages/Messages"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
 const CloseFriends = lazy(() => import("./pages/CloseFriends"));
+const BlockedUsers = lazy(() => import("./pages/BlockedUsers"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AppLayout = lazy(() => import("./components/layout/AppLayout"));
 
 // Loading fallback component
