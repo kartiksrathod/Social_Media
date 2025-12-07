@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * LazyImage Component with Intersection Observer
+ * LazyImage Component with Intersection Observer & Responsive Images
  * - Lazy loads images when they enter the viewport
  * - Shows blur-up effect with placeholder
- * - Supports WebP with fallback
+ * - Supports responsive images with srcset
+ * - Automatic WebP format detection
  * - Progressive loading with low-quality placeholder
  */
 
@@ -15,10 +16,13 @@ const LazyImage = ({
   className = '',
   width,
   height,
+  sizes,
+  srcSet,
   placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"%3E%3Crect fill="%23e5e7eb" width="400" height="300"/%3E%3C/svg%3E',
   onLoad,
   onError,
   loading = 'lazy',
+  responsive = false,
   ...props
 }) => {
   const [imageSrc, setImageSrc] = useState(placeholder);
