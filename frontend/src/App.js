@@ -1,21 +1,34 @@
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { SocketProvider } from "./contexts/SocketContext";
-import LandingPage from "./pages/LandingPage";
-import Feed from "./pages/Feed";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
-import Explore from "./pages/Explore";
-import Notifications from "./pages/Notifications";
-import SavedPosts from "./pages/SavedPosts";
-import HashtagPage from "./pages/HashtagPage";
-import Messages from "./pages/Messages";
-import SearchResults from "./pages/SearchResults";
-import CloseFriends from "./pages/CloseFriends";
-import AppLayout from "./components/layout/AppLayout";
+
+// Lazy load all page components for better performance
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const SavedPosts = lazy(() => import("./pages/SavedPosts"));
+const HashtagPage = lazy(() => import("./pages/HashtagPage"));
+const Messages = lazy(() => import("./pages/Messages"));
+const SearchResults = lazy(() => import("./pages/SearchResults"));
+const CloseFriends = lazy(() => import("./pages/CloseFriends"));
+const AppLayout = lazy(() => import("./components/layout/AppLayout"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="text-center space-y-4">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+      <p className="text-sm text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
 
 // Protected Route - Requires authentication
 const ProtectedRoute = () => {
