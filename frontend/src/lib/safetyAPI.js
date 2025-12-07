@@ -36,7 +36,7 @@ export const isUserBlocked = async (userId) => {
 // ============================================
 
 export const reportContent = async (type, targetId, reason, description = '') => {
-  const response = await axios.post('/api/safety/report', {
+  const response = await api.post('/safety/report', {
     type,
     target_id: targetId,
     reason,
