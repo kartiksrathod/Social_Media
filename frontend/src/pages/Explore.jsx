@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -9,12 +9,18 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollToTopButton } from '@/components/ui/scroll-to-top';
 import { PullToRefreshIndicator } from '@/components/ui/pull-to-refresh';
+import VirtualizedFeed from '@/components/feed/VirtualizedFeed';
 import { Link } from 'react-router-dom';
 import { postsAPI, usersAPI } from '../lib/api';
 import { toast } from 'sonner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { useScrollToTop } from '../hooks/useScrollToTop';
+import { 
+  PERFORMANCE_CONFIG, 
+  shouldUseVirtualScrolling,
+  getOptimalPageSize 
+} from '../config/performance';
 
 export default function Explore() {
   const [posts, setPosts] = useState([]);
@@ -24,7 +30,13 @@ export default function Explore() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [skip, setSkip] = useState(0);
-  const LIMIT = 10;
+  const LIMIT = getOptimalPageSize();
+
+  // Determine if we should use virtual scrolling
+  const useVirtualScroll = useMemo(() => 
+    shouldUseVirtualScrolling(posts.length), 
+    [posts.length]
+  );
 
   const loadExploreFeed = async (isLoadMore = false) => {
     try {
