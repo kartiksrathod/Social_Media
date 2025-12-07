@@ -7,7 +7,7 @@ import { setupCache } from 'axios-cache-adapter';
  * - In-memory storage (can be upgraded to IndexedDB)
  */
 
-// Create cache adapter
+// Create cache adapter with optimized settings
 export const cache = setupCache({
   maxAge: 5 * 60 * 1000, // Default: 5 minutes
   exclude: {
@@ -18,8 +18,20 @@ export const cache = setupCache({
   },
   // Store in memory (fastest)
   store: 'memory',
-  // Ignore cache headers from server
+  // Respect cache headers from server if present
   ignoreCache: false,
+  // Cache key customization for better hit rates
+  key: req => {
+    const url = req.url || '';
+    const params = req.params ? JSON.stringify(req.params) : '';
+    return url + params;
+  },
+  // Invalidate on error
+  invalidate: async (config, request) => {
+    if (request.response?.status >= 400) {
+      await cache.store.removeItem(config.uuid);
+    }
+  },
   // Debug mode
   debug: process.env.NODE_ENV === 'development',
 });
