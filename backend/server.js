@@ -139,6 +139,12 @@ app.use(helmet({
 // Custom security headers
 app.use(securityHeaders);
 
+// DEBUG: Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
+
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' })); // Limit payload size
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
