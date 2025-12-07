@@ -252,6 +252,15 @@ router.get('/:commentId/replies', authenticateToken, async (req, res) => {
     const { sort = 'newest' } = req.query;
     const { user_id } = req.user;
 
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: user_id }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: user_id }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
+
     // Determine sort criteria
     let sortCriteria = { created_at: 1 }; // Default: oldest first for replies (conversation flow)
     if (sort === 'newest') {
@@ -262,9 +271,10 @@ router.get('/:commentId/replies', authenticateToken, async (req, res) => {
       sortCriteria = { reply_count: -1, created_at: 1 };
     }
 
-    // Get all replies for this comment
+    // Get all replies for this comment, excluding blocked users
     const replies = await Comment.find({ 
-      parent_comment_id: commentId 
+      parent_comment_id: commentId,
+      user_id: { $nin: blockedUserIds }
     }).sort(sortCriteria);
 
     // Format replies with user like status and reaction data
