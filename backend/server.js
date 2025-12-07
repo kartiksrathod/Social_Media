@@ -118,7 +118,8 @@ app.set('userSockets', userSockets);
 // ===== SECURITY MIDDLEWARE =====
 
 // Helmet - Set security headers
-app.use(helmet({
+// TEMPORARILY DISABLED FOR DEBUGGING
+/* app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -134,10 +135,11 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false, // Required for Cloudinary uploads
   crossOriginResourcePolicy: { policy: "cross-origin" },
-}));
+})); */
 
 // Custom security headers
-app.use(securityHeaders);
+// TEMPORARILY DISABLED FOR DEBUGGING
+// app.use(securityHeaders);
 
 // DEBUG: Log all incoming requests
 app.use((req, res, next) => {
