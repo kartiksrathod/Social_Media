@@ -11,6 +11,7 @@ import MentionAutocomplete from './MentionAutocomplete';
 import ImageTagging from './ImageTagging';
 import CollaboratorSelector from './CollaboratorSelector';
 import ImageCropModal from './ImageCropModal';
+import LazyImage from '../ui/lazy-image';
 import {
   DropdownMenu,
   DropdownMenuContent,
