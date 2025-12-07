@@ -34,7 +34,7 @@ This repository has been cleaned up and verified for deployment.
 
 ### Frontend Configuration (`/app/frontend/.env`):
 ✅ **VERIFIED** - Already configured correctly:
-- Backend API URL: https://login-system-repair-1.preview.emergentagent.com
+- Backend API URL: https://credential-repair.preview.emergentagent.com
 - WebSocket configuration
 - Production-ready settings
 
