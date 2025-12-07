@@ -46,6 +46,8 @@ export default function Profile() {
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [closeFriendLoading, setCloseFriendLoading] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const LIMIT = getOptimalPageSize();
 
   const isOwnProfile = !username || username === currentUser?.username;
