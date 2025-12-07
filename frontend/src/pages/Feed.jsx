@@ -45,7 +45,19 @@ export default function Feed() {
       const newPosts = response.data;
 
       if (isLoadMore) {
-        setPosts(prev => [...prev, ...newPosts]);
+        setPosts(prev => {
+          const combined = [...prev, ...newPosts];
+          
+          // DOM cleanup: keep max posts to prevent memory issues
+          // Only cleanup if not using virtual scrolling
+          if (!useVirtualScroll && combined.length > PERFORMANCE_CONFIG.MAX_POSTS_IN_DOM) {
+            const excess = combined.length - PERFORMANCE_CONFIG.MAX_POSTS_IN_DOM;
+            console.log(`[Performance] Cleaning up ${excess} old posts from DOM`);
+            return combined.slice(excess);
+          }
+          
+          return combined;
+        });
       } else {
         setPosts(newPosts);
       }
