@@ -118,8 +118,9 @@ export const getAvatarUrl = (url, size = 200) => {
     height: size,
     crop: 'thumb',
     gravity: 'face',
-    quality: 'auto',
+    quality: 'auto:good',
     format: 'auto',
+    dpr: 'auto',
   });
 };
 
