@@ -36,6 +36,7 @@ const storyRoutes = require('./routes/stories');
 const messageRoutes = require('./routes/messages');
 const collaborationRoutes = require('./routes/collaborations');
 const commentRoutes = require('./routes/comments');
+const safetyRoutes = require('./routes/safety');
 
 // Create Express app and HTTP server
 const app = express();
