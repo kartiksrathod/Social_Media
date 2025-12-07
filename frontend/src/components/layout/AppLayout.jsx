@@ -13,7 +13,8 @@ import {
   Moon,
   Sun,
   Bookmark,
-  Star
+  Star,
+  Ban
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
