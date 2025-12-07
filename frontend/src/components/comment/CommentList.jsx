@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, Trash2 } from 'lucide-react';
 import { postsAPI } from '../../lib/api';
 import { formatDistanceToNow } from 'date-fns';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const CommentList = ({ postId, commentCount, onCommentAdded }) => {
   const [comments, setComments] = useState([]);
