@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usersAPI } from '../../lib/api';
 import FollowButton from './FollowButton';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const SuggestedUsers = () => {
   const [users, setUsers] = useState([]);
@@ -62,10 +64,12 @@ const SuggestedUsers = () => {
               to={`/profile/${user.username}`}
               className="flex items-center gap-3 flex-1 min-w-0"
             >
-              <img
-                src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+              <LazyImage
+                src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`, 40)}
                 alt={user.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-border"
+                width={40}
+                height={40}
               />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm truncate text-foreground">{user.username}</p>

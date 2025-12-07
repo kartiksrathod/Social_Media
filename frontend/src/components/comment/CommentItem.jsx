@@ -6,6 +6,8 @@ import CommentInput from './CommentInput';
 import CommentReplies from './CommentReplies';
 import ReactionButton from '../post/ReactionButton';
 import { useNavigate } from 'react-router-dom';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
   const navigate = useNavigate();
@@ -175,10 +177,12 @@ const CommentItem = ({ comment, currentUser, onUpdate, onDelete }) => {
   return (
     <div className="space-y-2">
       <div className="flex gap-3">
-        <img
-          src={comment.avatar || `https://ui-avatars.com/api/?name=${comment.username}&background=random`}
+        <LazyImage
+          src={getAvatarUrl(comment.avatar || `https://ui-avatars.com/api/?name=${comment.username}&background=random`, 32)}
           alt={comment.username}
           className="w-8 h-8 rounded-full flex-shrink-0"
+          width={32}
+          height={32}
         />
         <div className="flex-1 min-w-0">
           {isEditing ? (

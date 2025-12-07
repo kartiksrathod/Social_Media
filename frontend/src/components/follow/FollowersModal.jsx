@@ -3,6 +3,8 @@ import { X } from 'lucide-react';
 import { usersAPI } from '../../lib/api';
 import FollowButton from './FollowButton';
 import { Link } from 'react-router-dom';
+import LazyImage from '../ui/lazy-image';
+import { getAvatarUrl } from '../../lib/imageOptimizer';
 
 const FollowersModal = ({ isOpen, onClose, userId, title = 'Followers' }) => {
   const [users, setUsers] = useState([]);
@@ -76,10 +78,12 @@ const FollowersModal = ({ isOpen, onClose, userId, title = 'Followers' }) => {
                     className="flex items-center gap-3 flex-1 min-w-0"
                     onClick={onClose}
                   >
-                    <img
-                      src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+                    <LazyImage
+                      src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`, 48)}
                       alt={user.username}
                       className="w-12 h-12 rounded-full object-cover"
+                      width={48}
+                      height={48}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{user.username}</p>

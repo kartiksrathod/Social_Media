@@ -6,6 +6,8 @@ import FollowButton from '../components/follow/FollowButton';
 import UserCardSkeleton from '../components/skeletons/UserCardSkeleton';
 import AppLayout from '../components/layout/AppLayout';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import LazyImage from '../components/ui/lazy-image';
+import { getAvatarUrl } from '../lib/imageOptimizer';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -169,10 +171,12 @@ const SearchResults = () => {
                             to={`/profile/${user.username}`}
                             className="flex items-center gap-4 flex-1 min-w-0"
                           >
-                            <img
-                              src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
+                            <LazyImage
+                              src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`, 48)}
                               alt={user.username}
                               className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                              width={48}
+                              height={48}
                             />
                             <div className="flex-1 min-w-0 space-y-1">
                               <p className="font-semibold truncate">{user.username}</p>
