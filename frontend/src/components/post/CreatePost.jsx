@@ -406,10 +406,11 @@ export default function CreatePost({ onPostCreated }) {
                   <div className="grid grid-cols-2 gap-3">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
-                        <img
+                        <LazyImage
                           src={preview}
                           alt={`Preview ${index + 1}`}
                           className="w-full h-40 sm:h-44 object-cover rounded-xl"
+                          loading="eager"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors rounded-xl flex items-center justify-center gap-2">
                           <Button
