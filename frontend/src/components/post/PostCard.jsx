@@ -334,25 +334,38 @@ export default function PostCard({ post, onUpdate }) {
                 )}
               </p>
             </div>
-            {isOwnPost && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground touch-target">
-                    <MoreHorizontal className="w-5 h-5 sm:w-4 sm:h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-[160px]">
-                  <DropdownMenuItem onClick={() => setEditOpen(true)} className="h-12 sm:h-10 text-base sm:text-sm">
-                    <Edit className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
-                    Edit Post
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-red-600 h-12 sm:h-10 text-base sm:text-sm">
-                    <Trash2 className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
-                    Delete Post
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground touch-target">
+                  <MoreHorizontal className="w-5 h-5 sm:w-4 sm:h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[160px]">
+                {isOwnPost ? (
+                  <>
+                    <DropdownMenuItem onClick={() => setEditOpen(true)} className="h-12 sm:h-10 text-base sm:text-sm">
+                      <Edit className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
+                      Edit Post
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-red-600 h-12 sm:h-10 text-base sm:text-sm">
+                      <Trash2 className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
+                      Delete Post
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => setReportOpen(true)} className="h-12 sm:h-10 text-base sm:text-sm">
+                      <Flag className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
+                      Report Post
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setBlockDialogOpen(true)} className="text-red-600 h-12 sm:h-10 text-base sm:text-sm">
+                      <Ban className="w-5 h-5 sm:w-4 sm:h-4 mr-3 sm:mr-2" />
+                      Block @{isRepost && originalPost ? originalPost.author_username : post.author_username}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
