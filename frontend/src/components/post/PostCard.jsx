@@ -348,10 +348,11 @@ export default function PostCard({ post, onUpdate }) {
         
         {postImages.length > 0 && (
           <div className="relative rounded-xl overflow-hidden border border-border bg-surface-700">
-            <img 
-              src={postImages[currentImageIndex]} 
+            <LazyImage 
+              src={getPostImageUrl(postImages[currentImageIndex], 'large')} 
               alt="Post content" 
               className="w-full h-auto object-cover max-h-[500px]"
+              loading={currentImageIndex === 0 ? 'eager' : 'lazy'}
             />
             
             {/* Image Tags */}
