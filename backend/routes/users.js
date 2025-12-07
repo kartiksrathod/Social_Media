@@ -3,10 +3,16 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { authenticateToken } = require('../middleware/auth');
 const { uploadToCloudinary } = require('../utils/cloudinary');
+const { processAvatar, validateImageFile } = require('../utils/imageProcessor');
 const multer = require('multer');
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // Helper to format user to public format
 const userToPublic = (user, currentUserId = null, currentUser = null) => {
