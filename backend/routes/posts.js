@@ -461,8 +461,20 @@ router.get('/explore', authenticateToken, async (req, res) => {
     const skip = parseInt(req.query.skip) || 0;
     const user = await User.findOne({ id: req.userId });
 
-    // Only show public posts in explore (don't show close friends posts)
-    const posts = await Post.find({ visibility: 'public' })
+    // Get blocked user IDs (users I blocked and users who blocked me)
+    const Block = require('../models/Block');
+    const blockedByMe = await Block.find({ blocker_id: req.userId }).select('blocked_id');
+    const blockedMe = await Block.find({ blocked_id: req.userId }).select('blocker_id');
+    const blockedUserIds = [
+      ...blockedByMe.map(b => b.blocked_id),
+      ...blockedMe.map(b => b.blocker_id)
+    ];
+
+    // Only show public posts in explore (don't show close friends posts), excluding blocked users
+    const posts = await Post.find({ 
+      visibility: 'public',
+      author_id: { $nin: blockedUserIds }
+    })
       .sort({ created_at: -1 })
       .skip(skip)
       .limit(limit);
