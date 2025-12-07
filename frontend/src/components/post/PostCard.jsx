@@ -17,6 +17,8 @@ import RepostDialog from './RepostDialog';
 import ReactionButton from './ReactionButton';
 import CommentSection from '../comment/CommentSection';
 import { getPostImageUrl } from '../../lib/imageOptimizer';
+import ReportDialog from '../safety/ReportDialog';
+import { blockUser } from '@/lib/safetyAPI';
 
 export default function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
