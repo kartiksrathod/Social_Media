@@ -95,10 +95,12 @@ const CommentList = ({ postId, commentCount, onCommentAdded }) => {
             ) : (
               comments.map((comment) => (
                 <div key={comment.id} className="flex gap-3">
-                  <img
-                    src={comment.avatar || `https://ui-avatars.com/api/?name=${comment.username}&background=random`}
+                  <LazyImage
+                    src={getAvatarUrl(comment.avatar || `https://ui-avatars.com/api/?name=${comment.username}&background=random`, 32)}
                     alt={comment.username}
                     className="w-8 h-8 rounded-full flex-shrink-0"
+                    width={32}
+                    height={32}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2">
