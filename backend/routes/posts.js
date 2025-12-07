@@ -140,11 +140,33 @@ router.post('/upload-image', authenticateToken, uploadLimiter, upload.single('fi
       return res.status(400).json({ detail: 'No file uploaded' });
     }
 
-    const result = await uploadToCloudinary(req.file.buffer, 'posts');
-    res.json({ url: result.url });
+    // Validate image file
+    validateImageFile(req.file);
+
+    // Process and compress image
+    const processed = await processPostImage(req.file.buffer);
+    
+    console.log(`Image compression: ${(processed.originalSize / 1024).toFixed(1)}KB -> ${(processed.size / 1024).toFixed(1)}KB (${processed.compressionRatio} saved)`);
+
+    // Upload compressed image to Cloudinary
+    const result = await uploadToCloudinary(processed.buffer, 'posts', {
+      width: processed.width,
+      height: processed.height,
+      format: processed.format
+    });
+    
+    res.json({ 
+      url: result.url,
+      width: result.width,
+      height: result.height,
+      format: result.format,
+      originalSize: processed.originalSize,
+      compressedSize: processed.size,
+      compressionRatio: processed.compressionRatio
+    });
   } catch (error) {
     console.error('Upload image error:', error);
-    res.status(500).json({ detail: 'Image upload failed' });
+    res.status(500).json({ detail: error.message || 'Image upload failed' });
   }
 });
 
