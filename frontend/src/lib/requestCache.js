@@ -20,18 +20,6 @@ export const cache = setupCache({
   store: 'memory',
   // Respect cache headers from server if present
   ignoreCache: false,
-  // Cache key customization for better hit rates
-  key: req => {
-    const url = req.url || '';
-    const params = req.params ? JSON.stringify(req.params) : '';
-    return url + params;
-  },
-  // Invalidate on error
-  invalidate: async (config, request) => {
-    if (request.response?.status >= 400) {
-      await cache.store.removeItem(config.uuid);
-    }
-  },
   // Debug mode
   debug: process.env.NODE_ENV === 'development',
 });
