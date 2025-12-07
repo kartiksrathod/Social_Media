@@ -6,7 +6,7 @@
 
 export const PERFORMANCE_CONFIG = {
   // Virtual scrolling configuration
-  ENABLE_VIRTUAL_SCROLLING: false, // Set to true for feeds with 100+ posts
+  ENABLE_VIRTUAL_SCROLLING: true, // Automatically enabled for feeds with 100+ posts
   VIRTUAL_SCROLL_OVERSCAN: 400, // Pixels to render outside viewport
   VIRTUAL_SCROLL_INCREASE_VIEWPORT: { top: 800, bottom: 800 },
 
