@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
  * - Progressive loading with low-quality placeholder
  */
 
-const LazyImage = ({
+const LazyImage = React.memo(({
   src,
   alt = '',
   className = '',
