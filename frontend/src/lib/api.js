@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { cache, cacheConfig, clearCache, invalidateUserCache, invalidatePostCache } from './requestCache';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const API_URL = `${BACKEND_URL}/api`;
@@ -8,6 +9,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  adapter: cache.adapter, // Enable caching
 });
 
 // Add token to requests
@@ -18,6 +20,9 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Export cache utilities
+export { clearCache, invalidateUserCache, invalidatePostCache };
 
 // ==================== AUTH ====================
 export const authAPI = {
