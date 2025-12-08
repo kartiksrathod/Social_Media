@@ -114,15 +114,21 @@ REACT_APP_BACKEND_URL=http://localhost:8001/api
 
 ### 4. Start MongoDB
 
+**Option A: Local MongoDB Installation**
 ```bash
 # macOS (with Homebrew)
 brew services start mongodb-community
 
 # Linux
-sudo systemctl start mongodb
+sudo systemctl start mongod
 
 # Windows
 net start MongoDB
+```
+
+**Option B: Using Docker (Recommended for Quick Setup)**
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
 
 ### 5. Run the Application
