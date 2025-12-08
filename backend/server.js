@@ -209,6 +209,7 @@ app.get('/api/csrf-token', getCsrfToken);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  console.log('Health endpoint hit!');
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
