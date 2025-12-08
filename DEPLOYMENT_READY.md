@@ -34,7 +34,7 @@ This repository has been cleaned up and verified for deployment.
 
 ### Frontend Configuration (`/app/frontend/.env`):
 ✅ **VERIFIED** - Already configured correctly:
-- Backend API URL: https://working-auth-deploy.preview.emergentagent.com
+- Backend API URL: https://auth-system-check-4.preview.emergentagent.com
 - WebSocket configuration
 - Production-ready settings
 

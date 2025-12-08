@@ -66,7 +66,7 @@ function makeHttpsRequest(url, method = 'GET', data = null, headers = {}) {
 }
 
 async function testExternalBackend() {
-  const baseUrl = 'https://working-auth-deploy.preview.emergentagent.com';
+  const baseUrl = 'https://auth-system-check-4.preview.emergentagent.com';
   
   console.log('Testing external backend URL:', baseUrl);
   
