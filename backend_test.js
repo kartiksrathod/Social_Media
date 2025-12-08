@@ -192,6 +192,64 @@ async function testUserLogin() {
   }
 }
 
+// Test 3b: Invalid Password Login
+async function testInvalidPasswordLogin() {
+  console.log('\n=== Testing Invalid Password Login ===');
+  const loginData = {
+    username: testUser.username,
+    password: 'WrongPassword123!'
+  };
+  
+  const result = await makeRequest('POST', '/api/auth/login', loginData);
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 401) {
+    if (result.data && result.data.detail === 'Invalid username or password') {
+      console.log('✅ Invalid password test passed - correct error message');
+      return true;
+    } else {
+      console.log('❌ Invalid password test failed - incorrect error message');
+      console.log('Expected: "Invalid username or password"');
+      console.log('Received:', result.data?.detail);
+      return false;
+    }
+  } else {
+    console.log('❌ Invalid password test failed - should return 401 status');
+    return false;
+  }
+}
+
+// Test 3c: Non-existent User Login
+async function testNonExistentUserLogin() {
+  console.log('\n=== Testing Non-existent User Login ===');
+  const loginData = {
+    username: 'nonexistent_user_12345',
+    password: 'SomePassword123!'
+  };
+  
+  const result = await makeRequest('POST', '/api/auth/login', loginData);
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 401) {
+    if (result.data && result.data.detail === 'Invalid username or password') {
+      console.log('✅ Non-existent user test passed - correct error message');
+      return true;
+    } else {
+      console.log('❌ Non-existent user test failed - incorrect error message');
+      console.log('Expected: "Invalid username or password"');
+      console.log('Received:', result.data?.detail);
+      return false;
+    }
+  } else {
+    console.log('❌ Non-existent user test failed - should return 401 status');
+    return false;
+  }
+}
+
 // Test 4: Get Current User
 async function testGetCurrentUser() {
   console.log('\n=== Testing Get Current User Endpoint ===');
