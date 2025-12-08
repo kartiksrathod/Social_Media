@@ -1,58 +1,71 @@
 # SocialVibe - Quick Start Guide
 
-## 🚀 Getting Started in 3 Steps
+## 🚀 Getting Started in 5 Minutes
 
 ### 1. Install Dependencies
 
 ```bash
 # Backend
-cd /app/backend
+cd backend
 yarn install
 
-# Frontend
-cd /app/frontend
+# Frontend  
+cd frontend
 yarn install
 ```
 
-### 2. Configure Environment Variables
+### 2. Setup Environment Files
 
-#### Backend (`/app/backend/.env`):
-```env
-# MongoDB Connection
-MONGO_URL=mongodb://localhost:27017/socialvibe
+#### Backend (`backend/.env`):
+```bash
+# Copy the example file
+cp backend/.env.example backend/.env
 
-# JWT Configuration
-JWT_SECRET=your-secret-key-here
-CSRF_SECRET=your-csrf-secret-here
-
-# Cloudinary (for image uploads)
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Server
-PORT=8001
-CORS_ORIGINS=*
+# Then edit backend/.env and set:
+# - JWT_SECRET (any random string for development)
+# - MONGO_URL (default: mongodb://localhost:27017/socialvibe)
+# - CLOUDINARY_* (optional, only needed for image uploads)
 ```
 
-#### Frontend (`/app/frontend/.env`):
-```env
-REACT_APP_BACKEND_URL=https://your-backend-url.com/api
-WDS_SOCKET_PORT=443
+#### Frontend (`frontend/.env`):
+```bash
+# Copy the example file
+cp frontend/.env.example frontend/.env
+
+# The default REACT_APP_BACKEND_URL=http://localhost:8001/api should work
 ```
 
-### 3. Start Services
+### 3. Start MongoDB
+
+**Option A: Using Docker (Easiest)**
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
+
+**Option B: Local MongoDB**
+```bash
+# macOS
+brew services start mongodb-community
+
+# Linux
+sudo systemctl start mongod
+
+# Windows
+net start MongoDB
+```
+
+### 4. Start Backend
 
 ```bash
-# Start MongoDB
-sudo supervisorctl start mongodb
-
-# Start Backend (Node.js)
-cd /app/backend
+cd backend
 node server.js
+# Or for auto-reload: yarn dev
+```
 
-# Start Frontend
-cd /app/frontend
+### 5. Start Frontend
+
+```bash
+cd frontend
 yarn start
 ```
 
