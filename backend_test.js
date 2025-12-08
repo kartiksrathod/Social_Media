@@ -337,8 +337,14 @@ async function runAllTests() {
   const results = {
     healthCheck: false,
     signup: false,
+    duplicateUsername: false,
+    duplicateEmail: false,
     login: false,
-    getCurrentUser: false
+    invalidPassword: false,
+    nonExistentUser: false,
+    getCurrentUser: false,
+    invalidToken: false,
+    noToken: false
   };
   
   try {
@@ -348,25 +354,48 @@ async function runAllTests() {
     // Test 2: User Signup
     results.signup = await testUserSignup();
     
-    // Test 3: User Login (only if signup failed, to test with existing user)
-    if (!results.signup) {
-      console.log('\n⚠️ Signup failed, attempting login with existing user...');
+    // Test 2b & 2c: Duplicate Registration Tests (only if signup succeeded)
+    if (results.signup) {
+      results.duplicateUsername = await testDuplicateUsernameSignup();
+      results.duplicateEmail = await testDuplicateEmailSignup();
+    } else {
+      console.log('\n⚠️ Skipping duplicate tests - initial signup failed');
     }
+    
+    // Test 3: User Login (try regardless of signup result)
     results.login = await testUserLogin();
+    
+    // Test 3b & 3c: Invalid Login Tests (only if we have a valid user)
+    if (results.signup || results.login) {
+      results.invalidPassword = await testInvalidPasswordLogin();
+      results.nonExistentUser = await testNonExistentUserLogin();
+    } else {
+      console.log('\n⚠️ Skipping invalid login tests - no valid user available');
+    }
     
     // Test 4: Get Current User (requires valid token)
     results.getCurrentUser = await testGetCurrentUser();
+    
+    // Test 4b & 4c: Invalid Token Tests
+    results.invalidToken = await testInvalidToken();
+    results.noToken = await testNoToken();
     
   } catch (error) {
     console.error('❌ Unexpected error during testing:', error);
   }
   
   // Summary
-  console.log('\n=== TEST SUMMARY ===');
+  console.log('\n=== COMPREHENSIVE TEST SUMMARY ===');
   console.log(`Health Check: ${results.healthCheck ? '✅ PASS' : '❌ FAIL'}`);
   console.log(`User Signup: ${results.signup ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`Duplicate Username: ${results.duplicateUsername ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`Duplicate Email: ${results.duplicateEmail ? '✅ PASS' : '❌ FAIL'}`);
   console.log(`User Login: ${results.login ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`Invalid Password: ${results.invalidPassword ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`Non-existent User: ${results.nonExistentUser ? '✅ PASS' : '❌ FAIL'}`);
   console.log(`Get Current User: ${results.getCurrentUser ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`Invalid Token: ${results.invalidToken ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`No Token: ${results.noToken ? '✅ PASS' : '❌ FAIL'}`);
   
   const passedTests = Object.values(results).filter(Boolean).length;
   const totalTests = Object.keys(results).length;
