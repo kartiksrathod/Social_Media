@@ -152,16 +152,18 @@ app.use(express.json({ limit: '10mb' })); // Limit payload size
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Cookie parser (required for CSRF)
-app.use(cookieParser);
+// TEMPORARILY DISABLED
+// app.use(cookieParser);
 
 // CORS Configuration
 const corsOrigins = process.env.CORS_ORIGINS || '*';
-app.use(cors({
+// TEMPORARILY DISABLED
+/*app.use(cors({
   origin: corsOrigins === '*' ? '*' : corsOrigins.split(','),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'x-csrf-token']
-}));
+}));*/
 
 // MongoDB injection prevention
 // TEMPORARILY DISABLED FOR DEBUGGING
