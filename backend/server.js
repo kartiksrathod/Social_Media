@@ -155,15 +155,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // TEMPORARILY DISABLED
 // app.use(cookieParser);
 
-// CORS Configuration
-const corsOrigins = process.env.CORS_ORIGINS || '*';
-// TEMPORARILY DISABLED
-/*app.use(cors({
-  origin: corsOrigins === '*' ? '*' : corsOrigins.split(','),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'x-csrf-token']
-}));*/
+// CORS Configuration - RE-ENABLED WITH SIMPLER CONFIG
+app.use(cors());
 
 // MongoDB injection prevention
 // TEMPORARILY DISABLED FOR DEBUGGING
