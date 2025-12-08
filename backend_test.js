@@ -414,4 +414,16 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runAllTests, testHealthCheck, testUserSignup, testUserLogin, testGetCurrentUser };
+module.exports = { 
+  runAllTests, 
+  testHealthCheck, 
+  testUserSignup, 
+  testDuplicateUsernameSignup,
+  testDuplicateEmailSignup,
+  testUserLogin, 
+  testInvalidPasswordLogin,
+  testNonExistentUserLogin,
+  testGetCurrentUser,
+  testInvalidToken,
+  testNoToken
+};
