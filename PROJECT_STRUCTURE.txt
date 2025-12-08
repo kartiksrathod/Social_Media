@@ -1,0 +1,97 @@
+.
+├── .emergent
+│   ├── markers
+│   │   ├── .bootstrap-complete
+│   │   ├── .restic-restore-verified
+│   │   └── .restore-complete
+│   └── emergent.yml
+├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   └── PULL_REQUEST_TEMPLATE.md
+├── backend
+│   ├── middleware
+│   │   ├── auth.js
+│   │   ├── csrf.js
+│   │   └── security.js
+│   ├── models
+│   │   ├── Block.js
+│   │   ├── Comment.js
+│   │   ├── Conversation.js
+│   │   ├── Message.js
+│   │   ├── Notification.js
+│   │   ├── Post.js
+│   │   ├── Report.js
+│   │   ├── Story.js
+│   │   └── User.js
+│   ├── routes
+│   │   ├── auth.js
+│   │   ├── collaborations.js
+│   │   ├── comments.js
+│   │   ├── hashtags.js
+│   │   ├── messages.js
+│   │   ├── notifications.js
+│   │   ├── posts.js
+│   │   ├── safety.js
+│   │   ├── stories.js
+│   │   └── users.js
+│   ├── utils
+│   │   ├── cloudinary.js
+│   │   ├── helpers.js
+│   │   └── imageProcessor.js
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── README.md
+│   ├── package.json
+│   ├── server.js
+│   └── yarn.lock
+├── docs
+│   ├── archive
+│   │   ├── DEPLOYMENT_STEPS.md
+│   │   ├── MERN_MIGRATION_SUMMARY.md
+│   │   ├── MIGRATION_GUIDE.md
+│   │   ├── PHASE1_FEATURES_SUMMARY.md
+│   │   ├── PYTHON_CLEANUP_COMPLETE.md
+│   │   └── TECH_STACK_COMPARISON.md
+│   └── SETUP_GUIDE.md
+├── frontend
+│   ├── plugins
+│   │   ├── health-check
+│   │   └── visual-edits
+│   ├── public
+│   │   └── index.html
+│   ├── src
+│   │   ├── components
+│   │   ├── config
+│   │   ├── contexts
+│   │   ├── hooks
+│   │   ├── lib
+│   │   ├── pages
+│   │   ├── App.css
+│   │   ├── App.js
+│   │   ├── index.css
+│   │   └── index.js
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── README.md
+│   ├── components.json
+│   ├── craco.config.js
+│   ├── jsconfig.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   └── yarn.lock
+├── .env.example
+├── .gitignore
+├── CONTRIBUTING.md
+├── DEPLOYMENT_READY.md
+├── LICENSE
+├── PROJECT_STRUCTURE.txt
+├── QUICK_START.md
+├── README.md
+├── SECURITY.md
+├── package-lock.json
+└── package.json
+
+24 directories, 71 files
