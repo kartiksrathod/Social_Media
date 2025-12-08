@@ -100,6 +100,66 @@ async function testUserSignup() {
   }
 }
 
+// Test 2b: Duplicate Username Registration
+async function testDuplicateUsernameSignup() {
+  console.log('\n=== Testing Duplicate Username Registration ===');
+  const duplicateUser = {
+    username: testUser.username, // Same username
+    email: 'different.email@example.com', // Different email
+    password: 'DifferentPass123!'
+  };
+  
+  const result = await makeRequest('POST', '/api/auth/signup', duplicateUser);
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 400) {
+    if (result.data && result.data.detail === 'Username already registered') {
+      console.log('✅ Duplicate username test passed - correct error message');
+      return true;
+    } else {
+      console.log('❌ Duplicate username test failed - incorrect error message');
+      console.log('Expected: "Username already registered"');
+      console.log('Received:', result.data?.detail);
+      return false;
+    }
+  } else {
+    console.log('❌ Duplicate username test failed - should return 400 status');
+    return false;
+  }
+}
+
+// Test 2c: Duplicate Email Registration
+async function testDuplicateEmailSignup() {
+  console.log('\n=== Testing Duplicate Email Registration ===');
+  const duplicateUser = {
+    username: 'different_username', // Different username
+    email: testUser.email, // Same email
+    password: 'DifferentPass123!'
+  };
+  
+  const result = await makeRequest('POST', '/api/auth/signup', duplicateUser);
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 400) {
+    if (result.data && result.data.detail === 'Email already registered') {
+      console.log('✅ Duplicate email test passed - correct error message');
+      return true;
+    } else {
+      console.log('❌ Duplicate email test failed - incorrect error message');
+      console.log('Expected: "Email already registered"');
+      console.log('Received:', result.data?.detail);
+      return false;
+    }
+  } else {
+    console.log('❌ Duplicate email test failed - should return 400 status');
+    return false;
+  }
+}
+
 // Test 3: User Login
 async function testUserLogin() {
   console.log('\n=== Testing User Login Endpoint ===');
