@@ -25,7 +25,12 @@ logs/
 .nyc_output
 test_result.md
 *_test.py
+*_test.js
 backend_test.py
+backend_test.js
+external_test.js
+simple_test.js
+test_connection.js
 
 # Production builds
 /build
