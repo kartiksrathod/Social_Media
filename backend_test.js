@@ -273,6 +273,10 @@ async function testGetCurrentUser() {
       console.log(`User ID: ${userData.id}`);
       console.log(`Username: ${userData.username}`);
       console.log(`Email: ${userData.email}`);
+      console.log(`Bio: ${userData.bio}`);
+      console.log(`Avatar: ${userData.avatar}`);
+      console.log(`Followers: ${userData.followers_count}`);
+      console.log(`Following: ${userData.following_count}`);
       return true;
     } else {
       console.log('❌ Get current user failed - missing required user fields');
@@ -283,6 +287,44 @@ async function testGetCurrentUser() {
     if (!result.success) {
       console.log('Error:', result.error);
     }
+    return false;
+  }
+}
+
+// Test 4b: Invalid Token Test
+async function testInvalidToken() {
+  console.log('\n=== Testing Invalid Token Access ===');
+  
+  const result = await makeRequest('GET', '/api/auth/me', null, {
+    'Authorization': 'Bearer invalid_token_12345'
+  });
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 401) {
+    console.log('✅ Invalid token test passed - correctly rejected');
+    return true;
+  } else {
+    console.log('❌ Invalid token test failed - should return 401 status');
+    return false;
+  }
+}
+
+// Test 4c: No Token Test
+async function testNoToken() {
+  console.log('\n=== Testing No Token Access ===');
+  
+  const result = await makeRequest('GET', '/api/auth/me');
+  
+  console.log(`Status: ${result.status}`);
+  console.log(`Response:`, result.data);
+  
+  if (!result.success && result.status === 401) {
+    console.log('✅ No token test passed - correctly rejected');
+    return true;
+  } else {
+    console.log('❌ No token test failed - should return 401 status');
     return false;
   }
 }
